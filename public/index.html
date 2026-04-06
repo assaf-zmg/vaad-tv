@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>לוח מודעות הבניין</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Alert Banner (hidden by default) -->
+  <div id="alert-banner" style="display:none;">
+    <span id="alert-icon">&#9888;</span>
+    <span id="alert-text"></span>
+  </div>
+
+  <!-- Top Strip: Clock (RIGHT in RTL) + Weather Forecast (LEFT in RTL) -->
+  <div id="top-strip">
+
+    <!-- Clock card — first child = right side in RTL -->
+    <div id="clock-section">
+      <div id="clock">--:--</div>
+      <div id="gregorian-date"></div>
+      <div id="hebrew-date"></div>
+    </div>
+
+    <!-- Weather card — second child = left side in RTL -->
+    <div id="weather-section">
+      <div id="weather-label">תחזית</div>
+      <div id="weather-forecast"></div>
+    </div>
+
+  </div>
+
+  <!-- Main Content -->
+  <div id="main">
+
+    <!-- Announcements — first child = right side in RTL -->
+    <div id="announcements-panel" class="panel">
+      <div class="panel-header">הודעות ועד בית</div>
+      <div id="announcements-content"></div>
+    </div>
+
+    <!-- Sidebar: News + Shabbat — second child = left side in RTL -->
+    <div id="sidebar">
+
+      <div id="news-panel" class="panel">
+        <div class="panel-header">כותרות Ynet</div>
+        <div id="news-content"></div>
+        <div id="news-dots"></div>
+      </div>
+
+      <div id="shabbat-panel" class="panel">
+        <div id="shabbat-content"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

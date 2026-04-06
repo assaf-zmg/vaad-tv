@@ -1,0 +1,16 @@
+{
+  "name": "vaad-tv-server",
+  "version": "1.0.0",
+  "description": "Lobby dashboard backend proxy for Vaad TV",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "csv-parse": "^5.5.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "node-fetch": "^2.7.0",
+    "xml2js": "^0.6.2"
+  }
+}

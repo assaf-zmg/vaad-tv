@@ -1,0 +1,421 @@
+/* === Reset & Base === */
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Heebo', Arial, Helvetica, sans-serif;
+  direction: rtl;
+  background-color: #4a7a2a;
+}
+
+body {
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  padding: 12px 14px;
+}
+
+/* === Alert Banner === */
+#alert-banner {
+  background: #d32f2f;
+  color: #fff;
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 20px;
+  font-weight: 800;
+  border-radius: 14px;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
+
+#alert-icon {
+  margin-left: 10px;
+}
+
+/* === Top Strip === */
+#top-strip {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  height: 21vh;
+  min-height: 130px;
+  margin-bottom: 10px;
+}
+
+/* Clock Card — appears RIGHT in RTL (first child) */
+#clock-section {
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 18px;
+  box-shadow: 0 3px 18px rgba(0, 0, 0, 0.14);
+  padding: 14px 22px;
+  margin-left: 10px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  min-width: 210px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  text-align: center;
+}
+
+#clock {
+  font-size: 56px;
+  font-weight: 900;
+  color: #1a1a1a;
+  line-height: 1.0;
+  letter-spacing: -2px;
+}
+
+#gregorian-date {
+  font-size: 15px;
+  font-weight: 500;
+  color: #444;
+  margin-top: 5px;
+}
+
+#hebrew-date {
+  font-size: 14px;
+  font-weight: 400;
+  color: #777;
+  margin-top: 2px;
+}
+
+/* Weather Card — appears LEFT in RTL (second child) */
+#weather-section {
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 18px;
+  box-shadow: 0 3px 18px rgba(0, 0, 0, 0.14);
+  padding: 12px 20px 10px;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#weather-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: right;
+  margin-bottom: 6px;
+}
+
+#weather-forecast {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-around;
+  justify-content: space-around;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+}
+
+.forecast-day {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
+.forecast-day .day-icon {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 3px;
+}
+
+.forecast-day .day-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+.forecast-day .day-temp {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.2;
+}
+
+.forecast-day .day-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #777;
+  margin-top: 2px;
+}
+
+/* === Main Content Area === */
+#main {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* === Shared Panel Style === */
+.panel {
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 18px;
+  box-shadow: 0 3px 18px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+  color: #1a1a1a;
+}
+
+.panel-header {
+  font-size: 18px;
+  font-weight: 900;
+  color: #1a1a1a;
+  padding: 13px 20px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+/* === Announcements Panel — RIGHT side === */
+#announcements-panel {
+  -webkit-box-flex: 56;
+  -webkit-flex: 56;
+  flex: 56;
+  margin-left: 10px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+#announcements-content {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  padding: 14px 18px;
+  overflow: hidden;
+}
+
+.announcement-card {
+  margin-bottom: 12px;
+  padding: 14px 18px;
+  border-radius: 13px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.announcement-card.urgent {
+  background: rgba(220, 60, 30, 0.08);
+  border-right: 4px solid #e84828;
+  padding-right: 14px;
+}
+
+.announcement-card .ann-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.announcement-card.urgent .ann-title {
+  color: #c0321a;
+}
+
+.announcement-card .ann-body {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.announcement-card .ann-date {
+  font-size: 12px;
+  color: #bbb;
+  margin-top: 7px;
+}
+
+/* === Sidebar — LEFT side === */
+#sidebar {
+  -webkit-box-flex: 44;
+  -webkit-flex: 44;
+  flex: 44;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+/* News Panel */
+#news-panel {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+#news-content {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  padding: 10px 20px 0;
+  overflow: hidden;
+}
+
+.news-item {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #1a1a1a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.news-item:last-child {
+  border-bottom: none;
+}
+
+/* Pagination dots */
+#news-dots {
+  text-align: center;
+  padding: 8px 0 10px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
+
+.page-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.16);
+  margin: 0 4px;
+}
+
+.page-dot.active {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Shabbat Card */
+#shabbat-panel {
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  padding: 14px 20px;
+  text-align: center;
+}
+
+#shabbat-content .shabbat-times {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.5;
+}
+
+#shabbat-content .shabbat-parasha {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* === Fade Transitions === */
+.fade-out {
+  opacity: 0;
+  -webkit-transition: opacity 0.4s ease;
+  transition: opacity 0.4s ease;
+}
+
+.fade-in {
+  opacity: 1;
+  -webkit-transition: opacity 0.4s ease;
+  transition: opacity 0.4s ease;
+}
+
+/* === Fallback text === */
+.fallback-text {
+  color: #bbb;
+  font-style: italic;
+  text-align: center;
+  padding: 20px 10px;
+  font-size: 15px;
+}
