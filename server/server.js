@@ -121,7 +121,7 @@ function fetchYnet() {
 function fetchWeather() {
   var url = 'https://api.open-meteo.com/v1/forecast'
     + '?latitude=32.08707&longitude=34.88747'
-    + '&daily=temperature_2m_max,temperature_2m_min,weathercode'
+    + '&daily=temperature_2m_max,temperature_2m_min,weather_code'
     + '&current_weather=true'
     + '&timezone=Asia%2FJerusalem'
     + '&forecast_days=5';
@@ -141,7 +141,7 @@ function fetchWeather() {
             dayName: 'יום ' + hebrewDays[dayIndex],
             maxTemp: Math.round(data.daily.temperature_2m_max[i]),
             minTemp: Math.round(data.daily.temperature_2m_min[i]),
-            weathercode: data.daily.weathercode[i],
+            weathercode: data.daily.weather_code[i],
             description: weatherDescriptions[data.daily.weathercode[i]] || 'לא ידוע'
           });
         }
