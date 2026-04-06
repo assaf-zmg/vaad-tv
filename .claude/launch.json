@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vaad-tv",
+      "runtimeExecutable": "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+      "runtimeArgs": ["/Users/assafyogev_1/Documents/Vaad TV/server/server.js"],
+      "port": 3000,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-static",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "3001"],
+      "port": 3001
+    }
+  ]
+}

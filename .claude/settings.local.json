@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(export PATH=\"$HOME/.local/node-v20.11.1-darwin-arm64/bin:$PATH\")",
+      "Bash(npm --version)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/)",
+      "Bash(curl -s http://localhost:3000/api/bg/0 -o /dev/null -w \"bg image: status=%{http_code} size=%{size_download} type=%{content_type}\\\\n\")",
+      "Bash(curl -sI \"https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=1920&q=60\")",
+      "Bash(curl -s http://localhost:3000/api/dashboard.json)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/api/dashboard.json)"
+    ]
+  }
+}

@@ -26,7 +26,7 @@ body {
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
   flex-direction: column;
-  padding: 12px 14px;
+  padding: 10px 12px;
 }
 
 /* === Alert Banner === */
@@ -35,7 +35,7 @@ body {
   color: #fff;
   text-align: center;
   padding: 10px 20px;
-  font-size: 20px;
+  font-size: 36px;
   font-weight: 800;
   border-radius: 14px;
   margin-bottom: 10px;
@@ -59,8 +59,8 @@ body {
   flex-direction: row;
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
-  height: 21vh;
-  min-height: 130px;
+  height: 26vh;
+  min-height: 170px;
   margin-bottom: 10px;
 }
 
@@ -69,11 +69,11 @@ body {
   background: rgba(255, 255, 255, 0.88);
   border-radius: 18px;
   box-shadow: 0 3px 18px rgba(0, 0, 0, 0.14);
-  padding: 14px 22px;
+  padding: 12px 20px;
   margin-left: 10px;
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
-  min-width: 210px;
+  min-width: 290px;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
@@ -91,22 +91,22 @@ body {
 }
 
 #clock {
-  font-size: 56px;
+  font-size: 96px;
   font-weight: 900;
   color: #1a1a1a;
   line-height: 1.0;
-  letter-spacing: -2px;
+  letter-spacing: -3px;
 }
 
 #gregorian-date {
-  font-size: 15px;
+  font-size: 24px;
   font-weight: 500;
   color: #444;
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 #hebrew-date {
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 400;
   color: #777;
   margin-top: 2px;
@@ -117,7 +117,7 @@ body {
   background: rgba(255, 255, 255, 0.88);
   border-radius: 18px;
   box-shadow: 0 3px 18px rgba(0, 0, 0, 0.14);
-  padding: 12px 20px 10px;
+  padding: 10px 16px 8px;
   -webkit-box-flex: 1;
   -webkit-flex: 1;
   flex: 1;
@@ -132,13 +132,14 @@ body {
 }
 
 #weather-label {
-  font-size: 12px;
+  font-size: 20px;
   font-weight: 700;
   color: #1a1a1a;
   letter-spacing: 1px;
-  text-transform: uppercase;
   text-align: right;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 #weather-forecast {
@@ -177,27 +178,27 @@ body {
 }
 
 .forecast-day .day-icon {
-  width: 36px;
-  height: 36px;
-  margin-bottom: 3px;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 4px;
 }
 
 .forecast-day .day-icon svg {
-  width: 36px;
-  height: 36px;
+  width: 56px;
+  height: 56px;
 }
 
 .forecast-day .day-temp {
-  font-size: 18px;
+  font-size: 30px;
   font-weight: 700;
   color: #1a1a1a;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .forecast-day .day-name {
-  font-size: 13px;
+  font-size: 20px;
   font-weight: 500;
-  color: #777;
+  color: #555;
   margin-top: 2px;
 }
 
@@ -227,10 +228,10 @@ body {
 }
 
 .panel-header {
-  font-size: 18px;
+  font-size: 30px;
   font-weight: 900;
   color: #1a1a1a;
-  padding: 13px 20px 10px;
+  padding: 12px 20px 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 }
 
@@ -253,29 +254,29 @@ body {
   -webkit-box-flex: 1;
   -webkit-flex: 1;
   flex: 1;
-  padding: 14px 18px;
+  padding: 12px 16px;
   overflow: hidden;
 }
 
 .announcement-card {
-  margin-bottom: 12px;
-  padding: 14px 18px;
+  margin-bottom: 10px;
+  padding: 12px 16px;
   border-radius: 13px;
   background: rgba(0, 0, 0, 0.04);
 }
 
 .announcement-card.urgent {
   background: rgba(220, 60, 30, 0.08);
-  border-right: 4px solid #e84828;
+  border-right: 5px solid #e84828;
   padding-right: 14px;
 }
 
 .announcement-card .ann-title {
-  font-size: 19px;
+  font-size: 34px;
   font-weight: 800;
   color: #1a1a1a;
   margin-bottom: 6px;
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .announcement-card.urgent .ann-title {
@@ -283,21 +284,21 @@ body {
 }
 
 .announcement-card .ann-body {
-  font-size: 15px;
+  font-size: 24px;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.5;
   color: #333;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
 
 .announcement-card .ann-date {
-  font-size: 12px;
+  font-size: 18px;
   color: #bbb;
-  margin-top: 7px;
+  margin-top: 6px;
 }
 
 /* === Sidebar — LEFT side === */
@@ -333,16 +334,16 @@ body {
   -webkit-box-flex: 1;
   -webkit-flex: 1;
   flex: 1;
-  padding: 10px 20px 0;
+  padding: 8px 20px 0;
   overflow: hidden;
 }
 
 .news-item {
-  padding: 10px 0;
+  padding: 9px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  font-size: 16px;
+  font-size: 26px;
   font-weight: 500;
-  line-height: 1.45;
+  line-height: 1.35;
   color: #1a1a1a;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -358,18 +359,18 @@ body {
 /* Pagination dots */
 #news-dots {
   text-align: center;
-  padding: 8px 0 10px;
+  padding: 6px 0 8px;
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
 }
 
 .page-dot {
   display: inline-block;
-  width: 7px;
-  height: 7px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.16);
-  margin: 0 4px;
+  margin: 0 5px;
 }
 
 .page-dot.active {
@@ -380,19 +381,19 @@ body {
 #shabbat-panel {
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
-  padding: 14px 20px;
+  padding: 12px 20px;
   text-align: center;
 }
 
 #shabbat-content .shabbat-times {
-  font-size: 16px;
+  font-size: 26px;
   font-weight: 700;
   color: #1a1a1a;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 #shabbat-content .shabbat-parasha {
-  font-size: 14px;
+  font-size: 22px;
   font-weight: 500;
   color: #666;
   margin-top: 4px;
@@ -417,5 +418,5 @@ body {
   font-style: italic;
   text-align: center;
   padding: 20px 10px;
-  font-size: 15px;
+  font-size: 26px;
 }
