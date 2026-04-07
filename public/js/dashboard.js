@@ -2,10 +2,10 @@
   'use strict';
 
   // --- Configuration ---
-  var POLL_INTERVAL = 5 * 60 * 1000;
+  var POLL_INTERVAL = 2 * 60 * 1000;
   var RETRY_INTERVAL = 60 * 1000;
   var ANNOUNCEMENT_ROTATE = 20 * 1000;
-  var NEWS_ROTATE = 9 * 1000;
+  var NEWS_ROTATE = 10 * 1000;
   var PAGE_RELOAD_INTERVAL = 7 * 60 * 60 * 1000;
   var ANNOUNCEMENTS_PER_PAGE = 1;
   var NEWS_PER_PAGE = 4;

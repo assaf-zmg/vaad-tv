@@ -14,8 +14,45 @@ var SHEET_ID = process.env.GOOGLE_SHEET_ID || '1e6bM89BRo1VEvw4edUaydH8sYy29Kr94
 var cache = {
   data: null,
   timestamp: 0,
-  TTL: 5 * 60 * 1000 // 5 minutes
+  TTL: 2 * 60 * 1000 // 2 minutes — for news, announcements, shabbat, alerts
 };
+
+// Separate weather cache — met.no model runs update every 6 hours
+var weatherCache = {
+  data: null,
+  timestamp: 0,
+  TTL: 6 * 60 * 60 * 1000 // 6 hours
+};
+
+// Separate shabbat cache — refresh every Sunday at 05:00 Israel time
+var shabbatCache = {
+  data: null,
+  timestamp: 0
+};
+
+// Returns the UTC ms timestamp of the most recent Sunday 05:00 Israel time.
+// The shabbat cache is stale whenever its timestamp predates this value.
+function lastSunday5amUTC() {
+  var israelOffset = getUtcOffset(); // hours (2 or 3)
+  var nowUTC = Date.now();
+  // Shift "now" into Israel time so we can do simple day/hour arithmetic
+  var israelMs  = nowUTC + israelOffset * 3600 * 1000;
+  var israelDate = new Date(israelMs);
+  var dayOfWeek  = israelDate.getUTCDay();  // 0 = Sunday
+  var hourInDay  = israelDate.getUTCHours();
+
+  // How many full days back to the last Sunday?
+  var daysBack = dayOfWeek;
+  if (dayOfWeek === 0 && hourInDay < 5) {
+    daysBack = 7; // It's Sunday but before 05:00 — use the Sunday before
+  }
+
+  // Construct that Sunday at 05:00 in Israel time, then convert to UTC
+  var sundayIsraelMs = israelMs - daysBack * 24 * 3600 * 1000;
+  var sundayDate = new Date(sundayIsraelMs);
+  sundayDate.setUTCHours(5, 0, 0, 0); // 05:00 Israel = 05:00 in shifted space
+  return sundayDate.getTime() - israelOffset * 3600 * 1000; // back to UTC
+}
 
 // --- Weather code to Hebrew description mapping ---
 var weatherDescriptions = {
@@ -407,11 +444,44 @@ app.get('/api/dashboard.json', function(req, res) {
 
   // Fetch all sources in parallel
   var results = {};
+
+  // Weather uses its own 6-hour cache
+  var weatherPromise;
+  if (weatherCache.data && (now - weatherCache.timestamp) < weatherCache.TTL) {
+    weatherPromise = Promise.resolve(weatherCache.data);
+  } else {
+    weatherPromise = fetchWeather()
+      .then(function(data) {
+        weatherCache.data = data;
+        weatherCache.timestamp = Date.now();
+        return data;
+      })
+      .catch(function(err) {
+        console.error('Error fetching weather:', err.message);
+        return weatherCache.data || { current: {}, daily: [] };
+      });
+  }
+
+  // Shabbat uses its own cache — refreshes every Sunday at 05:00 Israel time
+  var shabbatPromise;
+  if (shabbatCache.data && shabbatCache.timestamp >= lastSunday5amUTC()) {
+    shabbatPromise = Promise.resolve(shabbatCache.data);
+  } else {
+    shabbatPromise = fetchShabbat()
+      .then(function(data) {
+        shabbatCache.data = data;
+        shabbatCache.timestamp = Date.now();
+        return data;
+      })
+      .catch(function(err) {
+        console.error('Error fetching shabbat:', err.message);
+        return shabbatCache.data || {};
+      });
+  }
+
   var sources = [
     { key: 'announcements', fn: fetchAnnouncements },
     { key: 'ynet', fn: fetchYnet },
-    { key: 'weather', fn: fetchWeather },
-    { key: 'shabbat', fn: fetchShabbat },
     { key: 'alert', fn: fetchAlerts }
   ];
 
@@ -422,7 +492,6 @@ app.get('/api/dashboard.json', function(req, res) {
       })
       .catch(function(err) {
         console.error('Error fetching ' + source.key + ':', err.message);
-        // Use cached value for this source if available
         if (cache.data && cache.data[source.key] !== undefined) {
           results[source.key] = cache.data[source.key];
         } else {
@@ -430,6 +499,9 @@ app.get('/api/dashboard.json', function(req, res) {
         }
       });
   });
+
+  promises.push(weatherPromise.then(function(data) { results.weather = data; }));
+  promises.push(shabbatPromise.then(function(data) { results.shabbat = data; }));
 
   Promise.all(promises).then(function() {
     var payload = {
