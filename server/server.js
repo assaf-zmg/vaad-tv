@@ -51,6 +51,44 @@ var weatherDescriptions = {
 
 var hebrewDays = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
 
+// --- RSS News Filters ---
+var NEWS_BLACKLIST = [
+  'הרוג','הרוגים','פצוע','פצועים','הרוגה',
+  'נרצח','נרצחה','נרצחו',
+  'ירי','ירי רקטות','אזעקה',
+  'פיגוע','פיגועים','מטען','חיסול',
+  'מחבל','מחבלים','ירי טילים','כטב"ם',
+  'חדירה','חטיפה','חטופים',
+  'לחימה','קרב','מלחמה','עימות',
+  'צבא','צה"ל','תקיפה','הפצצה','יירוט',
+  'רצח','רציחה','דקירה','דקר','תקף',
+  'אלימות','שוד','שדד','גניבה',
+  'נעצר','מעצר','חשוד','חקירה','כתב אישום',
+  'אונס','הטרדה','תקיפה מינית',
+  'תאונה','תאונת דרכים','התנגשות','דריסה',
+  'שריפה','דליקה','קריסה','התמוטטות','טביעה',
+  'אסון','פינוי','נפגעים','משבר',
+  'ירידות','פיטורים','אבטלה','מחסור',
+  'התייקרות','זינוק במחירים',
+  'מחאה','הפגנה','שביתה','סכסוך',
+  'מגפה','קורונה','נגיף','הדבקה','חולה קשה',
+  'מוות','תמותה'
+];
+
+var NEWS_WHITELIST = [
+  'זכה','זכתה','הצלחה','יוזמה','פרויקט',
+  'חדש','השקה','קהילה','ילדים','חינוך',
+  'תרומה','התנדבות','חדשנות','מחקר',
+  'גילוי','בריאות','טוב','סיוע','שיתוף פעולה'
+];
+
+function titleContainsAny(title, list) {
+  for (var i = 0; i < list.length; i++) {
+    if (title.indexOf(list[i]) !== -1) return true;
+  }
+  return false;
+}
+
 // --- Data Fetchers ---
 
 function fetchAnnouncements() {
@@ -100,21 +138,30 @@ function fetchYnet() {
       return xml2js.parseStringPromise(xml);
     })
     .then(function(result) {
-      var items = [];
+      var whitelisted = [];
+      var neutral = [];
       try {
         var channel = result.rss.channel[0];
         var rawItems = channel.item || [];
-        for (var i = 0; i < Math.min(rawItems.length, 8); i++) {
+        // Scan up to 40 items so the filter has enough to choose from
+        for (var i = 0; i < Math.min(rawItems.length, 40); i++) {
           var item = rawItems[i];
-          items.push({
-            title: (item.title && item.title[0]) || '',
-            link: (item.link && item.link[0]) || ''
-          });
+          var title = (item.title && item.title[0]) || '';
+          // Skip blacklisted items
+          if (titleContainsAny(title, NEWS_BLACKLIST)) continue;
+          var entry = { title: title, link: (item.link && item.link[0]) || '' };
+          // Separate whitelisted from neutral
+          if (titleContainsAny(title, NEWS_WHITELIST)) {
+            whitelisted.push(entry);
+          } else {
+            neutral.push(entry);
+          }
         }
       } catch (e) {
         console.error('Ynet parse error:', e.message);
       }
-      return items;
+      // Whitelisted items first, then neutral; cap at 8
+      return whitelisted.concat(neutral).slice(0, 8);
     });
 }
 
