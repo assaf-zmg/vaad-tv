@@ -178,10 +178,26 @@ function metSymbolToHebrew(code) {
   return 'בהיר';
 }
 
+// Severity order for picking worst daytime condition (lower index = worse)
+var MET_SEVERITY = [
+  'thunder', 'heavysnow', 'snow', 'sleet',
+  'heavyrain', 'rain', 'rainshowers', 'shower',
+  'lightrain', 'drizzle', 'fog',
+  'cloudy', 'partlycloudy', 'fair', 'clearsky'
+];
+function metSeverity(sym) {
+  var base = sym.replace('_day','').replace('_night','');
+  for (var i = 0; i < MET_SEVERITY.length; i++) {
+    if (base.indexOf(MET_SEVERITY[i]) !== -1) return i;
+  }
+  return MET_SEVERITY.length;
+}
+
 function fetchWeather() {
-  // Uses met.no (Norwegian Meteorological Institute) — free, no API key required
-  var url = 'https://api.met.no/weatherapi/locationforecast/2.0/compact'
-    + '?lat=32.09&lon=34.89';
+  // Uses met.no complete endpoint — gives air_temperature_max per 6h block
+  // Petah Tikva, Israel: 32.0840°N 34.8878°E
+  var url = 'https://api.met.no/weatherapi/locationforecast/2.0/complete'
+    + '?lat=32.0840&lon=34.8878';
 
   return fetch(url, {
     timeout: 10000,
@@ -190,39 +206,64 @@ function fetchWeather() {
     .then(function(res) { return res.json(); })
     .then(function(data) {
       var series = data.properties.timeseries;
+      var dayMap = {};
+
+      for (var i = 0; i < series.length; i++) {
+        var s    = series[i];
+        var h    = parseInt(s.time.slice(11, 13), 10);
+        var date = s.time.slice(0, 10);
+
+        if (!dayMap[date]) dayMap[date] = { maxTemp: -99, symbol: '' };
+        var day = dayMap[date];
+
+        // --- Max temperature ---
+        // From 6-hourly blocks (T00, T06, T12) covering daytime
+        if ((h === 0 || h === 6 || h === 12) &&
+            s.data.next_6_hours && s.data.next_6_hours.details) {
+          var mx = s.data.next_6_hours.details.air_temperature_max;
+          if (mx !== undefined && mx > day.maxTemp) day.maxTemp = mx;
+        }
+        // Also scan instant temps for hourly entries during 06–15 UTC (09–18 local)
+        if (h >= 6 && h <= 15 && s.data.next_1_hours) {
+          var t = s.data.instant.details.air_temperature || -99;
+          if (t > day.maxTemp) day.maxTemp = t;
+        }
+
+        // --- Worst daytime symbol ---
+        // Scan 03–15 UTC (= 06–18 Israel local)
+        if (h >= 3 && h <= 15) {
+          var sym = (s.data.next_1_hours && s.data.next_1_hours.summary && s.data.next_1_hours.summary.symbol_code)
+                 || (s.data.next_6_hours && s.data.next_6_hours.summary && s.data.next_6_hours.summary.symbol_code)
+                 || '';
+          if (sym && (!day.symbol || metSeverity(sym) < metSeverity(day.symbol))) {
+            day.symbol = sym;
+          }
+        }
+      }
+
       var daily = [];
-
-      // Use the noon UTC entry for each day (≈ 15:00 Israel time — representative daytime temp)
-      var noons = series.filter(function(s) {
-        return s.time.indexOf('T12:00') !== -1;
-      }).slice(0, 6);
-
-      for (var i = 0; i < noons.length; i++) {
-        var entry = noons[i];
-        var dateStr = entry.time.slice(0, 10);
+      var dates = Object.keys(dayMap).sort().slice(0, 6);
+      for (var d = 0; d < dates.length; d++) {
+        var dateStr = dates[d];
         var dateObj = new Date(dateStr + 'T12:00:00');
         var dayIndex = dateObj.getDay();
-        var temp = Math.round(entry.data.instant.details.air_temperature || 0);
-        var next12 = entry.data.next_12_hours || {};
-        var next6  = entry.data.next_6_hours  || {};
-        var symbol = (next12.summary && next12.summary.symbol_code)
-                  || (next6.summary  && next6.summary.symbol_code)
-                  || 'clearsky_day';
+        var entry   = dayMap[dateStr];
+        var symbol  = entry.symbol || 'clearsky_day';
         daily.push({
           date:        dateStr,
           dayName:     'יום ' + hebrewDays[dayIndex],
-          maxTemp:     temp,
-          minTemp:     temp,
+          maxTemp:     Math.round(entry.maxTemp),
+          minTemp:     Math.round(entry.maxTemp),
           weathercode: symbol,
           description: metSymbolToHebrew(symbol)
         });
       }
 
-      // Current conditions from first timeseries entry
-      var first   = series[0] || {};
-      var curDet  = (first.data && first.data.instant && first.data.instant.details) || {};
-      var curNext = (first.data && first.data.next_1_hours && first.data.next_1_hours.summary) || {};
-      var curSym  = curNext.symbol_code || 'clearsky_day';
+      // Current: most recent entry
+      var first  = series[0] || {};
+      var curDet = (first.data && first.data.instant && first.data.instant.details) || {};
+      var curSym = (first.data && first.data.next_1_hours && first.data.next_1_hours.summary &&
+                   first.data.next_1_hours.summary.symbol_code) || 'clearsky_day';
 
       return {
         current: {

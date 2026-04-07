@@ -38,12 +38,13 @@
   function getWeatherIconType(code) {
     // met.no string symbol codes (e.g. "clearsky_day", "partlycloudy_day", "heavyrain")
     if (typeof code === 'string') {
-      if (code.indexOf('thunder') !== -1) return 'storm';
-      if (code.indexOf('snow') !== -1 || code.indexOf('sleet') !== -1) return 'snow';
-      if (code.indexOf('rain') !== -1 || code.indexOf('shower') !== -1 || code.indexOf('drizzle') !== -1) return 'rain';
-      if (code === 'cloudy' || code.indexOf('fog') !== -1) return 'cloudy';
-      if (code.indexOf('partlycloudy') !== -1) return 'partly';
-      return 'sunny'; // clearsky_day, fair_day, etc.
+      var base = code.replace('_day', '').replace('_night', '');
+      if (base.indexOf('thunder') !== -1) return 'storm';
+      if (base.indexOf('snow') !== -1 || base.indexOf('sleet') !== -1) return 'snow';
+      if (base.indexOf('rain') !== -1 || base.indexOf('shower') !== -1 || base.indexOf('drizzle') !== -1) return 'rain';
+      if (base === 'cloudy' || base.indexOf('fog') !== -1) return 'cloudy';
+      if (base.indexOf('partlycloudy') !== -1) return 'partly';
+      return 'sunny'; // clearsky, fair
     }
     // Legacy WMO numeric codes (fallback)
     code = parseInt(code, 10) || 0;
