@@ -7,7 +7,7 @@
   var ANNOUNCEMENT_ROTATE = 20 * 1000;
   var NEWS_ROTATE = 9 * 1000;
   var PAGE_RELOAD_INTERVAL = 7 * 60 * 60 * 1000;
-  var ANNOUNCEMENTS_PER_PAGE = 2;
+  var ANNOUNCEMENTS_PER_PAGE = 1;
   var NEWS_PER_PAGE = 4;
   var CACHE_KEY = 'vaadtv_dashboard_cache';
   var BG_IMAGE_COUNT = 7;
