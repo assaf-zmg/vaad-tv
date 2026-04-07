@@ -237,9 +237,9 @@ body {
 
 /* === Announcements Panel — RIGHT side === */
 #announcements-panel {
-  -webkit-box-flex: 56;
-  -webkit-flex: 56;
-  flex: 56;
+  -webkit-box-flex: 69;
+  -webkit-flex: 69;
+  flex: 69;
   margin-left: 10px;
   display: -webkit-box;
   display: -webkit-flex;
@@ -304,9 +304,9 @@ body {
 
 /* === Sidebar — LEFT side === */
 #sidebar {
-  -webkit-box-flex: 44;
-  -webkit-flex: 44;
-  flex: 44;
+  -webkit-box-flex: 31;
+  -webkit-flex: 31;
+  flex: 31;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;

@@ -98,7 +98,10 @@ var NEWS_BLACKLIST = [
   'חדירה','חטיפה','חטופים',
   'לחימה','קרב','מלחמה','עימות',
   'צבא','צה"ל','תקיפה','הפצצה','יירוט',
-  'רצח','רציחה','דקירה','דקר','תקף',
+  'רצח','רציחה','דקירה','דקר',
+  'תקף','תקפה','תקפו','תקפת',
+  'תוקף','תוקפת','תוקפים','תוקפות',
+  'התקפה','התקפות',
   'אלימות','שוד','שדד','גניבה',
   'נעצר','מעצר','חשוד','חקירה','כתב אישום',
   'אונס','הטרדה','תקיפה מינית',
@@ -157,10 +160,9 @@ function fetchAnnouncements() {
       });
 
       // Sort: urgent first, then newest date, then highest ID
+      // Sort by ID ascending — the spreadsheet ID is the display order set by the admin
       announcements.sort(function(a, b) {
-        if (a.urgent !== b.urgent) return a.urgent ? -1 : 1;
-        if (a.date !== b.date) return a.date < b.date ? 1 : -1;
-        return b.id - a.id;
+        return a.id - b.id;
       });
 
       return announcements;
