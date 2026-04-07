@@ -124,7 +124,7 @@ function fetchWeather() {
     + '&daily=temperature_2m_max,temperature_2m_min,weather_code'
     + '&current_weather=true'
     + '&timezone=Asia%2FJerusalem'
-    + '&forecast_days=5';
+    + '&forecast_days=6';
 
   return fetch(url)
     .then(function(res) { return res.json(); })
@@ -134,6 +134,7 @@ function fetchWeather() {
 
       if (data.daily && data.daily.time) {
         for (var i = 0; i < data.daily.time.length; i++) {
+          var code = data.daily.weather_code[i] || 0;
           var dateObj = new Date(data.daily.time[i] + 'T12:00:00');
           var dayIndex = dateObj.getDay();
           daily.push({
@@ -141,8 +142,8 @@ function fetchWeather() {
             dayName: 'יום ' + hebrewDays[dayIndex],
             maxTemp: Math.round(data.daily.temperature_2m_max[i]),
             minTemp: Math.round(data.daily.temperature_2m_min[i]),
-            weathercode: data.daily.weather_code[i],
-            description: weatherDescriptions[data.daily.weathercode[i]] || 'לא ידוע'
+            weathercode: code,
+            description: weatherDescriptions[code] || 'לא ידוע'
           });
         }
       }

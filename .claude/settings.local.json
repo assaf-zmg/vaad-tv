@@ -10,7 +10,9 @@
       "Bash(curl -sI \"https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=1920&q=60\")",
       "Bash(curl -s http://localhost:3000/api/dashboard.json)",
       "Bash(echo \"exit: $?\")",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/api/dashboard.json)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/api/dashboard.json)",
+      "Bash(curl -s \"https://api.open-meteo.com/v1/forecast?latitude=32.08707&longitude=34.88747&daily=temperature_2m_max,temperature_2m_min,weather_code&current_weather=true&timezone=Asia%2FJerusalem&forecast_days=6\")",
+      "Bash(curl -v \"https://api.open-meteo.com/v1/forecast?latitude=32.08707&longitude=34.88747&daily=weather_code&timezone=Asia%2FJerusalem&forecast_days=3\")"
     ]
   }
 }
