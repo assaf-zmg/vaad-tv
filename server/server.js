@@ -165,41 +165,70 @@ function fetchYnet() {
     });
 }
 
-function fetchWeather() {
-  var url = 'https://api.open-meteo.com/v1/forecast'
-    + '?latitude=32.08707&longitude=34.88747'
-    + '&daily=temperature_2m_max,temperature_2m_min,weather_code'
-    + '&current_weather=true'
-    + '&timezone=Asia%2FJerusalem'
-    + '&forecast_days=6';
+function metSymbolToHebrew(code) {
+  if (code.indexOf('thunder') !== -1) return 'סופת רעמים';
+  if (code.indexOf('snow') !== -1) return 'שלג';
+  if (code.indexOf('sleet') !== -1) return 'ברד';
+  if (code.indexOf('rain') !== -1 || code.indexOf('shower') !== -1) return 'גשם';
+  if (code.indexOf('drizzle') !== -1) return 'טפטוף';
+  if (code.indexOf('fog') !== -1) return 'ערפל';
+  if (code === 'cloudy') return 'מעונן';
+  if (code.indexOf('partlycloudy') !== -1) return 'מעונן חלקית';
+  if (code.indexOf('fair') !== -1) return 'בהיר בעיקר';
+  return 'בהיר';
+}
 
-  return fetch(url)
+function fetchWeather() {
+  // Uses met.no (Norwegian Meteorological Institute) — free, no API key required
+  var url = 'https://api.met.no/weatherapi/locationforecast/2.0/compact'
+    + '?lat=32.09&lon=34.89';
+
+  return fetch(url, {
+    timeout: 10000,
+    headers: { 'User-Agent': 'VaadTV/1.0 (lobby-dashboard)' }
+  })
     .then(function(res) { return res.json(); })
     .then(function(data) {
-      var current = data.current_weather || {};
+      var series = data.properties.timeseries;
       var daily = [];
 
-      if (data.daily && data.daily.time) {
-        for (var i = 0; i < data.daily.time.length; i++) {
-          var code = data.daily.weather_code[i] || 0;
-          var dateObj = new Date(data.daily.time[i] + 'T12:00:00');
-          var dayIndex = dateObj.getDay();
-          daily.push({
-            date: data.daily.time[i],
-            dayName: 'יום ' + hebrewDays[dayIndex],
-            maxTemp: Math.round(data.daily.temperature_2m_max[i]),
-            minTemp: Math.round(data.daily.temperature_2m_min[i]),
-            weathercode: code,
-            description: weatherDescriptions[code] || 'לא ידוע'
-          });
-        }
+      // Use the noon UTC entry for each day (≈ 15:00 Israel time — representative daytime temp)
+      var noons = series.filter(function(s) {
+        return s.time.indexOf('T12:00') !== -1;
+      }).slice(0, 6);
+
+      for (var i = 0; i < noons.length; i++) {
+        var entry = noons[i];
+        var dateStr = entry.time.slice(0, 10);
+        var dateObj = new Date(dateStr + 'T12:00:00');
+        var dayIndex = dateObj.getDay();
+        var temp = Math.round(entry.data.instant.details.air_temperature || 0);
+        var next12 = entry.data.next_12_hours || {};
+        var next6  = entry.data.next_6_hours  || {};
+        var symbol = (next12.summary && next12.summary.symbol_code)
+                  || (next6.summary  && next6.summary.symbol_code)
+                  || 'clearsky_day';
+        daily.push({
+          date:        dateStr,
+          dayName:     'יום ' + hebrewDays[dayIndex],
+          maxTemp:     temp,
+          minTemp:     temp,
+          weathercode: symbol,
+          description: metSymbolToHebrew(symbol)
+        });
       }
+
+      // Current conditions from first timeseries entry
+      var first   = series[0] || {};
+      var curDet  = (first.data && first.data.instant && first.data.instant.details) || {};
+      var curNext = (first.data && first.data.next_1_hours && first.data.next_1_hours.summary) || {};
+      var curSym  = curNext.symbol_code || 'clearsky_day';
 
       return {
         current: {
-          temperature: Math.round(current.temperature || 0),
-          weathercode: current.weathercode || 0,
-          description: weatherDescriptions[current.weathercode] || 'לא ידוע'
+          temperature: Math.round(curDet.air_temperature || 0),
+          weathercode: curSym,
+          description: metSymbolToHebrew(curSym)
         },
         daily: daily
       };
