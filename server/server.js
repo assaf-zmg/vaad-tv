@@ -131,6 +131,32 @@ function titleContainsAny(title, list) {
 
 // --- Data Fetchers ---
 
+// Resolve a share-page URL to a direct image URL.
+// Returns a Promise<string>.
+function resolveImageUrl(url) {
+  if (!url) return Promise.resolve('');
+
+  // Google Drive share/view → direct URL
+  var driveMatch = url.match(/drive\.google\.com\/file\/d\/([^\/\?]+)/);
+  if (driveMatch) {
+    return Promise.resolve('https://drive.google.com/uc?export=view&id=' + driveMatch[1]);
+  }
+
+  // imgBB share page (ibb.co/CODE) → extract og:image direct URL
+  if (/^https?:\/\/(www\.)?ibb\.co\/[a-zA-Z0-9]+/.test(url) && url.indexOf('i.ibb.co') === -1) {
+    return fetch(url, { timeout: 8000 })
+      .then(function(r) { return r.text(); })
+      .then(function(html) {
+        var m = html.match(/property="og:image"\s+content="([^"]+)"/);
+        if (!m) m = html.match(/content="([^"]+)"\s+property="og:image"/);
+        return (m && m[1]) ? m[1] : url;
+      })
+      .catch(function() { return url; });
+  }
+
+  return Promise.resolve(url);
+}
+
 function fetchAnnouncements() {
   var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv';
   return fetch(url)
@@ -155,17 +181,25 @@ function fetchAnnouncements() {
           title: row.title || row.Title || '',
           body: row.body || row.Body || '',
           date: row.date || row.Date || '',
-          urgent: (row.urgent || row.Urgent || '').toString().toUpperCase() === 'TRUE'
+          urgent: (row.urgent || row.Urgent || '').toString().toUpperCase() === 'TRUE',
+          showImage: (row.image || row.Image || '').toString().toUpperCase() === 'TRUE',
+          imageUrl: row.link || row.Link || ''
         };
       });
 
-      // Sort: urgent first, then newest date, then highest ID
       // Sort by ID ascending — the spreadsheet ID is the display order set by the admin
       announcements.sort(function(a, b) {
         return a.id - b.id;
       });
 
-      return announcements;
+      // Resolve share-page URLs (Google Drive, imgBB, etc.) to direct image URLs
+      return Promise.all(announcements.map(function(ann) {
+        if (!ann.showImage || !ann.imageUrl) return Promise.resolve(ann);
+        return resolveImageUrl(ann.imageUrl).then(function(resolved) {
+          ann.imageUrl = resolved;
+          return ann;
+        });
+      }));
     });
 }
 
@@ -564,6 +598,26 @@ app.get('/api/bg/:index', function(req, res) {
         res.set('Cache-Control', 'public, max-age=86400');
         res.send(buf);
       });
+    })
+    .catch(function(err) {
+      console.error('Image proxy error:', err.message);
+      res.status(502).send('');
+    });
+});
+
+// --- Announcement image proxy (bypasses ORB/CORS for Google Drive URLs) ---
+app.get('/api/image-proxy', function(req, res) {
+  var url = req.query.url;
+  if (!url) { res.status(400).send(''); return; }
+
+  fetch(url, {
+    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; VaadTV/1.0)' }
+  })
+    .then(function(r) {
+      var ct = r.headers.get('content-type') || 'image/jpeg';
+      res.set('Content-Type', ct);
+      res.set('Cache-Control', 'public, max-age=3600');
+      return r.buffer().then(function(buf) { res.send(buf); });
     })
     .catch(function(err) {
       console.error('Image proxy error:', err.message);

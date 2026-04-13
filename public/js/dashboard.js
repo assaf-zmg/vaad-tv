@@ -200,8 +200,13 @@
     var html = '';
     for (var i = start; i < start + ANNOUNCEMENTS_PER_PAGE && i < list.length; i++) {
       var ann = list[i];
+      var hasImage = ann.showImage && ann.imageUrl;
+      var cardClass = 'announcement-card' + (ann.urgent ? ' urgent' : '') + (hasImage ? ' has-image' : '');
+      var cardStyle = hasImage
+        ? ' style="background-image:url(\'' + ann.imageUrl + '\');background-size:cover;background-position:center;"'
+        : '';
       html +=
-        '<div class="announcement-card' + (ann.urgent ? ' urgent' : '') + '">' +
+        '<div class="' + cardClass + '"' + cardStyle + '>' +
           '<div class="ann-title">' + escapeHtml(ann.title) + '</div>' +
           '<div class="ann-body">' + escapeHtml(ann.body) + '</div>' +
           '<div class="ann-date">' + escapeHtml(ann.date) + '</div>' +

@@ -16,7 +16,10 @@
       "Bash(curl -s \"https://wttr.in/Tel+Aviv?format=j1\")",
       "Bash(/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node -e \":*)",
       "Bash(curl -s --max-time 8 -H \"User-Agent: VaadTV/1.0\" \"https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=32.09&lon=34.89\")",
-      "Bash(export PATH=\"/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin:$PATH\" curl -s --max-time 10 -H \"User-Agent: VaadTV/1.0\" \"https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=32.0840&lon=34.8878\")"
+      "Bash(export PATH=\"/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin:$PATH\" curl -s --max-time 10 -H \"User-Agent: VaadTV/1.0\" \"https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=32.0840&lon=34.8878\")",
+      "Bash(curl -sI --max-time 10 -L \"https://drive.google.com/uc?export=view&id=1w2GHmlzQFgDlm_YilmwCGeROQvhVamgZ\")",
+      "Bash(lsof -ti:3000)",
+      "Bash(kill 99167)"
     ]
   }
 }

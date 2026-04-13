@@ -271,6 +271,22 @@ body {
   padding-right: 14px;
 }
 
+.announcement-card.has-image {
+  background: none;
+  border-right: none;
+}
+
+.announcement-card.has-image .ann-title,
+.announcement-card.has-image .ann-body,
+.announcement-card.has-image .ann-date {
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.75), 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.announcement-card.has-image .ann-title {
+  color: #fff;
+}
+
 .announcement-card .ann-title {
   font-size: 34px;
   font-weight: 800;
