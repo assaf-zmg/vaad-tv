@@ -203,7 +203,7 @@
       var hasImage = ann.showImage && ann.imageUrl;
       var cardClass = 'announcement-card' + (ann.urgent ? ' urgent' : '') + (hasImage ? ' has-image' : '');
       var cardStyle = hasImage
-        ? ' style="background-image:url(\'' + ann.imageUrl + '\');background-size:cover;background-position:center;"'
+        ? ' style="background-image:url(\'' + ann.imageUrl + '\');background-size:cover;-webkit-background-size:cover;background-position:center center;-webkit-background-position:center center;"'
         : '';
       html +=
         '<div class="' + cardClass + '"' + cardStyle + '>' +

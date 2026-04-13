@@ -192,11 +192,12 @@ function fetchAnnouncements() {
         return a.id - b.id;
       });
 
-      // Resolve share-page URLs (Google Drive, imgBB, etc.) to direct image URLs
+      // Resolve share-page URLs then wrap in local proxy so Android 4.4
+      // (no TLS 1.2 for external HTTPS) can load them via HTTP from this server
       return Promise.all(announcements.map(function(ann) {
         if (!ann.showImage || !ann.imageUrl) return Promise.resolve(ann);
         return resolveImageUrl(ann.imageUrl).then(function(resolved) {
-          ann.imageUrl = resolved;
+          ann.imageUrl = resolved ? '/api/image-proxy?url=' + encodeURIComponent(resolved) : '';
           return ann;
         });
       }));
