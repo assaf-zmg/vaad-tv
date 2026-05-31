@@ -626,9 +626,13 @@ app.get('/api/image-proxy', function(req, res) {
     });
 });
 
-// --- Serve static frontend ---
+// --- Serve static frontend (local dev only; Vercel serves /public directly) ---
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-app.listen(PORT, function() {
-  console.log('Vaad TV server running on port ' + PORT);
-});
+module.exports = app;
+
+if (require.main === module) {
+  app.listen(PORT, function() {
+    console.log('Vaad TV server running on port ' + PORT);
+  });
+}
