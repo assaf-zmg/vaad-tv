@@ -1559,6 +1559,104 @@
    "note": "synthetic mourning/'but' case",
    "keep": true,
    "preferred": true
+  },
+  {
+   "feed": 4880,
+   "title": "אחרי שהרגו אם ובתה: דובת גריזלי ושלושת גוריה הומתו",
+   "note": "synthetic: killing/animal-harm vs false-positive check (11.11.2026)",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "צייד הרג אריה בשמורה",
+   "note": "synthetic: killing/animal-harm vs false-positive check (11.11.2026)",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "כלב נמצא מת בחוף",
+   "note": "synthetic: killing/animal-harm vs false-positive check (11.11.2026)",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "נמר טורף צבי: התיעוד",
+   "note": "synthetic: killing/animal-harm vs false-positive check (11.11.2026)",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "גורי חתולים חמודים מחפשים בית חם",
+   "note": "synthetic: killing/animal-harm vs false-positive check (11.11.2026)",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 4880,
+   "title": "גור הפנדה הראשון נולד בגן",
+   "note": "synthetic: killing/animal-harm vs false-positive check (11.11.2026)",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "הרגלי אכילה בריאים לחורף",
+   "note": "synthetic: killing/animal-harm vs false-positive check (11.11.2026)",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "הטבח שפתח מסעדה בתל אביב",
+   "note": "synthetic: killing/animal-harm vs false-positive check (11.11.2026)",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "פגרת החורף בבתי הספר",
+   "note": "synthetic: killing/animal-harm vs false-positive check (11.11.2026)",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "שלושה נהרגו בתאונה קטלנית בכביש 6",
+   "note": "synthetic must-block (manager urgent, 11.11.2026)",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "אישה נורתה למוות בעירה",
+   "note": "synthetic must-block (manager urgent, 11.11.2026)",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "הותקף ומת מפצעיו",
+   "note": "synthetic must-block (manager urgent, 11.11.2026)",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "המיתו את הכלב שתקף ילדים",
+   "note": "synthetic must-block (manager urgent, 11.11.2026)",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "פיגוע קטלני בצפון",
+   "note": "synthetic must-block (manager urgent, 11.11.2026)",
+   "keep": false,
+   "preferred": false
   }
  ]
 }
