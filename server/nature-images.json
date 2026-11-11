@@ -166,5 +166,26 @@
   "place": "סנאי קרקע, דרום אפריקה",
   "credit": "Hans Hillewaert",
   "license": "CC BY-SA 3.0"
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a4/Allium_rothii_1.jpg/1920px-Allium_rothii_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "שום רוט",
+  "credit": "גדעון פיזנטי",
+  "license": "CC BY 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Allium_rothii_1.jpg"
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/Iris_mariae_1.jpg/1920px-Iris_mariae_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "אירוס הנגב",
+  "credit": "גדעון פיזנטי",
+  "license": "CC BY 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Iris_mariae_1.jpg"
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Alone_in_the_unspoilt_wilderness_%28Unsplash%29.jpg/1920px-Alone_in_the_unspoilt_wilderness_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "מרחבי בר",
+  "credit": "David Marcu",
+  "license": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Alone_in_the_unspoilt_wilderness_(Unsplash).jpg"
  }
 ]

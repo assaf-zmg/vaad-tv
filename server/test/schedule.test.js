@@ -308,4 +308,17 @@ assert.equal(s.formatDates('2027-10-28', '2027-11-02'), '28.10–2.11');
   assert.equal(r[2].go, ''); assert.equal(r[2].link, 'nope-id', 'unknown id stays a link (resolver ignores it)');
 })();
 
+// Pools: a photo lives in exactly one pool (content moves photos between pools;
+// a duplicate would show twice, and the move must not drop it from both).
+(function() {
+  var where = {};
+  ['landscape', 'nature', 'art'].forEach(function(k) {
+    s.POOLS[k].forEach(function(img) {
+      assert.ok(img.url && img.place, k + ': url + place');
+      assert.ok(!where[img.url], 'photo in two pools (' + where[img.url] + ', ' + k + '): ' + img.place);
+      where[img.url] = k;
+    });
+  });
+})();
+
 console.log('schedule tests: ALL OK');

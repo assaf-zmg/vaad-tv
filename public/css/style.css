@@ -970,3 +970,44 @@ body.has-alert #photo-context { display: none; }
   .has-qr .ctx-name { font-size: 32px; }
   body.ticker-on #photo-context { bottom: 58px; }
 }
+
+/* === D42: the current item (day 0: "היום" / "עכשיו") leads the forecast row ===
+   Append at the END of style.css. Bigger icon and temperature, full-white
+   bold label, and a hairline after it (RTL: day 0 is the first child, on the
+   right, so the divider is its left border). Other days unchanged. The row
+   still fits 5 days at 1920 and 1280 (D27 fit logic tightens spacing first). */
+
+.forecast-day:first-child {
+  padding-left: 22px;
+  margin-left: 22px;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.forecast-day:first-child .day-icon,
+.forecast-day:first-child .day-icon svg {
+  width: 56px;
+  height: 56px;
+}
+
+.forecast-day:first-child .day-temp {
+  font-size: 42px;
+  font-weight: 800;
+}
+
+.forecast-day:first-child .day-name {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.wx-compact .forecast-day:first-child {
+  padding-left: 12px;
+  margin-left: 12px;
+}
+
+@media (max-height: 820px) {
+  .forecast-day:first-child { padding-left: 16px; margin-left: 16px; }
+  .forecast-day:first-child .day-icon,
+  .forecast-day:first-child .day-icon svg { width: 42px; height: 42px; }
+  .forecast-day:first-child .day-temp { font-size: 32px; }
+  .wx-compact .forecast-day:first-child { padding-left: 8px; margin-left: 8px; }
+}
