@@ -7,6 +7,7 @@ var ART_IMAGES = require('./art-images.json');       // public-domain art (conte
 var THEMES = require('./theme-images.json');
 var CAKES = require('./cakes.json');                 // wave 3: cake of the week (content-owned)
 var golinks = require('./golinks');                  // wave 3: closed QR target list
+var LABELS = require('./labels.json');               // D37: context line per photo kind (content-owned)
 var BG_SLOT_MS = 3 * 60 * 60 * 1000; // pool photo changes every 3 hours (Israel time)
 
 function normalizeKey(s) {
@@ -146,9 +147,15 @@ function poolBackground(slot) {
     caption: caption,
     message: '', sub: '', tone: ''
   };
-  // wave 3: "הטיול הבא שלכם" only on Israeli landscapes that carry trip data
+  // D37 context block. Landscapes with trip data are Israeli (QR to the site); the rest are abroad.
   if (pick.kind === 'landscape' && img.trip && img.trip.go) {
-    bg.qr = qrCard('trip', 'הטיול הבא שלכם', img.trip.title, 'סרקו לפרטים', img.trip.go);
+    bg.context = context('israel', labelFor('israel', slot), img.place, '', qrFor(img.trip.go, 'סרקו לפרטים'));
+  } else if (pick.kind === 'landscape') {
+    bg.context = context('abroad', labelFor('abroad', slot), img.place, '');
+  } else if (pick.kind === 'art') {
+    bg.context = context('art', labelFor('art', slot), img.place, img.credit);
+  } else {
+    bg.context = context(pick.kind, labelFor(pick.kind, slot), img.place, '');
   }
   return bg;
 }
@@ -170,20 +177,34 @@ function cakeIndex(localMs) {
   return ((week % CAKES.length) + CAKES.length) % CAKES.length;
 }
 
-function cakeBackground(localMs) {
+function cakeBackground(localMs, slot) {
   var i = cakeIndex(localMs);
   var cake = CAKES[i];
   return {
     id: 'cake-' + i,
     url: '/api/cake/' + i + '?v=' + urlVersion(cake.image),
-    caption: '', // like holiday photos; the credit is on /credits
+    caption: '',
     message: '', sub: '', tone: '',
-    qr: qrCard('cake', 'העוגה הבאה שלכם', cake.title, 'סרקו למתכון', cake.go)
+    context: context('cake', labelFor('cake', slot), cake.title, 'צילום: ' + cake.credit + ' · Unsplash',
+      qrFor(cake.go, 'סרקו למתכון'))
   };
 }
 
-function qrCard(kind, title, name, cta, go) {
-  return { kind: kind, title: title, name: name, cta: cta, img: '/api/qr/' + go + '.png' };
+// D37: one context block per pool photo: why it's here (label), what it is (name),
+// optional sub line (artist / photo credit) and, for trips, cakes and city events, a QR.
+function labelFor(kind, slot) {
+  var list = LABELS[kind];
+  return list && list.length ? list[slot % list.length] : '';
+}
+
+function qrFor(go, cta) {
+  return { img: '/api/qr/' + go + '.png', cta: cta };
+}
+
+function context(kind, label, name, sub, qr) {
+  var c = { kind: kind, label: label, name: name, sub: sub || '' };
+  if (qr) c.qr = qr;
+  return c;
 }
 
 // D39: "4.6", "9–18.2", "28.10–2.11"
@@ -205,10 +226,10 @@ function cityMessage(item) {
 // building event / committee request > memorial day > holiday / city event > cake > pool.
 // Same priority: the lower row in the sheet wins.
 // slotMs is optional (local testing can rotate faster); default 3 hours.
-// opts.alert: a red alert is on -> no QR card at all (wave 3).
+// opts.alert: a red alert is on -> no QR at all (wave 3; the block is hidden by CSS too).
 function getBackground(schedule, localMs, slotMs, opts) {
   var bg = pickBackground(schedule, localMs, slotMs);
-  if (opts && opts.alert) delete bg.qr;
+  if (opts && opts.alert && bg.context) delete bg.context.qr;
   return bg;
 }
 
@@ -222,12 +243,12 @@ function pickBackground(schedule, localMs, slotMs) {
     var pri = THEMES[item.theme].priority || 1;
     if (!best || pri >= best.pri) best = { item: item, pri: pri };
   });
-  if (!best) return cakeWindowActive(localMs) ? cakeBackground(localMs) : poolBackground(slot);
+  if (!best) return cakeWindowActive(localMs) ? cakeBackground(localMs, slot) : poolBackground(slot);
 
   var item = best.item;
   var theme = THEMES[item.theme];
   var bg = poolBackground(slot);
-  delete bg.qr; // a scheduled day never shows the trip card
+  delete bg.context; // scheduled days: the message pill is the context (D37)
   if (item.imageUrl) {
     bg.id = 'custom-' + item.row + '-' + item.imageUrl;
     bg.url = '/api/image-proxy?url=' + encodeURIComponent(item.imageUrl);
@@ -239,9 +260,15 @@ function pickBackground(schedule, localMs, slotMs) {
     bg.url = '/api/theme/' + item.theme + '/' + i + '?v=' + urlVersion(img.url);
     bg.caption = ''; // D25: holiday / event photos carry no caption on screen
   }
-  if (item.theme === 'city') {
+  if (item.theme === 'city' && item.go) {
+    // D39 + D37: with a QR the event goes in the context block (no pill, so they don't collide)
+    bg.message = '';
+    bg.context = item.text
+      ? context('event', 'אירוע בעיר', item.text, '', qrFor(item.go, 'סרקו לפרטים'))
+      : context('event', 'אירוע בעיר', item.name || cityMessage(item),
+          (item.details ? item.details + ' · ' : '') + formatDates(item.from, item.to), qrFor(item.go, 'סרקו לפרטים'));
+  } else if (item.theme === 'city') {
     bg.message = item.text || cityMessage(item);
-    if (item.go) bg.qr = qrCard('event', 'אירוע בעיר', item.name || bg.message, 'סרקו לפרטים', item.go);
   } else {
     bg.message = item.text || fillDetails(theme.message, item.details);
   }

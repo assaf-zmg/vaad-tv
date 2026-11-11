@@ -186,8 +186,17 @@ var cake = s.CAKES[ci];
 assert.ok(cakeBg.id.indexOf('cake-' + ci) === 0, cakeBg.id);
 assert.equal(cakeBg.url, '/api/cake/' + ci + '?v=' + s.urlVersion(cake.image));
 assert.equal(cakeBg.caption, '', 'no caption on the cake photo');
-assert.deepEqual(cakeBg.qr, { kind: 'cake', title: 'העוגה הבאה שלכם', name: cake.title,
-  cta: 'סרקו למתכון', img: '/api/qr/' + cake.go + '.png' });
+// D37: context block (label rotates by 3h slot over labels.json[kind])
+var LABELS = require('../labels.json');
+function slotOf(at) { return Math.floor(at / (3 * HOUR)); }
+function labelAt(kind, at) { return LABELS[kind][slotOf(at) % LABELS[kind].length]; }
+assert.ok(!cakeBg.qr, 'D37 replaces bg.qr');
+assert.deepEqual(cakeBg.context, { kind: 'cake', label: labelAt('cake', local('2027-07-01T16:00:00')), name: cake.title,
+  sub: 'צילום: ' + cake.credit + ' · Unsplash', qr: { img: '/api/qr/' + cake.go + '.png', cta: 'סרקו למתכון' } });
+// labels rotate: over 4 consecutive slots the cake shows more than one label
+var cakeLabels = {};
+['15', '18', '21'].forEach(function(h) { cakeLabels[s.getBackground([], local('2027-07-01T' + h + ':00:00')).context.label] = 1; });
+assert.ok(Object.keys(cakeLabels).length > 1, 'labels rotate by slot');
 // same week = same cake all window long; next week = another cake
 assert.equal(s.cakeIndex(local('2027-07-02T11:00:00')), ci);
 assert.notEqual(s.cakeIndex(local('2027-07-08T16:00:00')), ci);
@@ -199,11 +208,11 @@ assert.equal(Object.keys(seen).length, 52, 'a year without repeats');
 var holidayThu = [{ row: 1, from: '2027-07-01', to: '2027-07-01', theme: 'atzmaut', details: '', text: '', active: true }];
 var hb = s.getBackground(holidayThu, local('2027-07-01T16:00:00'));
 assert.equal(hb.id.indexOf('theme-atzmaut'), 0, 'holiday beats cake');
-assert.ok(!hb.qr, 'no QR on a holiday photo');
+assert.ok(!hb.context, 'no context block on a holiday photo');
 // alert: the cake photo stays, its card goes
 var cakeAlert = s.getBackground([], local('2027-07-01T16:00:00'), 0, { alert: true });
 assert.equal(cakeAlert.id, cakeBg.id);
-assert.ok(!cakeAlert.qr, 'no QR during an alert');
+assert.ok(cakeAlert.context && !cakeAlert.context.qr, 'no QR during an alert (the block itself is hidden by CSS)');
 
 // Trip card only on landscape photos that carry trip data
 var tripBg = null, plainLand = null, other = null;
@@ -217,15 +226,35 @@ for (var t = 0; t < 400 && !(tripBg && plainLand && other); t++) {
   else if (kind !== 'landscape' && !other) other = b;
 }
 assert.ok(tripBg, 'found a trip landscape slot');
-assert.deepEqual(tripBg.bg.qr, { kind: 'trip', title: 'הטיול הבא שלכם', name: tripBg.img.trip.title,
-  cta: 'סרקו לפרטים', img: '/api/qr/' + tripBg.img.trip.go + '.png' });
-assert.equal(tripBg.bg.caption, tripBg.img.place, 'the place caption stays');
-if (plainLand) assert.ok(!plainLand.qr, 'landscape without trip -> no card');
-assert.ok(other && !other.qr, 'nature/art -> no card');
-assert.ok(!s.getBackground([], tripBg.at, 0, { alert: true }).qr, 'trip card hidden during an alert');
+assert.deepEqual(tripBg.bg.context, { kind: 'israel', label: labelAt('israel', tripBg.at), name: tripBg.img.place, sub: '',
+  qr: { img: '/api/qr/' + tripBg.img.trip.go + '.png', cta: 'סרקו לפרטים' } });
+assert.equal(tripBg.bg.caption, tripBg.img.place, 'caption kept (shown when the block is hidden)');
+assert.ok(plainLand, 'found an abroad slot');
+var plainIdx = +plainLand.id.split('-')[1];
+assert.equal(plainLand.context.kind, 'abroad');
+assert.ok(LABELS.abroad.indexOf(plainLand.context.label) !== -1, 'abroad label from labels.json');
+assert.equal(plainLand.context.name, s.BG_IMAGES[plainIdx].place);
+assert.ok(!plainLand.context.qr, 'abroad: no QR');
+assert.ok(other && other.context && !other.context.qr, 'nature/art: block without QR');
+assert.ok(!s.getBackground([], tripBg.at, 0, { alert: true }).context.qr, 'no trip QR during an alert');
+// nature and art blocks
+(function() {
+  var nat = null, art = null;
+  for (var t = 0; t < 40 && !(nat && art); t++) {
+    var b = s.poolBackground(t);
+    if (!nat && b.id.indexOf('nature-') === 0) nat = { b: b, slot: t };
+    if (!art && b.id.indexOf('art-') === 0) art = { b: b, slot: t };
+  }
+  var ni = s.NATURE_IMAGES[+nat.b.id.split('-')[1]], ai = s.ART_IMAGES[+art.b.id.split('-')[1]];
+  assert.deepEqual(nat.b.context, { kind: 'nature', label: LABELS.nature[nat.slot % LABELS.nature.length], name: ni.place, sub: '' });
+  assert.deepEqual(art.b.context, { kind: 'art', label: LABELS.art[art.slot % LABELS.art.length], name: ai.place, sub: ai.credit });
+})();
+// "_comment" in labels.json is never a label
+Object.keys(LABELS).forEach(function(k) { if (k !== '_comment') assert.ok(Array.isArray(LABELS[k]) && LABELS[k].length, 'labels ' + k); });
+['abroad', 'israel', 'nature', 'art', 'cake'].forEach(function(k) { assert.ok(LABELS[k] && LABELS[k].length, 'labels.json has ' + k); });
 // custom committee photo -> no card
 var customRow = [{ row: 2, from: '2027-07-04', to: '2027-07-30', theme: 'custom', details: '', text: 'x', active: true, imageUrl: 'https://i.ibb.co/a.jpg' }];
-assert.ok(!s.getBackground(customRow, tripBg.at).qr, 'committee photo -> no card');
+assert.ok(!s.getBackground(customRow, tripBg.at).context, 'committee photo -> no block');
 
 // ===== D39: "אירוע בעיר" =====
 assert.equal(s.formatDates('2027-06-04', '2027-06-04'), '4.6');
@@ -238,22 +267,30 @@ assert.equal(s.formatDates('2027-10-28', '2027-11-02'), '28.10–2.11');
   var city = [{ row: 3, from: '2027-06-04', to: '2027-06-04', theme: 'city', name: 'מרוץ הלילה', details: 'פארק אוחיון',
     text: '', go: goId, active: true }];
   var cb = s.getBackground(city, local('2027-06-04T10:00:00'));
-  assert.equal(cb.message, 'מרוץ הלילה, פארק אוחיון · 4.6');
-  assert.equal(cb.tone, 'festive');
-  assert.deepEqual(cb.qr, { kind: 'event', title: 'אירוע בעיר', name: 'מרוץ הלילה', cta: 'סרקו לפרטים', img: '/api/qr/' + goId + '.png' });
-  assert.ok(!s.getBackground(city, local('2027-06-04T10:00:00'), 0, { alert: true }).qr, 'no event QR in an alert');
+  // with a go id: the D37 block carries the event (no pill, so they don't collide)
+  assert.equal(cb.message, '');
+  assert.deepEqual(cb.context, { kind: 'event', label: 'אירוע בעיר', name: 'מרוץ הלילה', sub: 'פארק אוחיון · 4.6',
+    qr: { img: '/api/qr/' + goId + '.png', cta: 'סרקו לפרטים' } });
+  var cbA = s.getBackground(city, local('2027-06-04T10:00:00'), 0, { alert: true });
+  assert.ok(!cbA.context.qr, 'no event QR in an alert');
   // no place, no go id -> text without the place, no card
   var bare = [{ row: 3, from: '2027-02-09', to: '2027-02-18', theme: 'city', name: 'אמצע הדרך', details: '', text: '', active: true }];
   var bb2 = s.getBackground(bare, local('2027-02-10T10:00:00'));
-  assert.equal(bb2.message, 'אמצע הדרך · 9–18.2');
-  assert.ok(!bb2.qr);
+  assert.equal(bb2.message, 'אמצע הדרך · 9–18.2', 'no go id: the regular pill');
+  assert.ok(!bb2.context);
   // screen text (column G) overrides
   bare[0].text = 'טקסט חופשי';
   assert.equal(s.getBackground(bare, local('2027-02-10T10:00:00')).message, 'טקסט חופשי');
+  // G text with a go id: the pill shows the text, and the QR goes in the block
+  var cityText = [Object.assign({}, city[0], { text: 'מרוץ הלילה הגדול!' })];
+  var ct = s.getBackground(cityText, local('2027-06-04T10:00:00'));
+  assert.equal(ct.message, '');
+  assert.equal(ct.context.name, 'מרוץ הלילה הגדול!', 'G overrides the block name');
+  assert.equal(ct.context.sub, '');
   // a building event (priority 3) on the same day wins and has no QR
   var both = city.concat([{ row: 4, from: '2027-06-04', to: '2027-06-04', theme: 'wedding', details: 'משפחת כהן', text: '', active: true }]);
   var wb = s.getBackground(both, local('2027-06-04T10:00:00'));
-  assert.ok(/משפחת כהן/.test(wb.message)); assert.ok(!wb.qr);
+  assert.ok(/משפחת כהן/.test(wb.message)); assert.ok(!wb.context);
   if (!hadCity) delete s.THEMES.city;
 })();
 // Sheet column H holding a known go id -> item.go (not an image link)

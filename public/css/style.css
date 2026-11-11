@@ -699,101 +699,6 @@ body.has-alert #photo-message { display: none; }
   #announcements-panel + .card { margin-top: 12px; }
 }
 
-/* === Wave 3 (D33): QR card — "הטיול הבא שלכם" / "העוגה הבאה שלכם" ===
-   Append at the END of style.css. One component for both segments: a card in
-   the TOP-LEFT of the photo (far from the column; the credit pill and the
-   holiday pill both sit at the bottom, so no collision). The QR itself is a
-   PNG, black on white with its own quiet zone (scanability beats the
-   transparent style). Old WebView: prefixed flexbox, rgba, one box-shadow. */
-
-#qr-card {
-  position: absolute;
-  z-index: 3;
-  top: 28px;
-  left: 28px;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  padding: 18px;
-  background: rgba(0, 0, 0, 0.55);
-  border-radius: 20px;
-  -webkit-box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
-  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
-  color: #ffffff;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
-}
-
-#qr-card:empty {
-  display: none;
-}
-
-/* RTL: text is the first child (right), the QR tile sits on the left. */
-.qr-text {
-  margin-left: 22px;
-  max-width: 340px;
-  text-align: right;
-}
-
-.qr-kicker {
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffd58a;
-}
-
-.qr-name {
-  font-size: 44px;
-  font-weight: 800;
-  line-height: 1.1;
-  margin: 4px 0 12px;
-}
-
-.qr-cake .qr-name {
-  font-size: 54px;
-}
-
-.qr-cta {
-  font-size: 22px;
-  color: rgba(255, 255, 255, 0.92);
-}
-
-/* The PNG is drawn by the server at an INTEGER scale (8 px/module, 6 on low
-   screens) with its white quiet zone, and shown at its natural size: no CSS
-   scaling, because Android 4.4's WebView ignores image-rendering: pixelated
-   and any resampling blurs module edges. Version-3 codes (ids <= 11 chars):
-   296x296 at s=8, 222x222 at s=6. */
-.qr-tile {
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-  background: #ffffff;
-  border-radius: 8px;
-  overflow: hidden;
-  line-height: 0;
-}
-
-.qr-tile img {
-  display: block;
-}
-
-/* Red alert: no promo card at all. */
-body.has-alert #qr-card {
-  display: none;
-}
-
-@media (max-height: 820px) {
-  #qr-card { top: 18px; left: 20px; padding: 12px; border-radius: 14px; }
-  .qr-text { margin-left: 16px; max-width: 260px; }
-  .qr-kicker { font-size: 18px; }
-  .qr-name { font-size: 32px; margin: 2px 0 8px; }
-  .qr-cake .qr-name { font-size: 40px; }
-  .qr-cta { font-size: 17px; }
-}
-
 /* === D35: ynet as a scrolling ticker along the bottom ===
    Append at the END of style.css (after D31 and wave 3). Everything is
    scoped to body.ticker-on, so removing that class restores the D26/D31
@@ -948,4 +853,120 @@ body.ticker-on.has-alert #ann-photo { bottom: 40px; }
   body.ticker-on.has-alert #sidebar { bottom: 18px; }
   body.ticker-on.has-alert #photo-caption { bottom: 14px; }
   body.ticker-on.has-alert #ann-photo { bottom: 24px; }
+}
+
+/* === D37: photo context block (supersedes the wave-3 top-left #qr-card) ===
+   Append at the END of style.css (after D35). One component, bottom-left of
+   the photo, where the place pill used to be: a gold context label ("why is
+   this photo here"), the name, an optional sub line, and - only for an Israeli
+   trip or the cake slot - a QR tile. No block on holiday / memorial / event
+   photos (the message pill is the context) and none during a red alert.
+   Old WebView: prefixed flexbox, rgba, one box-shadow. */
+
+#photo-context {
+  position: absolute;
+  z-index: 3;
+  bottom: 22px;
+  left: 24px;
+  max-width: 62%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: end;
+  -webkit-align-items: flex-end;
+  align-items: flex-end;
+  padding: 12px 18px 14px;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 14px;
+  -webkit-box-shadow: 0 6px 22px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+#photo-context:empty {
+  display: none;
+}
+
+.ctx-text {
+  text-align: right;
+}
+
+.ctx-label {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffd58a;
+}
+
+.ctx-name {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.ctx-sub {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 2px;
+}
+
+.ctx-cta {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.92);
+  margin-top: 12px;
+}
+
+/* With a QR (Israeli trip / cake): bigger card, text beside the tile.
+   RTL: the text is the first child (right), the tile sits on the left. */
+#photo-context.has-qr {
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 20px;
+}
+
+.has-qr .ctx-text {
+  margin-left: 22px;
+  max-width: 340px;
+}
+
+.has-qr .ctx-label { font-size: 24px; }
+.has-qr .ctx-name { font-size: 44px; }
+
+/* QR tile: PNG at its natural size, integer scale (see wave 3). */
+.qr-tile {
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.qr-tile img {
+  display: block;
+}
+
+/* Above the ticker (D35) */
+body.ticker-on #photo-context { bottom: 82px; }
+
+/* Red alert: no context block at all (calm screen). */
+body.has-alert #photo-context { display: none; }
+
+@media (max-height: 820px) {
+  #photo-context { bottom: 14px; left: 18px; padding: 8px 12px 10px; border-radius: 10px; }
+  #photo-context.has-qr { padding: 10px; border-radius: 14px; }
+  .ctx-label { font-size: 16px; }
+  .ctx-name { font-size: 26px; }
+  .ctx-sub, .ctx-cta { font-size: 16px; }
+  .ctx-cta { margin-top: 8px; }
+  .has-qr .ctx-text { margin-left: 14px; max-width: 260px; }
+  .has-qr .ctx-label { font-size: 18px; }
+  .has-qr .ctx-name { font-size: 32px; }
+  body.ticker-on #photo-context { bottom: 58px; }
 }

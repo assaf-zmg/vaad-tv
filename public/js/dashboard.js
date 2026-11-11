@@ -79,7 +79,7 @@
     els.annPhoto = document.getElementById('ann-photo');
     els.photoMessage = document.getElementById('photo-message');
     els.photoCaption = document.getElementById('photo-caption');
-    els.qrCard = document.getElementById('qr-card');
+    els.photoContext = document.getElementById('photo-context');
     els.tickerStrip = document.getElementById('ticker-strip');
     els.tickerViewport = document.getElementById('ticker-viewport');
   }
@@ -143,36 +143,72 @@
   // We preload the new photo, then cross-fade it in on top of the old one.
   var photoState = { id: null, pendingId: null, front: null, annShowing: false, bg: null };
 
-  // --- QR card (wave 3, D33) ---
-  // The server decides when a QR segment applies and adds it to the
-  // background payload:
-  //   bg.qr = { kind: 'trip' | 'cake',
-  //             title: 'הטיול הבא שלכם' | 'העוגה הבאה שלכם',
-  //             name: 'עין עבדת',
-  //             cta: 'סרקו לפרטים' | 'סרקו למתכון',
-  //             img: '/api/qr/ein-avdat.png' }     // PNG, black on white, quiet zone
-  // The client asks for an integer scale (?s=8, or ?s=6 on screens <= 820px
-  // high) and shows the PNG at its natural size (no width/height, no CSS
-  // scaling) so every module stays a whole number of pixels on the old WebView.
-  // No bg.qr -> no card. The card hides during a red alert (CSS) and while a
-  // committee flyer takes over the photo (showAnnouncementPhoto).
-  function renderQrCard(bg) {
-    var q = bg && bg.qr;
-    if (!q || !q.img) {
-      els.qrCard.innerHTML = '';
-      els.qrCard.className = '';
+  // --- Photo context block (D37; supersedes wave-3 renderQrCard) ---
+  // The server adds bg.context for pool photos only (never on holiday,
+  // memorial, mourning or event photos):
+  //   bg.context = { kind: 'abroad' | 'israel' | 'nature' | 'art' | 'cake',
+  //                  label: 'החופשה הבאה שלכם',   // from server/labels.json, rotated by slot
+  //                  name:  'לופוטן, נורווגיה',   // place / subject / artwork title / cake name
+  //                  sub:   'קלוד מונה',          // optional: artist, or "צילום: X · Unsplash"
+  //                  qr:    { img: '/api/qr/ramon.png', cta: 'סרקו לפרטים' } }  // israel+trip, cake only
+  // The block replaces the plain place pill (#photo-caption is hidden while it
+  // shows). A message pill on the photo wins: then no context block. The QR
+  // PNG is requested at an integer scale and shown at natural size (wave 3).
+  // QR PNG at an integer scale: 8 px/module, 6 on screens <= 820px high. Before
+  // layout the old WebView can report innerHeight 0; then use the document height.
+  function qrScale() {
+    var h = window.innerHeight || document.documentElement.clientHeight;
+    return h && h <= 820 ? 6 : 8;
+  }
+
+  function qrSrc(qr) {
+    return qr.img + (qr.img.indexOf('?') === -1 ? '?' : '&') + 's=' + qrScale();
+  }
+
+  // Code review: redraw the block only when it changed (rebuilding the <img> on
+  // every 2-minute poll can blink the QR tile on the old WebView), and show a QR
+  // only once its PNG has loaded; if the PNG fails, show the block without it.
+  var ctxShown = '';
+  function showContext(bg) {
+    var c = bg && bg.context;
+    var key = (bg && bg.message ? 'M\u0001' : '') +
+      (c ? [c.kind, c.label, c.name, c.sub, c.qr ? qrSrc(c.qr) + '\u0001' + c.qr.cta : ''].join('\u0001') : '');
+    if (key === ctxShown) return;
+    ctxShown = key;
+    if (!c || !c.qr || !c.qr.img || bg.message) { renderContext(bg); return; }
+    renderContext(null); // the previous photo's block goes now; this one comes with its QR
+    var img = new Image();
+    img.onload = function() { if (ctxShown === key) renderContext(bg); };
+    img.onerror = function() {
+      if (ctxShown !== key) return;
+      renderContext({ message: '', context: { kind: c.kind, label: c.label, name: c.name, sub: c.sub } });
+    };
+    img.src = qrSrc(c.qr);
+  }
+
+  function renderContext(bg) {
+    var el = els.photoContext;
+    var c = bg && bg.context;
+    if (!c || bg.message) {
+      el.innerHTML = '';
+      el.className = '';
+      els.photoCaption.style.display = '';
       return;
     }
-    els.qrCard.className = q.kind === 'cake' ? 'qr-cake' : 'qr-trip';
-    var scale = window.innerHeight <= 820 ? 6 : 8;
-    var src = q.img + (q.img.indexOf('?') === -1 ? '?' : '&') + 's=' + scale;
-    els.qrCard.innerHTML =
-      '<div class="qr-text">' +
-        '<div class="qr-kicker">' + escapeHtml(q.title || '') + '</div>' +
-        '<div class="qr-name">' + escapeHtml(q.name || '') + '</div>' +
-        '<div class="qr-cta">' + escapeHtml(q.cta || '') + '</div>' +
-      '</div>' +
-      '<div class="qr-tile"><img src="' + src + '" alt=""></div>';
+    var hasQr = !!(c.qr && c.qr.img);
+    var html =
+      '<div class="ctx-text">' +
+        '<div class="ctx-label">' + escapeHtml(c.label || '') + '</div>' +
+        '<div class="ctx-name">' + escapeHtml(c.name || '') + '</div>' +
+        (c.sub ? '<div class="ctx-sub">' + escapeHtml(c.sub) + '</div>' : '') +
+        (hasQr && c.qr.cta ? '<div class="ctx-cta">' + escapeHtml(c.qr.cta) + '</div>' : '') +
+      '</div>';
+    if (hasQr) {
+      html += '<div class="qr-tile"><img src="' + qrSrc(c.qr) + '" alt=""></div>';
+    }
+    el.className = 'ctx-' + (c.kind || 'abroad') + (hasQr ? ' has-qr' : '');
+    el.innerHTML = html;
+    els.photoCaption.style.display = 'none';
   }
 
   function renderPhotoText(bg) {
@@ -186,7 +222,7 @@
     els.photoMessage.className = (bg.tone === 'somber' ? 'somber' : '') + (photoState.annShowing ? ' hidden' : '');
     els.photoCaption.innerHTML = escapeHtml(bg.caption || '');
     photoState.bg = bg;
-    renderQrCard(bg); // runs from the photo's onload, so the card never shows without its photo
+    showContext(bg); // runs from the photo's onload, so the block never shows without its photo
   }
 
   function applyBackground(bg) {
@@ -226,7 +262,7 @@
     photoState.annShowing = on;
     var hide = on ? ' hidden' : '';
     els.photoCaption.className = hide;
-    if (els.qrCard) els.qrCard.style.display = on ? 'none' : '';
+    if (els.photoContext) els.photoContext.style.display = on ? 'none' : '';
     els.photoMessage.className = els.photoMessage.className.replace(' hidden', '').replace('hidden', '') + hide;
   }
 
@@ -383,7 +419,7 @@
     renderAnnouncementsPage();
     renderNewsPage();
     renderTicker(true);
-    if (photoState.bg) renderQrCard(photoState.bg); // QR scale follows the screen height
+    if (photoState.bg) showContext(photoState.bg); // QR scale follows the screen height (part of the key)
   };
 
   // --- Render: Dates ---
@@ -613,6 +649,7 @@
       annLayout = null;
       renderAnnouncementsPage();
       renderNewsPage();
+      renderTicker(true); // the copy width depends on the font (code review)
     });
   }
 
