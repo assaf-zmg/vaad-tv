@@ -1,0 +1,1564 @@
+{
+ "_comment": "Ynet titles from 11.11.2026 plus 10 synthetic tokenizer cases, with the expected result of server/news-filter.json under docs/content/news-filter-reference.py. Updated 11.11.2026: (1) outer quotes stripped before matching, inner gershayim and trailing geresh kept; (2) prefixes stripped only in valid order ו?(ש|כש|מש)?[בכלמ]?ה?; (3) risky short stems moved to exact words. The JS port must reproduce every 'keep' value.",
+ "items": [
+  {
+   "feed": 2,
+   "title": "\"חנק עם שרשרת, עד שנקרעה\": נאשם כי תקף וגרם לשברים ביד - בגלל צפירה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "איזנקוט באזהרה לנתניהו: \"להפעלת כוחות הביטחון בלי איום ישיר - השלכות הרסניות\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "שגריר רוסיה בארה\"ב הלך לעולמו בפתאומיות, סיבת המוות לא פורסמה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "מטפלת ו-4 סייעות נעצרו: חשד שפגעו בפעוטות באשקלון",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "הנוסח המשונה של מכתב השב\"כ: \"אם לא אמרו ליועמ\"שית, האדמה צריכה לרעוד\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "\"היה חסר לו קפה\": פגישת יו\"ר יהדות התורה עם ליברמן - והרכבי הוועדות שאושרו",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "ירי, טיפוס על חבל ואומגה: מחנה האימונים החדש לנשים בטהרן",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "בניגוד להצהרת טראמפ, נתניהו מבהיר: \"הסיוע האמריקני יופסק בהדרגה\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "עוזרת בית בסעודיה ילדה מחוץ לנישואים - ונידונה ל-100 מלקות: \"בן סלמאן צבוע\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "גוש איזנקוט צלח את המבחנים הראשונים, מהומה בוועדה: השפלות וצרחות, גוטליב הורחקה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "ראש מועצת שומרון: צרפת אסרה עליי להיכנס למדינה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "חניית נכה בלב ת\"א עמדה נטושה שבועות - ואז התושבים גילו את הסיבה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "שגרירי האו\"ם ביקרו באושוויץ: \"אסור לשכוח את העבר, האנטישמיות בעלייה\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "בן השגריר שנפצע אנושות בפיגוע הועבר לשיקום: \"מחוסר הכרה, תמשיכו להתפלל לנס\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "השתלשל מקומה 5 בגיל 74: המחבל מ\"הבריגדות האדומות\" ברח ממעצר בית",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "נוכחות דלה מאוד בישיבת ממשלת המעבר: אושר מינוי סער לשר הפנים",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "בן 5 נהרג בהתהפכות רכב שטח באזור נהריה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "\"מיכאיל ממיזוגיניסטן\" היכה שוב: התרעת פצצה נשלחה ל-6,300 בתי ספר באיטליה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "\"עמוד אש\" בים, בכיר איראני: אף חלקיק גרעין לא ייצא, רוצים לייצר צוללות",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "מורה במרכז חשוד בעבירות מין בתלמידה בת 7",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "כל צד מביט אל הצד השני ורואה שורפי האסמים",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "ביידן הותקף באירלנד: פרו-פלסטינים זרקו חפצים וחלב וקראו \"ג'נוסייד ג'ו\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "יש מדיניות, אין פקודה: כך צה\"ל מטפל במשרתי מילואים החשודים בעבירות מין",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "קוצר בשנה מאסרו של חוטף הנשק מלוחם אגוז: \"חל שיפור משמעותי בהתנהגותו\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "\"אסור לשכב, אין אוורור\": סורים טוענים שעברו עינויים בכלא בישראל",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "ישראל: Start-Up Nation עם תפיסה פוליטית מיושנת",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "רעידת אדמה בעוצמה 4.5 הורגשה במפרץ אילת, התרעה הופעלה באזור",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "קונספירציית \"בריז'יט היא גבר\": הזוג מקרון תובע את קנדיס אוונס על \"בובת החייזר\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "בנט והחרדים מתנגחים בהצעות חוק, אשר הציג: אלה התנאים לממשלה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 2,
+   "title": "אחרי שלוש שנות מלחמה: פיקוד העורף מקים מפקדה שתתאם בין הצבא לגופי חירום אזרחיים",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "באמצע השממה מצאתי מאפייה שמגישה פוקאצ'ה פסיכית עם טחינה",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "תעקבו אחרי ההוראות - ותקבלו מרק שכולו טוב",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "במקום כוכבים, ענבים: הדירוג היוקרתי החדש של מישלן",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "\"הגיע הזמן שתל אביבים יצאו לבלות באשדוד\"",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "כמו באמריקה: 6 מתכוני דלעת משמחים",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "בכפר קטן ונידח: זו המסעדה הטובה בעולם",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "להכין ברבע שעה: 10 מרקים מעולים",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "בין הסירים המנחמים גילינו מנה מרוקאית אלוהית",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "לא זורקים לחם: הקינוח שנולד משאריות, הפך לכוכב מסעדות ויראלי",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "כבר איבדנו אמון בעגלות קפה - ואז מצאנו את פינת האוכל הנפלאה הזאת",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "\"יש מסעדות שלוקחות 100 שקל לרול סושי. אצלי הכי יקר זה 98\"",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "הסמכות העליונה של עולם הקולינריה: האם זה סופו של עידן המישלן?",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "\"עברנו מספיק ב-7 באוקטובר\": המסעדה האהובה עומדת בפני סכנת סגירה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "\"אני לא המבורגרייה\": השפים שמסרבים לתת לכם לשנות את המנה – ויש להם סיבה טובה",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "מה אוכלים היום? מסעדות חדשות ומסקרנות ששוות קפיצה",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "סופריטו עוף ותפוחי אדמה ועוד מתכונים לסיר של  יום חולין",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "האמת? מהבראנץ' של חיים כהן ציפינו ליותר",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "טעם של נוסטלגיה: האוצר הגנוב של סבתא סימה",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "בעזרת פטנט קטן, מכינים את הביצה המושלמת",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "טעם של נוסטלגיה: הגעגועים לבצק של  ענת לב-אדלר",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "טעם של נוסטלגיה: הגעגועים של יואב בירנברג לסוכריות מנטה ודבש",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "טעם של נוסטלגיה: רותי רוסו",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "2 מצרכים פשוטים שיש בכל בית - הופכים לביס שווה במיוחד",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "בלב תל אביב מצאנו בורקס שלא עושה פוזות ואומר את האמת",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "טעם של נוסטלגיה: גרגירי החומוס שהענישו את יוסי שטרית",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "הצבעת? אכלת: מנות מיוחדות, בראנצ'ים ודרינקים ביום הבוחר",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "נתפסתי על חם, עם המכסה ביד",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "משתבחים כמו יין: דיירים מדיור מוגן הקימו יחד יקב",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "תם עידן החומוס-צ׳יפס-סלט: המטבח הערבי עולה שלב",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "יוסי שטרית פתח שיפודייה. עד עכשיו אני חולם על הבשר",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "4 פלסטינים נעצרו בחשד שהתעללו בגמל בחתונה בחברון, בהם החתן",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "פלסטינים שפכו משקאות אנרגיה לפיו של גמל בחתונה בחברון | תיעוד קשה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "רשות הטבע והגנים מזהירה: אל תצללו עם הכרישים בחדרה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "הכלבת מתפשטת, אך שיתוף הפעולה עם צה\"ל הופסק: \"הסכר נפרץ\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "שלוש זכיות במקום הראשון ותואר אחד היסטורי: ההישג של צלם הטבע הישראלי",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 4880,
+   "title": "להציל את הצבאים: אושר מעבר אקולוגי מעל כביש 6",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 4880,
+   "title": "כלבים של משפחות בדואיות נורו על ידי פקחים סמוך למצפה יריחו",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "תיעוד: משפחת יעלים מדלגת מעל מעקה הבטיחות בכביש בערבה",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "כמו בני האדם: גם כלבים מקשרים בין צלילים לצורות",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 4880,
+   "title": "הציפור שהונצחה בשיר השירים עלולה להיעלם מישראל",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "חוקרים \"פספסו\" גור ששוקל כ-7 טונות בספירה באוקיינוס",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 4880,
+   "title": "נגד איתני הטבע: המסע הפראי לאתיופיה בעקבות הזאבים החבשיים",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "שניים תחת מטרייה אחת: מדור אימוץ הכלבים והחתולים של ynet",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 4880,
+   "title": "הכוכב החדש של אוניברסיטת בן-גוריון",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 4880,
+   "title": "מבצע חילוץ או סיפור כיסוי? הטלה פבלו שהסתיר מאחוריו פרשת סמים",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "המשטרה סיכלה מרוץ גמלים בלתי חוקי בשטח אש בנגב",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "מחקר ישראלי: האם גם דורבנים מתאבלים?",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "עשור של חסד: החיבולנס חוגג 10 שנים",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 4880,
+   "title": "אחרי כמעט 100 שנה: היונק הארסי שנחשב לנכחד התגלה מחדש",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "השמיים הם הגבול, והאנרגיה בחינם: סוד התעופה החסכונית של העופות הדואים",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "גם לחמלה יש כוח בקלפי ומקום בהסכם קואליציוני ביום שאחרי",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "הסודות הביולוגיים של הכרישים",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "בואו לבחור חבר עם זנב: כלבים וחתולים מחפשים בית חם",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 4880,
+   "title": "צעיר נעצר בחשד שתפס חתולה בזנבה והטיח אותה על הקרקע | קשה לצפייה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "חשבו שהיא בהיריון – ואז התגלתה האמת הכואבת בבטנה של הצבייה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "חברים לא גונבים מחברים (או לפחות גונבים פחות)",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "דרום קוריאה: נקבת הכריש, שהפכה לכוכבת, חולצה מהתעלה",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "לא רק גרגורים וליטופים: איך חתולים משפיעים על מצב הרוח שלנו?",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 4880,
+   "title": "הקצין שמסתייע בכלבת שירות: \"אין לי מה להתבייש בזה\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 4880,
+   "title": "סרי לנקה במלכוד: הפילים רעבים, יותר בני אדם נהרגים - והעימות מסלים",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "קטנה באמריקה: טויוטה חשפה משאית זעירה לארץ הענקים",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "חשיפות נוספות מתערוכת האופנועים במילאנו",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 550,
+   "title": "נמתחת: אורה מציגה סטיישן ראשונה, וחשמלית כמובן",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "איך נראה לכם חזון 2030 של פולסטאר? הנה המראה החדש",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 550,
+   "title": "בכל תצורה ועם כל סוג הנעה: בליץ הדגמים של ב.מ.וו בישראל",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "ממשיכים לחשוף חדשות: הדגמים שהוצגו בתערוכת האופנועים האיטלקית",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 550,
+   "title": "מרצדס חוגגת יום הולדת, ולא נראית יום אחד יותר מ-120",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 550,
+   "title": "מלחמת הפחמן השלישית: גרמניה וצרפת בכסאח מול שאר אירופה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "חשמל זורם בלי כפות ידיך: BYD מציגה רובוט שיטעין לכם את הרכב",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "ב.מ.וו i3 (נהיגה ראשונה) – קבלו את דור העתיד",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "בכל הכוח: חשיפות מרהיבות בתערוכת האופנועים הגדולה בעולם",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 550,
+   "title": "מעכשיו תוכלו לנהוג ברכב כבד יותר גם עם רישיון ב' – אבל רק אם הוא חשמלי",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "מרצדס מסבירה מדוע ההבטחה לנהיגה אוטונומית הקדימה את זמנה",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "הרולס רויס של BYD - ספינת דגל סינית שרוצה להתחרות בגדולה מכולן",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "זוכרים פיאג'ו טייפון? אז הוא חוזר, ועוד חשיפות מהתערוכה",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 550,
+   "title": "מבחן לחשמליות קומפקטיות שחייבים לקרוא: MG4 אורבן מול איון UT",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "אם אי אפשר בכוח, נשקיע עוד יותר כוח: האירופים יאסרו לשווק BYD?",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "יש שיא מהירות חדש: זו הסינית שהגיעה ל-500 קמ\"ש על כביש ציבורי",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 550,
+   "title": "מותג טרקטורונים חדש בעולם הפנאי המקומי: לונסין הסיני",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 550,
+   "title": "מילאנו על שניים: חשיפות ראשונות מהתערוכה, וגם הפתעת דקאר",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 550,
+   "title": "לא מוותרת על בנזין: אלפא רומיאו משיקה טונאלה מחוזק ויקר",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "היצרניות האירופיות ממשיכות לקרוס בסין, וגם סיוע מקומי לא עוזר",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "הלו פורד, שומע ברונקו? ג'יפ הציגה רנגלר מתחרה",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "תם ונשלם המעבר - זיכיון שיווק אופנועי קאוואסאקי עבר לדלק מוטורס",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "על חשמל בלבד או בתוספת בנזין: אקספנג L03 כבר כאן",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "500 קמ\"ש על הכביש זה בינתיים יותר מדי: BYD התרסקה בדרך לשיא",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 550,
+   "title": "רב המכר מתנתק מהשקע: ג'אקו 7, עכשיו גם ללא טעינה",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 550,
+   "title": "לא דור חדש, כן מתיחת פנים: מרצדס GLE מחודש הגיע ארצה",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 550,
+   "title": "קוריאה עושה שריר: קיה EV5 מצטרף לחגיגה החשמלית",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 550,
+   "title": "בסגנון אירופי, במחיר מפתיע: ליפמוטור B05 הגיעה ארצה",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "אוהדי הפועל מקווים לנקמה בדרבי היורוליג: \"אנחנו יותר טובים ממכבי\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "מבוכה גדולה: נבחרת הנוער ביצעה שישה חילופים במשחק - וצפויה להיענש",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "כדורסל משחקים 40 דקות, ובסוף מכבי ת\"א מנצחת | תוכן גולשים",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "יותר מאלף אוהדי מכבי ת\"א ייצאו לקפריסין, קטש: \"אולי מקום חדש יהיה מרענן\"",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 3,
+   "title": "פתחה רע: נבחרת הנוער הפסידה 3:2 לאוקראינה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "זכרו של עזרא: נבחרת יוניטי זכתה בטורניר ההנצחה ברמלה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "אבדיה הצהיר: \"לא מפחדים מאף קבוצה\", בפורטלנד התלהבו מהשילוב עם לילארד",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "דיווח: מנצ'סטר יונייטד קרובה לסיכום עם מאוריסיו פוצ'טינו",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "המריאה לאליפות עם בתה התינוקת: \"חולמת שתראה אותי זוכה במדליה באולימפיאדה\" | ריאיון",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 3,
+   "title": "מהמכללות ליורוליג - ובחזרה לנבחרת: \"מגיעה שחקנית אחרת, בוגרת יותר\"",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "\"הבית הדרומי\" נחנך בטרנר: תא אירוח מיוחד ללוחמי צה\"ל",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "אבדיה כיכב עם 24 נקודות, לילארד להט: פורטלנד הביסה את אוקלהומה ב-20 הפרש",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "דיווח: המאמן הצפון אירי, רורי היגינס מועמד למכבי חיפה",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "חזרה מפתיעה לפרמייר ליג? \"אברטון פנתה לדה בריינה\"",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "האם זו סוף סוף העונה של לוקה דונצ'יץ'? | תוכן גולשים",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "ג'ורג' כיכב מול האקסית, בוסטון ניצחה בפילדלפיה",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 3,
+   "title": "\"הורדת הכתר\", המסדר ההומופובי - והסתבכות עם האוהדים: חגיגת השער שהציתה סערה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "הזעזוע לא עזר: חולון ממשיכה להסתבך, ברנר המועמד המוביל",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "כוכב סקוטלנד חושף: \"יומיים לפני המונדיאל - עברתי טיפול בשוק חשמלי\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "שחקן צ'לסי הסגיר את הפציעה של חברו דרך משחק הפנטזי?",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "דיווח: ארסן ונגר שוקל להתמודד על נשיאות פיפ\"א",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "הפועל ת\"א של ברדה החזירה אותי ליציע | תוכן גולשים",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "נבחרת הנשים פותחת את השלב השני במוקדמות היורובאסקט: \"הכל אפשרי בכדורסל\"",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "גם בלי קרוניץ': הפועל חולון הפסידה לווכטה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "הווידוי המטלטל של שחקן ה-NBA לשעבר: \"הצמדתי את האקדח לראש - ובכיתי\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "סולומון: \"רוצים להציל את הקמפיין עם ניצחון מול קוסובו\"",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 3,
+   "title": "הרכז קמאר בולדווין חתם במכבי ת\"א: \"יוסיף לנו עומק ואיכות\"",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "אוהדי לסטר נגד כוכבת הפורנו: \"האם זה מי שאנחנו?\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "שניהם רצו להיות ג'ורדן: טייטום ובראון נפגשים, הפעם כיריבים",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 3,
+   "title": "העקיצה המרומזת לאיטודיס וההטפה של ינאי לקהל: הפועל ת\"א מעכלת את המפלה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "האח הגדול מגיע הביתה: אמזון משיקה רחפן שיטוס לכם בין החדרים",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "הזהב החדש של תעשיית ה-AI מסתתר במכוניות חשמליות ישנות",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 544,
+   "title": "חברות קש, שבבים במיליארדים: המאהבת המסתורית של מנכ\"ל אנבידיה מסתבכת",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "13 שנה, אינסוף הבטחות: האם GTA VI יצליח לספק את הסחורה?",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "סקס, שקרים ומיליארדים: הבגידות שהסעירו את עולם הטכנולוגיה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "אנת'רופיק השיקה שני מודלים חדשים שמדאיגים גם את המפתחים שלהם",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "בגידה, שקרים ושבבים: האם סיפור ההצלחה של אימפריית הטריליונים בסכנה?",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "האישה, הילדים והמרגלת הסינית: האימפריה המשפחתית של מנכ\"ל אנבידיה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "פאניקה בצמרת אפל: המנכ\"ל החדש מבין שהחברה בבעיה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "מי ישלוט בחשמל ובמים שלנו? תוכנית ה-AI השאפתנית של ישראל",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "מנכ\"ל אנבידיה הודה כי ניהל קשר רומנטי עם אישה שחשודה כמרגלת סינית",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "תבוסה לענקיות ה-AI: תומכי הרגולציה ניצחו בבחירות בארה\"ב",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "מדריך: כך תשתמשו בשדרוגי המצלמה ב-One UI 9 החדשה של סמסונג",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 544,
+   "title": "מסמך מודיעיני סודי חושף: מנכ\"ל אנבידיה ניהל רומן עם מרגלת סינית",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "MOMENTUM True Wireless 5: סנהייזר עושה את מה שסוני ובוז עדיין לא מעזות",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "\"אנחנו מעדיפים לעשות את זה נכון\": דייסון עונה למתחרות הסיניות",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "ביל גייטס: \"ה-AI עלול להוביל למגפה חמורה יותר מהקורונה\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "אפל מזהירה מגל התייקרויות: \"עליות מחירים חסרות תקדים\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "גוגל, מאחורייך: הנתון המטורף שחושף כמה ChatGPT התחזק",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "או שתשתמשו ב-AI, או שלא יהיה חיפוש: האולטימטום של גוגל שמסעיר את ארה\"ב",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "סופר סייבר: מי עומד מאחורי מתקפת המקררים באירופה?",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "Vivo X300 Pro: מצלמה מקצועית בתחפושת של סמארטפון",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "נמכר גם בישראל: נוזקה מסוכנת התגלתה בסטרימרים של מותג סיני מוכר",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "אנת'רופיק מזהירה: הבינה המלאכותית מתפתחת מהר מכפי שצפינו",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "שבע שנים, 8,000 שקל, וזה מה שקיבלנו? אייפון דואו במבחן",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "החזון של אורקל: כשהרובוטים יעבדו ואנחנו ננוח",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "פריצת הדרך הישראלית שעשויה לשנות את עולם ה-AI | פרסום ראשון",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "קיללתם את הבינה המלאכותית? אתם עלולים להיחסם לצמיתות",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "\"זה יהיה חסר אחריות\": ראש תחום ה-AI במיקרוסופט מזהיר מפני העתיד",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 544,
+   "title": "מי צריך את GTA VI? אחד המשחקים הטובים בהיסטוריה חוזר",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 538,
+   "title": "כוכב \"ימי חיינו\" חושף שאובחן עם פרקינסון; המחלה תשולב בעלילת הסדרה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "ב\"הטבח\" הגברים לא מתבגרים, העלילה לא מתקדמת, אבל משהו עדיין עובד",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "השחקן סטייסי קיץ', כוכב \"אמריקה X\" ו\"נמלטים\", הלך לעולמו",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "לייק אה גשר על מים בוערים / שלמה ארצי",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "בייבי בלוז - חלק 13",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "אילה חסון הודיעה על עזיבת תאגיד השידור: \"לא אהיה חלק ממערכת שמבקשת להשתיק קולות\" | נחשף ב-ynet",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "דיוויד ווליאמס (\"בריטניה גוט טאלנט\") מואשם בהטרדות ובתקיפה מינית של קטינה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "יוצא \"האח הגדול\" אופיר לוי הלך לעולמו בגיל 54",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "מכוכב הקיי-פופ ועד נועה קירל הפיליפינית: מי יכבוש את אירוויזיון אסיה?",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "עדי אולמנסקי על השיר שכתבה לזכר אחיה: \"נמאס לי להרגיש שאני צריכה להסתתר\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "מכתב פתוח  לשר התרבות הבא",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "בייבי בלוז - חלק 12",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "סלמה בלייר חולמת לעלות לישראל: \"אני מקווה להביא לכאן את העצמות של אמא שלי\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "טלטלה בצמרת DC: ג'יימס גאן ופיטר ספרן עוזבים את תפקידיהם, איש מארוול יחליף אותם",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "בגיל 83, ואחרי ששבר את צלעותיו ואת האגן: מייקל פיילין נעזר בהליכון",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "בית המשפט הכריע: ראסל ברנד נידון ל-10.5 שנות מאסר בגין אונס ותקיפות מיניות",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "רבקה מיכאלי לא קיבלה פרס ישראל. אחרי ערב כזה, היא כבר לא צריכה אותו",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "מי צריך אולם קולנוע כשאפשר לראות את מרילין מונרו מתחת לכוכבים?",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 538,
+   "title": "\"הדבר הראשון שעשיתי היה לגעת להן בשיער\": הצלמת שפגשה נשים ששרדו את שבי דאעש",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "בייבי בלוז - חלק 11",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "\"יש עולם שלם - כל מה שעשיתי כל חיי - שנמחק. וזה מה שאנשים לא מבינים: שאדם הפך ביום אחד מדבר לכלום\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "גם סרטים בינלאומיים: יום הקולנוע חוזר - עם כרטיסים ב-10 שקלים",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 538,
+   "title": "פרסום ראשון: אייל ברקוביץ' הושעה מערוץ 13",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "השחקנית בר בלפר (\"מישהו לרוץ איתו\") הלכה לעולמה בגיל 37",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "כל מה שפסטיבל העוד מנסה לעשות, דודו טסה וג'וני גרינווד עושים במופע אחד",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 538,
+   "title": "אבי שושן חשב שהוא מגיע ל\"הישרדות\" כדי לנצח. במקום זה הוא הפסיד הרבה יותר ממיליון שקל",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "\"אהבה אפשרית\" מוכיח שהפערים בין עשירים לעניים עמוקים הרבה יותר מכסף",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "\"ניסוי בבן אדם\": 149 אנשים שיקרו לו במשך ארבעה חודשים, הכול בשביל תוכנית ריאליטי",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "מייק לי לא מתכוון להקרין כאן את סרטיו, \"עד שהישראלים יחליטו מה הם רוצים לעשות\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 538,
+   "title": "בייבי בלוז - חלק עשירי",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "תלונות על SHEIN: תקלות ועיכובים בהחזר הכספי",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "מוצרים שעולים פי 2 בישראל: מה קונים בעלי אקספרס",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "מועדון פוקס מתחזק: המותג דייסון מצטרף לדרים קארד וימכור גם מוצרים למטבח",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "הישראלים בחרו בשופינג: 1.752 מיליארד שקל ביום הבחירות",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "מרכך הכביסה הוקטן והמחיר לא ירד",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "רותם סלע תמכור קולוסטרום כתוסף תזונה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "שלא יעבדו עליכם: כל האמת על המבצעים ביום הבחירות",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "יקר בזארה ישראל? ככה תקנו בזול יותר",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "מגיפת פגי תוקף בקרפור? למעלה מ-700 פריטים התגלו אחרי שכבר הוגשה ייצוגית",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "אבקת זיפ וממולדה אננס: עלית תמכור מוצרים נוסטלגיים",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "קפה רותח: שופרסל נכנסת לתחום המגורען עם מותג חדש",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 5363,
+   "title": "עלי אקספרס משיקה מועדון לקוחות בישראל, צפי ליותר מ-20 מיליון חבילות",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "התחרות מתעצמת: נקודות הנוסע המתמיד למתדלקים ב-yellow",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "זארה סוגרת חנויות בישראל ומבטלת משלוח חינם",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "הכושר מתייקר: ספייס מחסלת את מסלול 99 שקל",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "חיתולי האגיס שוב מתכווצים ומתייקרים, גם פמפרס וטיטולים הוקטנו",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "נגמר המחסור בקוטג'? תנובה תמכור תוספי תזונה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "שוקולד פרה, קפה נמס ובורקס מעדנות: המוצרים שמחירם זינק בסופר",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "קנו רכב חשמלי - קבלו טעינה חינם ל-3 שנים",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "דו\"ח משרד התקשורת: קשיש וילדה חויבו באלפי שקלים, לקוח זוכה ב-16 אלף שקל",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "\"אל תשאלו אותנו למה\": הטבת פייטר למילואימניקים לא תקפה בשק\"ם",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "לקוחות אסוס: קיבלנו הודעה שהאתר נפרץ",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "מעל 50 מיליארד שקל: על מה בזבזו הישראלים את הכסף בחגים?",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "הגודל החדש של פחיות קוקה קולה",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 5363,
+   "title": "סלקום מייקרת את ספורט 5 פרימיום",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "עם בס\"ד, בלי \"מיוצר בישראל\": מותג השיער שהחל להימכר באוסטרליה",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "מחסור בגבינה לבנה: \"17 שקל על גבינת נפוליאון 9%\"",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "מחסני חשמל תמכור קורקינטים של INOKIM",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "המחיר היה על המדף, אך לא על המוצר: אושרה ייצוגית נגד אושר עד",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 5363,
+   "title": "קרפור ומשרד הכלכלה מבטלים את הסל של ישראל: זה הזמן להצטייד",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "הכירו את \"השף\" החדש של תל אביב",
+   "note": "synthetic tokenizer case",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "\"צה\"ל\" הודיע: מבצע חדש בצפון",
+   "note": "synthetic tokenizer case",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "יריד הספרים חוזר לתל אביב",
+   "note": "synthetic tokenizer case",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "שברולט חשפה דגם חדש",
+   "note": "synthetic tokenizer case",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "מתכון לעוגה מתוקה עם גזר",
+   "note": "synthetic tokenizer case",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "צבאים בחרמון",
+   "note": "synthetic tokenizer case",
+   "keep": true,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "סמוטריץ' הודיע על תקציב",
+   "note": "synthetic tokenizer case",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "פריצת דרך במחקר הישראלי",
+   "note": "synthetic tokenizer case",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "והמחבלים נעצרו",
+   "note": "synthetic tokenizer case",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "כלבים נורו בגליל",
+   "note": "synthetic tokenizer case",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "אבל כבד בעיר",
+   "note": "synthetic mourning/'but' case",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "הלך לעולמו בגיל 92",
+   "note": "synthetic mourning/'but' case",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "נפטר הזמר",
+   "note": "synthetic mourning/'but' case",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "הלוויה תתקיים",
+   "note": "synthetic mourning/'but' case",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "בצער רב",
+   "note": "synthetic mourning/'but' case",
+   "keep": false,
+   "preferred": false
+  },
+  {
+   "feed": 975,
+   "title": "טעים, אבל לא זול: המסעדה החדשה",
+   "note": "synthetic mourning/'but' case",
+   "keep": true,
+   "preferred": true
+  },
+  {
+   "feed": 975,
+   "title": "קטן אבל חזק: הרכב החשמלי החדש",
+   "note": "synthetic mourning/'but' case",
+   "keep": true,
+   "preferred": true
+  }
+ ]
+}

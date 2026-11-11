@@ -1,3 +1,8 @@
+/* Layout B (D11/D14): full-bleed photo, info column as text on the photo.
+   Readability = right-side gradient scrim (#photo:after) + one text-shadow.
+   Old Android WebView: prefixed flexbox only, no grid / gap / CSS vars /
+   backdrop-filter / inset. Keep large text-shadows few (crossfade cost). */
+
 /* === Reset & Base === */
 * {
   margin: 0;
@@ -12,13 +17,11 @@ html, body {
   overflow: hidden;
   font-family: 'Heebo', Arial, Helvetica, sans-serif;
   direction: rtl;
-  background-color: #4a7a2a;
+  background-color: #111110;
+  color: #ffffff;
 }
 
 body {
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
@@ -26,191 +29,29 @@ body {
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
   flex-direction: column;
-  padding: 20px 24px;
 }
 
-/* === Alert Banner === */
+/* === Alert Banner: full width, top, pushes the screen down === */
 #alert-banner {
   background: #d32f2f;
   color: #fff;
   text-align: center;
-  padding: 10px 20px;
-  font-size: 36px;
+  padding: 14px 20px;
+  font-size: 40px;
   font-weight: 800;
-  border-radius: 14px;
-  margin-bottom: 20px;
-  letter-spacing: 0.5px;
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
+  position: relative;
+  z-index: 10;
 }
 
 #alert-icon {
   margin-left: 10px;
 }
 
-/* === Top Strip === */
-#top-strip {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: row;
-  flex-direction: row;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-  height: 26vh;
-  min-height: 170px;
-  margin-bottom: 20px;
-}
-
-/* Clock Card — appears RIGHT in RTL (first child) */
-#clock-section {
-  background: rgba(255, 255, 255, 0.68);
-  border-radius: 18px;
-  box-shadow: 0 3px 18px rgba(0, 0, 0, 0.14);
-  padding: 12px 20px;
-  margin-left: 20px;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-  min-width: 290px;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  text-align: center;
-}
-
-#clock {
-  font-size: 96px;
-  font-weight: 900;
-  color: #1a1a1a;
-  line-height: 1.0;
-  letter-spacing: -3px;
-}
-
-#gregorian-date {
-  font-size: 24px;
-  font-weight: 500;
-  color: #444;
-  margin-top: 4px;
-}
-
-#hebrew-date {
-  font-size: 20px;
-  font-weight: 400;
-  color: #777;
-  margin-top: 2px;
-}
-
-/* Weather Card — appears LEFT in RTL (second child) */
-#weather-section {
-  background: rgba(255, 255, 255, 0.68);
-  border-radius: 18px;
-  box-shadow: 0 3px 18px rgba(0, 0, 0, 0.14);
-  padding: 10px 16px 8px;
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-  flex: 1;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-#weather-label {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1a1a1a;
-  letter-spacing: 1px;
-  text-align: right;
-  margin-bottom: 4px;
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-}
-
-#weather-forecast {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-around;
-  justify-content: space-around;
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-  flex: 1;
-}
-
-.forecast-day {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-}
-
-.forecast-day .day-icon {
-  width: 56px;
-  height: 56px;
-  margin-bottom: 4px;
-}
-
-.forecast-day .day-icon svg {
-  width: 56px;
-  height: 56px;
-}
-
-.forecast-day .day-temp {
-  font-size: 30px;
-  font-weight: 700;
-  color: #1a1a1a;
-  line-height: 1.1;
-}
-
-.forecast-day .day-name {
-  font-size: 20px;
-  font-weight: 500;
-  color: #555;
-  margin-top: 2px;
-}
-
-/* === Main Content Area === */
+/* === Main: photo fills it, column floats on top === */
 #main {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: row;
-  flex-direction: row;
+  position: relative;
   -webkit-box-flex: 1;
   -webkit-flex: 1;
   flex: 1;
@@ -218,29 +59,150 @@ body {
   overflow: hidden;
 }
 
-/* === Shared Panel Style === */
-.panel {
-  background: rgba(255, 255, 255, 0.68);
-  border-radius: 18px;
-  box-shadow: 0 3px 18px rgba(0, 0, 0, 0.14);
+/* === Photo (full bleed) === */
+#photo {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   overflow: hidden;
-  color: #1a1a1a;
+  /* First paint (2–5 s until the photo decodes): a calm dusk tone, not flat black. */
+  background: #111110;
+  background: -webkit-linear-gradient(top, #2a3138 0%, #1a1d20 55%, #111110 100%);
+  background: linear-gradient(to bottom, #2a3138 0%, #1a1d20 55%, #111110 100%);
 }
 
-.panel-header {
+/* Scrim behind the column. Stops tested on the brightest photos in the pool. */
+#photo:after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 980px;
+  background: -webkit-linear-gradient(right, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.58) 40%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.58) 40%, rgba(0, 0, 0, 0) 100%);
+}
+
+.photo-layer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-repeat: no-repeat;
+  background-position: center center;
+  -webkit-background-size: cover;
+  background-size: cover;
+  opacity: 0;
+  -webkit-transition: opacity 1.5s ease;
+  transition: opacity 1.5s ease;
+}
+
+.photo-layer.visible {
+  opacity: 1;
+}
+
+/* Committee flyer: whole flyer, centred in the photo area (left of the
+   column), the rest of the photo dimmed. The column sits above (#sidebar
+   z-index) so it stays bright. Background + spread shadow = one dim layer. */
+#ann-photo {
+  z-index: 4;
+  top: 40px;
+  right: 568px;
+  bottom: 40px;
+  left: 40px;
+  background-color: rgba(0, 0, 0, 0.6);
+  -webkit-box-shadow: 0 0 0 3000px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 0 3000px rgba(0, 0, 0, 0.6);
+  -webkit-background-size: contain;
+  background-size: contain;
+  -webkit-transition: opacity 0.6s ease;
+  transition: opacity 0.6s ease;
+}
+
+/* Holiday / building-event message: a pill centred in the photo area */
+#photo-message {
+  position: absolute;
+  z-index: 3;
+  right: 556px;
+  bottom: 70px;
+  left: 28px;
+  text-align: center;
+  color: #ffffff;
+  -webkit-transition: opacity 1s ease;
+  transition: opacity 1s ease;
+}
+
+#photo-message:empty {
+  display: none;
+}
+
+#photo-message .msg-pill {
+  display: inline-block;
+  padding: 22px 48px 26px;
+  border-radius: 22px;
+  background: rgba(0, 0, 0, 0.42);
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1.15;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+#photo-message .msg-sub {
+  display: block;
   font-size: 30px;
-  font-weight: 900;
-  color: #1a1a1a;
-  padding: 12px 20px 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  font-weight: 500;
+  margin-top: 6px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-/* === Announcements Panel — RIGHT side === */
-#announcements-panel {
-  -webkit-box-flex: 69;
-  -webkit-flex: 69;
-  flex: 69;
-  margin-left: 20px;
+/* Mourning / memorial days: quieter, smaller, regular weight, darker */
+#photo-message.somber .msg-pill {
+  background: rgba(0, 0, 0, 0.55);
+  font-size: 48px;
+  font-weight: 500;
+}
+
+#photo-message.somber .msg-sub {
+  font-size: 28px;
+}
+
+/* Credit: bottom-left, no box. 23px clear of the message pill (measured). */
+#photo-caption {
+  position: absolute;
+  z-index: 5;
+  bottom: 22px;
+  left: 24px;
+  max-width: 60%;
+  font-size: 17px;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  -webkit-transition: opacity 0.6s ease;
+  transition: opacity 0.6s ease;
+}
+
+#photo-caption:empty {
+  display: none;
+}
+
+#photo-caption.hidden,
+#photo-message.hidden {
+  opacity: 0;
+}
+
+/* === Info column (RIGHT), text on the photo === */
+#sidebar {
+  position: absolute;
+  z-index: 6;
+  top: 28px;
+  right: 28px;
+  bottom: 28px;
+  width: 500px;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
@@ -248,81 +210,95 @@ body {
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
   flex-direction: column;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
 }
 
-#announcements-content {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-  flex: 1;
-  padding: 12px 16px;
-  overflow: hidden;
+.card {
+  padding: 0 4px;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
 }
 
-.announcement-card {
-  margin-bottom: 10px;
-  padding: 12px 16px;
-  border-radius: 13px;
-  background: rgba(0, 0, 0, 0.04);
+.card + .card {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
 }
 
-.announcement-card.urgent {
-  background: rgba(220, 60, 30, 0.08);
-  border-right: 5px solid #e84828;
-  padding-right: 14px;
-}
-
-.announcement-card.has-image {
-  background: none;
-  border-right: none;
-}
-
-.announcement-card.has-image .ann-title,
-.announcement-card.has-image .ann-body,
-.announcement-card.has-image .ann-date {
-  color: #fff;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.75), 0 2px 12px rgba(0, 0, 0, 0.5);
-}
-
-.announcement-card.has-image .ann-title {
-  color: #fff;
-}
-
-.announcement-card .ann-title {
-  font-size: 34px;
-  font-weight: 800;
-  color: #1a1a1a;
+.card-header {
+  font-size: 22px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.78);
   margin-bottom: 6px;
-  line-height: 1.2;
 }
 
-.announcement-card.urgent .ann-title {
-  color: #c0321a;
+/* --- Clock + today/tomorrow weather --- */
+#clock {
+  font-size: 104px;
+  font-weight: 900;
+  line-height: 1.0;
+  letter-spacing: -3px;
+  color: #ffffff;
 }
 
-.announcement-card .ann-body {
-  font-size: 34px;
-  font-weight: 400;
-  line-height: 1.28;
-  color: #333;
-  white-space: pre-wrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-}
-
-.announcement-card .ann-date {
-  font-size: 18px;
-  color: #777;
+#gregorian-date {
+  font-size: 25px;
+  font-weight: 500;
   margin-top: 6px;
 }
 
-/* === Sidebar — LEFT side === */
-#sidebar {
-  -webkit-box-flex: 31;
-  -webkit-flex: 31;
-  flex: 31;
+#hebrew-date {
+  font-size: 21px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 2px;
+}
+
+#weather-forecast {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.forecast-day {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  margin-left: 34px;
+}
+
+.forecast-day .day-icon,
+.forecast-day .day-icon svg {
+  width: 46px;
+  height: 46px;
+}
+
+.forecast-day .day-icon {
+  margin-left: 10px;
+}
+
+.forecast-day .day-temp {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.forecast-day .day-name {
+  font-size: 19px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* --- News: natural height; announcements take the remaining space --- */
+#news-panel,
+#announcements-panel {
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
@@ -332,51 +308,73 @@ body {
   flex-direction: column;
 }
 
-/* News Panel */
-#news-panel {
+#announcements-panel {
   -webkit-box-flex: 1;
   -webkit-flex: 1;
   flex: 1;
-  margin-bottom: 20px;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-  flex-direction: column;
+  min-height: 0;
 }
 
-#news-content {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-  flex: 1;
-  padding: 8px 20px 0;
+/* Content takes its natural height so the dots sit right under it. */
+#announcements-content {
+  -webkit-flex-shrink: 1;
+  flex-shrink: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
 .news-item {
-  padding: 9px 0;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.22);
-  font-size: 26px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 25px;
   font-weight: 500;
-  line-height: 1.35;
-  color: #1a1a1a;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  line-height: 1.3;
 }
 
 .news-item:last-child {
   border-bottom: none;
 }
 
-/* Pagination dots */
-#news-dots {
+/* --- Announcements (one at a time) --- */
+.announcement-card.urgent {
+  border-right: 5px solid #ff5a36;
+  padding-right: 14px;
+}
+
+.announcement-card .ann-title {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #ffd58a;
+  margin-bottom: 6px;
+}
+
+.announcement-card.urgent .ann-title {
+  color: #ff8a65;
+}
+
+.announcement-card .ann-body {
+  font-size: 25px;
+  line-height: 1.3;
+  white-space: pre-wrap;
+}
+
+.announcement-card .ann-date {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 6px;
+}
+
+.announcement-card .ann-photo-note {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 4px;
+}
+
+/* --- Pagination dots --- */
+.dots {
   text-align: center;
-  padding: 6px 0 8px;
+  padding: 6px 0 0;
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
 }
@@ -386,34 +384,29 @@ body {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.16);
+  background: rgba(255, 255, 255, 0.35);
   margin: 0 5px;
 }
 
 .page-dot.active {
-  background: rgba(0, 0, 0, 0.5);
+  background: #ffffff;
 }
 
-/* Shabbat Card */
+/* --- Shabbat --- */
 #shabbat-panel {
-  -webkit-flex-shrink: 0;
-  flex-shrink: 0;
-  padding: 12px 20px;
   text-align: center;
 }
 
 #shabbat-content .shabbat-times {
-  font-size: 26px;
+  font-size: 23px;
   font-weight: 700;
-  color: #1a1a1a;
   line-height: 1.4;
 }
 
 #shabbat-content .shabbat-parasha {
-  font-size: 22px;
-  font-weight: 500;
-  color: #666;
-  margin-top: 4px;
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 2px;
 }
 
 /* === Fade Transitions === */
@@ -431,9 +424,231 @@ body {
 
 /* === Fallback text === */
 .fallback-text {
-  color: #bbb;
+  color: rgba(255, 255, 255, 0.7);
   font-style: italic;
   text-align: center;
-  padding: 20px 10px;
-  font-size: 26px;
+  padding: 16px 10px;
+  font-size: 22px;
 }
+
+/* === ynet "good news" badge (D15/D16) === */
+.news-badge {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+  padding: 2px 10px 3px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  white-space: nowrap;
+}
+
+.news-badge svg {
+  width: 15px;
+  height: 15px;
+  vertical-align: -2px;
+  margin-left: 5px;
+}
+
+/* === Smaller / lower screens (1366×768, 1280×720): keep the column inside
+   the screen. Font sizes stay fixed px, just one step down. === */
+@media (max-height: 820px) {
+  #alert-banner { font-size: 30px; padding: 8px 16px; }
+
+  #sidebar { top: 18px; right: 20px; bottom: 18px; width: 420px; }
+  .card + .card { margin-top: 10px; padding-top: 10px; }
+  .card-header { font-size: 18px; margin-bottom: 2px; }
+  .news-badge { font-size: 14px; padding: 1px 8px 2px; }
+
+  #clock { font-size: 72px; letter-spacing: -2px; }
+  #gregorian-date { font-size: 20px; margin-top: 2px; }
+  #hebrew-date { font-size: 17px; }
+  #weather-forecast { margin-top: 8px; padding-top: 8px; }
+  .forecast-day .day-icon,
+  .forecast-day .day-icon svg { width: 34px; height: 34px; }
+  .forecast-day .day-temp { font-size: 24px; }
+  .forecast-day .day-name { font-size: 15px; }
+
+  .news-item { font-size: 20px; padding: 5px 0; }
+  .announcement-card .ann-title { font-size: 22px; margin-bottom: 2px; }
+  .announcement-card .ann-body { font-size: 20px; }
+  .announcement-card .ann-date { font-size: 15px; margin-top: 2px; }
+  .dots { padding-top: 2px; }
+  #shabbat-content .shabbat-times { font-size: 18px; }
+  #shabbat-content .shabbat-parasha { font-size: 16px; }
+
+  #photo:after { width: 760px; }
+  #photo-message { right: 466px; bottom: 50px; left: 20px; }
+  #photo-message .msg-pill { font-size: 44px; padding: 14px 32px 18px; }
+  #photo-message.somber .msg-pill { font-size: 34px; }
+  #photo-message .msg-sub { font-size: 22px; }
+  #ann-photo { top: 24px; bottom: 24px; left: 24px; right: 466px; }
+  #photo-caption { font-size: 14px; bottom: 14px; left: 18px; }
+}
+
+/* === D26: whole text everywhere — no clamp, no ellipsis, no half lines ===
+   Append at the END of style.css (after the @media and the old has-alert
+   block). Also DELETE the clamp rules listed in handoff-B-addendum-D26.md. */
+
+/* News and announcements share the free height; their content boxes have a
+   fixed height that JS measures to build pages of whole items. */
+#news-panel,
+#announcements-panel {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Committee announcements get a bit more of the height than headlines. */
+#announcements-panel {
+  -webkit-box-flex: 1.3;
+  -webkit-flex: 1.3;
+  flex: 1.3;
+}
+
+#news-content,
+#announcements-content {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* A headline wraps fully (up to ~3 lines at 25px in the 500px column). */
+.news-item {
+  display: block;
+}
+
+/* Announcement type steps, tried in order until the whole text fits.
+   Below size 3 the body is split into parts (1/2, 2/2). */
+.announcement-card .ann-body {
+  display: block;
+}
+
+.announcement-card.ann-size-2 .ann-title { font-size: 27px; }
+.announcement-card.ann-size-2 .ann-body { font-size: 22px; }
+.announcement-card.ann-size-3 .ann-title { font-size: 24px; }
+.announcement-card.ann-size-3 .ann-body { font-size: 20px; }
+
+/* Fallback when a single headline is taller than the whole news box. */
+.news-compact .news-item {
+  font-size: 21px;
+  padding: 5px 0;
+}
+
+.ann-part {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+@media (max-height: 820px) {
+  .announcement-card.ann-size-2 .ann-title { font-size: 20px; }
+  .announcement-card.ann-size-2 .ann-body { font-size: 18px; }
+  .announcement-card.ann-size-3 .ann-title { font-size: 18px; }
+  .announcement-card.ann-size-3 .ann-body { font-size: 17px; }
+  .news-compact .news-item { font-size: 17px; padding: 3px 0; }
+
+  /* Red alert on a low screen: a smaller clock frees room for whole text. */
+  body.has-alert #clock { font-size: 56px; }
+  body.has-alert #weather-forecast { margin-top: 4px; padding-top: 4px; }
+}
+
+/* === D27: forecast row, as many whole days as fit (max 5) ===
+   Append at the END of style.css (after the D26 block). Replaces the
+   icon-beside-text layout of .forecast-day with a stacked one: icon on top,
+   temperature, day name. Spacing shrinks first (.wx-compact), type never. */
+
+#weather-forecast {
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.forecast-day {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  margin-left: 22px;
+  text-align: center;
+}
+
+.forecast-day:last-child {
+  margin-left: 0;
+}
+
+.forecast-day .day-icon {
+  margin-left: 0;
+  margin-bottom: 4px;
+}
+
+.forecast-day .day-icon,
+.forecast-day .day-icon svg {
+  width: 44px;
+  height: 44px;
+}
+
+.forecast-day .day-temp {
+  font-size: 30px;
+}
+
+.forecast-day .day-name {
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+/* Tighter spacing before dropping a day */
+.wx-compact .forecast-day {
+  margin-left: 10px;
+}
+
+.wx-compact .forecast-day:last-child {
+  margin-left: 0;
+}
+
+@media (max-height: 820px) {
+  .forecast-day { margin-left: 16px; }
+  .forecast-day .day-icon,
+  .forecast-day .day-icon svg { width: 34px; height: 34px; }
+  .forecast-day .day-temp { font-size: 24px; }
+  .forecast-day .day-name { font-size: 15px; }
+  .wx-compact .forecast-day { margin-left: 8px; }
+}
+
+/* === Gate fixes (append at the END of style.css, after D27) === */
+
+/* 1. Red alert on a low screen: hide the news card and give its height to the
+   committee announcement (in an emergency the committee's text matters more). */
+@media (max-height: 820px) {
+  body.has-alert #news-panel { display: none; }
+}
+
+/* 2. Photo credit: small dark backing so it stays readable over pale rock/snow. */
+#photo-caption {
+  background: rgba(0, 0, 0, 0.45);
+  padding: 3px 10px 4px;
+  border-radius: 6px;
+}
+
+/* Review fix: a committee title too tall for the box on its own steps down once
+   more before the body is split (see layoutAnnouncement). */
+.announcement-card.ann-title-tight .ann-title { font-size: 21px; line-height: 1.15; }
+@media (max-height: 820px) {
+  .announcement-card.ann-title-tight .ann-title { font-size: 17px; }
+}
+
+/* Design (gate addendum): no holiday/event pill next to a red alert; it returns when the alert clears */
+body.has-alert #photo-message { display: none; }

@@ -1,0 +1,17 @@
+/* === Gate fixes (append at the END of style.css, after D27) === */
+
+/* 1. Red alert on a low screen: hide the news card and give its height to the
+   committee announcement (in an emergency the committee's text matters more). */
+@media (max-height: 820px) {
+  body.has-alert #news-panel { display: none; }
+}
+
+/* 2. Photo credit: small dark backing so it stays readable over pale rock/snow. */
+#photo-caption {
+  background: rgba(0, 0, 0, 0.45);
+  padding: 3px 10px 4px;
+  border-radius: 6px;
+}
+
+/* 3. Red alert: no holiday/event greeting next to the alert (all sizes). */
+body.has-alert #photo-message { display: none; }

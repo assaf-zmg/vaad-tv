@@ -7,10 +7,8 @@
   var ANNOUNCEMENT_ROTATE = 20 * 1000;
   var NEWS_ROTATE = 10 * 1000;
   var PAGE_RELOAD_INTERVAL = 7 * 60 * 60 * 1000;
-  var ANNOUNCEMENTS_PER_PAGE = 2;
-  var NEWS_PER_PAGE = 4;
   var CACHE_KEY = 'vaadtv_dashboard_cache';
-  var BG_IMAGE_COUNT = 7;
+  var PHOTO_FADE_MS = 1600;
 
   // --- Weather SVG Icons — outline/line style, dark stroke, no fill ---
   // Clouds use arc-based paths; fill="white" on partly-cloudy hides sun rays behind the cloud.
@@ -59,7 +57,6 @@
   // --- State ---
   var currentData = null;
   var utcOffset = 2;
-  var announcementPage = 0;
   var newsPage = 0;
 
   // --- DOM References ---
@@ -75,34 +72,54 @@
     els.announcementsContent = document.getElementById('announcements-content');
     els.newsContent = document.getElementById('news-content');
     els.newsDots = document.getElementById('news-dots');
+    els.annDots = document.getElementById('ann-dots');
     els.shabbatContent = document.getElementById('shabbat-content');
+    els.photoA = document.getElementById('photo-a');
+    els.photoB = document.getElementById('photo-b');
+    els.annPhoto = document.getElementById('ann-photo');
+    els.photoMessage = document.getElementById('photo-message');
+    els.photoCaption = document.getElementById('photo-caption');
   }
 
   // --- XHR (ES5, no fetch) ---
   function fetchJSON(url, callback) {
+    // Exactly one callback per request: on a network failure the browser fires
+    // both readystatechange (status 0) and error, and calling back twice would
+    // start two retry loops in fetchData (they multiply on every failure).
+    var done = false;
+    function finish(err, data) {
+      if (done) return;
+      done = true;
+      callback(err, data);
+    }
     var xhr;
     try {
       xhr = new XMLHttpRequest();
     } catch (e) {
-      callback(e, null);
+      finish(e, null);
       return;
     }
     xhr.open('GET', url, true);
+    xhr.timeout = 20000;
+    xhr.ontimeout = function() { finish(new Error('Timeout'), null); };
+    xhr.onerror = function() { finish(new Error('Network error'), null); };
     xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4) {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            callback(null, JSON.parse(xhr.responseText));
-          } catch (e2) {
-            callback(e2, null);
-          }
-        } else {
-          callback(new Error('HTTP ' + xhr.status), null);
-        }
+      if (xhr.readyState !== 4) return;
+      if (xhr.status >= 200 && xhr.status < 300) {
+        var data;
+        try { data = JSON.parse(xhr.responseText); } catch (e2) { finish(e2, null); return; }
+        finish(null, data);
+      } else {
+        finish(new Error('HTTP ' + xhr.status), null);
       }
     };
-    xhr.onerror = function() { callback(new Error('Network error'), null); };
-    try { xhr.send(); } catch (e) { callback(e, null); }
+    try { xhr.send(); } catch (e) { finish(e, null); }
+  }
+
+  // CSS url() value: quoted, with ( ) ' " escaped, so image names like
+  // "Almond_tree_(Israel).jpg" can't break the declaration.
+  function cssUrl(u) {
+    return 'url("' + ('' + u).replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/'/g, '%27').replace(/"/g, '%22') + '")';
   }
 
   // --- LocalStorage Cache ---
@@ -117,12 +134,75 @@
     } catch (e) { return null; }
   }
 
-  // --- Background Image ---
-  function setBackground() {
-    var now = new Date();
-    var dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
-    var index = dayOfYear % BG_IMAGE_COUNT;
-    document.body.style.backgroundImage = 'url(/api/bg/' + index + ')';
+  // --- Main photo ---
+  // The server decides what to show (pool photo every 3 hours, holiday photo,
+  // or a building event) and sends { id, url, caption, message, sub, tone }.
+  // We preload the new photo, then cross-fade it in on top of the old one.
+  var photoState = { id: null, pendingId: null, front: null, annShowing: false };
+
+  function renderPhotoText(bg) {
+    var msg = '';
+    if (bg.message) {
+      msg = escapeHtml(bg.message);
+      if (bg.sub) msg += '<span class="msg-sub">' + escapeHtml(bg.sub) + '</span>';
+      msg = '<span class="msg-pill">' + msg + '</span>';
+    }
+    els.photoMessage.innerHTML = msg;
+    els.photoMessage.className = (bg.tone === 'somber' ? 'somber' : '') + (photoState.annShowing ? ' hidden' : '');
+    els.photoCaption.innerHTML = escapeHtml(bg.caption || '');
+  }
+
+  function applyBackground(bg) {
+    if (!bg || !bg.url) return;
+    if (bg.id === photoState.id) { renderPhotoText(bg); return; }
+    if (bg.id === photoState.pendingId) return; // already loading this one
+    photoState.pendingId = bg.id;
+
+    var img = new Image();
+    img.onerror = function() { if (photoState.pendingId === bg.id) photoState.pendingId = null; };
+    img.onload = function() {
+      if (photoState.pendingId !== bg.id) return; // a newer photo was requested meanwhile
+      photoState.pendingId = null;
+      var next = (photoState.front === els.photoA) ? els.photoB : els.photoA;
+      var prev = photoState.front;
+      next.style.backgroundImage = cssUrl(bg.url);
+      next.style.zIndex = 1;
+      if (prev) prev.style.zIndex = 0;
+      next.className = 'photo-layer visible';
+      // hide the old layer after the fade, unless it became the front again meanwhile
+      if (prev) setTimeout(function() { if (photoState.front !== prev) prev.className = 'photo-layer'; }, PHOTO_FADE_MS);
+      photoState.front = next;
+      photoState.id = bg.id;
+      renderPhotoText(bg);
+    };
+    // On error keep the current photo; the next poll will try again.
+    img.src = bg.url;
+  }
+
+  // An announcement with an image takes over the photo area while it is shown.
+  // The flyer is preloaded and shown only once it has loaded, so a broken link
+  // never blanks the photo area (the landscape just stays).
+  var annPhotoWanted = '';
+
+  function setAnnPhotoVisible(on) {
+    els.annPhoto.className = on ? 'photo-layer visible' : 'photo-layer';
+    photoState.annShowing = on;
+    var hide = on ? ' hidden' : '';
+    els.photoCaption.className = hide;
+    els.photoMessage.className = els.photoMessage.className.replace(' hidden', '').replace('hidden', '') + hide;
+  }
+
+  function showAnnouncementPhoto(url) {
+    annPhotoWanted = url || '';
+    if (!url) { setAnnPhotoVisible(false); return; }
+    var img = new Image();
+    img.onload = function() {
+      if (annPhotoWanted !== url) return; // the announcement changed meanwhile
+      els.annPhoto.style.backgroundImage = cssUrl(url);
+      setAnnPhotoVisible(true);
+    };
+    img.onerror = function() { if (annPhotoWanted === url) setAnnPhotoVisible(false); };
+    img.src = url;
   }
 
   // --- Clock (ES5: getUTCHours + offset, no Intl timezone) ---
@@ -135,6 +215,21 @@
   }
 
   // --- HTML Escaping ---
+  // D21: Android 4.4 has no colour-emoji font, so emoji render as empty boxes.
+  // Drop astral characters (surrogate pairs), BMP symbol/dingbat emoji (U+2600-27BF)
+  // and emoji joiners/variation selectors,
+  // then tidy the spaces they leave behind. Newlines are kept (pre-wrap bodies).
+  function stripEmoji(str) {
+    if (!str) return '';
+    return ('' + str)
+      .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '')
+      .replace(/[\u2600-\u27BF]\uFE0F?/g, '')          // BMP symbols / dingbats (☀ ❤ ✨)
+      .replace(/[\u200D\uFE0E\uFE0F]/g, '')
+      .replace(/[ \t]{2,}/g, ' ')
+      .replace(/[ \t]+(\n|$)/g, '$1')
+      .replace(/(^|\n)[ \t]+/g, '$1');
+  }
+
   function escapeHtml(str) {
     if (!str) return '';
     return ('' + str)
@@ -149,36 +244,98 @@
     if (alert && alert.title) {
       els.alertText.innerHTML = escapeHtml(alert.title + (alert.areas ? ' - ' + alert.areas : ''));
       els.alertBanner.style.display = 'block';
+      // body.has-alert trims the column so nothing is cut mid-line (no classList on old WebView)
+      if (!/(^|\s)has-alert(\s|$)/.test(document.body.className)) document.body.className += ' has-alert';
     } else {
       els.alertBanner.style.display = 'none';
+      document.body.className = document.body.className.replace(/(^|\s)has-alert(?=\s|$)/g, '');
     }
   }
 
-  // --- Render: Weather (5-day forecast with SVG icons) ---
+  // --- Render: Weather (D27: as many whole days as fit, max 5) ---
+  // Day 0 = "היום" (daily high) until 15:00 local; from 15:00 it becomes
+  // "עכשיו" with the current temperature, because the "high of the remaining
+  // hours" can be lower than tomorrow's and reads as wrong in the evening.
+  // Then "מחר", then short day names ("שישי"). The row never wraps and never
+  // cuts an item: tighter spacing first, then fewer days.
+  var WEATHER_MAX_DAYS = 5;
+  var WEATHER_EVENING_HOUR = 15;
+  var MOON_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48"><path d="M 30 6 A 18 18 0 1 0 42 32 A 14 14 0 0 1 30 6 Z" fill="none" stroke="' + S + '" stroke-width="2.5" stroke-linejoin="round"/></svg>';
+  var lastWeather = null;
+
+  function localHour() {
+    var h = (new Date().getUTCHours() + utcOffset) % 24;
+    return h < 0 ? h + 24 : h;
+  }
+
+  function weatherIconHtml(code) {
+    var type = getWeatherIconType(code);
+    var svg = (typeof code === 'string' && code.indexOf('night') !== -1 && type === 'sunny')
+      ? MOON_ICON
+      : (WEATHER_ICONS[type] || WEATHER_ICONS.cloudy);
+    return svg.split(S).join('#f2f0ea').split('fill="white"').join('fill="none"');
+  }
+
+  function shortDayName(dayName) {
+    return dayName ? dayName.replace('יום ', '') : '';
+  }
+
+  function forecastItemHtml(code, temp, label) {
+    return '<div class="forecast-day">' +
+      '<div class="day-icon">' + weatherIconHtml(code) + '</div>' +
+      '<div class="day-temp">' + temp + '&#176;</div>' +
+      '<div class="day-name">' + escapeHtml(label) + '</div>' +
+      '</div>';
+  }
+
+  function setWeatherCompact(on) {
+    var el = els.weatherForecast;
+    el.className = el.className.replace(/(^|\s)wx-compact(?=\s|$)/g, '');
+    if (on) el.className += ' wx-compact';
+  }
+
+  function weatherOverflows() {
+    return els.weatherForecast.scrollWidth > els.weatherForecast.clientWidth + 1;
+  }
+
   function renderWeather(weather) {
+    if (weather) lastWeather = weather;
+    weather = lastWeather;
     if (!weather || !weather.daily || weather.daily.length === 0) {
-      els.weatherForecast.innerHTML = '<div class="fallback-text">מזג אוויר לא זמין</div>';
+      els.weatherForecast.innerHTML = '<div class="day-name">מזג אוויר לא זמין</div>';
       return;
     }
 
-    var html = '';
     var daily = weather.daily;
-    for (var i = 0; i < daily.length; i++) {
-      var day = daily[i];
-      var iconType = getWeatherIconType(day.weathercode);
-      var icon = WEATHER_ICONS[iconType] || WEATHER_ICONS.cloudy;
-      // Short day name: strip "יום " prefix
-      var shortName = day.dayName ? day.dayName.replace('יום ', '') : '';
-      var label = (i === 0) ? 'היום' : (i === 1) ? 'מחר' : shortName;
-      html +=
-        '<div class="forecast-day">' +
-          '<div class="day-icon">' + icon + '</div>' +
-          '<div class="day-temp">' + day.maxTemp + '&#176;</div>' +
-          '<div class="day-name">' + label + '</div>' +
-        '</div>';
+    var cur = weather.current || {};
+    var evening = localHour() >= WEATHER_EVENING_HOUR &&
+      cur.temperature !== undefined && cur.temperature !== null;
+    var items = [];
+    for (var i = 0; i < daily.length && items.length < WEATHER_MAX_DAYS; i++) {
+      var d = daily[i];
+      if (i === 0 && evening) {
+        items.push(forecastItemHtml(cur.weathercode || d.weathercode, Math.round(cur.temperature), 'עכשיו'));
+      } else if (d.maxTemp === undefined || d.maxTemp === null || d.maxTemp <= -50) {
+        continue; // no data for this day (e.g. -99 sentinel): skip, never show a fake number
+      } else {
+        items.push(forecastItemHtml(d.weathercode, d.maxTemp,
+          i === 0 ? 'היום' : i === 1 ? 'מחר' : shortDayName(d.dayName)));
+      }
     }
-    els.weatherForecast.innerHTML = html;
+
+    // Fit: all items with normal spacing, then compact spacing, then drop the last day.
+    var n = items.length;
+    setWeatherCompact(false);
+    els.weatherForecast.innerHTML = items.join('');
+    if (weatherOverflows()) setWeatherCompact(true);
+    while (n > 2 && weatherOverflows()) {
+      n--;
+      els.weatherForecast.innerHTML = items.slice(0, n).join('');
+    }
   }
+
+  // Re-fit if the screen size changes (rare on the kiosk, cheap anyway).
+  window.onresize = function() { renderWeather(null); };
 
   // --- Render: Dates ---
   function renderDates(data) {
@@ -186,85 +343,228 @@
     if (data.hebrewDate) els.hebrewDate.innerHTML = escapeHtml(data.hebrewDate);
   }
 
-  // --- Render: Announcements ---
+  // --- Render: Announcements (D26: always whole text, never clamped) ---
+  // One announcement at a time. For each one we try three type sizes; if the
+  // whole text does not fit even at the smallest size, the body is split into
+  // parts ("1/2", "2/2") that rotate in the same 20s slot. Measurement happens
+  // while the content is faded out, so the resident never sees it.
+  var ANN_SIZES = ['ann-size-1', 'ann-size-2', 'ann-size-3'];
+  var annIndex = 0;      // which announcement
+  var annPart = 0;       // which part of it
+  var annLayout = null;  // { size: 'ann-size-x', parts: [bodyText, ...] }
+  var annKey = '';       // text + alert state of the current one (see render())
+  var annBusy = false;   // a render is mid-fade (400ms); rotation waits for it
+
+  function annCardHtml(ann, size, body, partLabel) {
+    var footer = escapeHtml(ann.date || '');
+    if (partLabel) footer += (footer ? ' · ' : '') + '<span class="ann-part">' + partLabel + '</span>';
+    return '<div class="announcement-card ' + size + (ann.urgent ? ' urgent' : '') + '">' +
+      '<div class="ann-title">' + escapeHtml(stripEmoji(ann.title)) + '</div>' +
+      '<div class="ann-body">' + escapeHtml(body) + '</div>' +
+      (footer ? '<div class="ann-date">' + footer + '</div>' : '') +
+      '</div>';
+  }
+
+  var FIT_SLACK = 4; // px of headroom for rounding between measure and paint
+
+  // Measure the card itself: el.scrollHeight never drops below el's own
+  // height, so it cannot tell "fits with room to spare".
+  function fits(el) {
+    var card = el.children[0];
+    return !!card && card.offsetHeight <= el.clientHeight - FIT_SLACK;
+  }
+
+  // Greedy word fill at the smallest size. Whitespace tokens are kept so
+  // line breaks typed in the sheet survive. Reserves room for a "9/9" label.
+  function splitBody(ann, body, el, size) {
+    var tokens = body.split(/(\s+)/);
+    var parts = [];
+    var cur = '';
+    for (var i = 0; i < tokens.length; i++) {
+      if (tokens[i] === '') continue;
+      var trial = cur + tokens[i];
+      el.innerHTML = annCardHtml(ann, size, trial, '9/9');
+      if (!fits(el) && cur.replace(/\s/g, '') !== '') {
+        // Prefer to break at a line break typed in the sheet, if one sits in
+        // the second half of this part; otherwise break between words.
+        var nl = cur.lastIndexOf('\n');
+        if (nl > cur.length / 2) {
+          parts.push(cur.slice(0, nl).replace(/\s+$/, ''));
+          cur = cur.slice(nl + 1) + tokens[i];
+        } else {
+          parts.push(cur.replace(/\s+$/, ''));
+          cur = tokens[i].replace(/^\s+/, '');
+        }
+      } else {
+        cur = trial;
+      }
+    }
+    if (cur.replace(/\s/g, '') !== '') parts.push(cur.replace(/\s+$/, ''));
+    return parts.length ? parts : [body];
+  }
+
+  function layoutAnnouncement(ann, el) {
+    var body = stripEmoji(ann.body || '');
+    for (var s = 0; s < ANN_SIZES.length; s++) {
+      el.innerHTML = annCardHtml(ann, ANN_SIZES[s], body, '');
+      if (fits(el)) return { size: ANN_SIZES[s], parts: [body] };
+    }
+    // A title that fills the box on its own would leave room for ~1 word per
+    // part. Step the title down once more before splitting; if even that is too
+    // tall (a very long title), show the whole text as one part rather than
+    // dozens of one-word pages.
+    var size = 'ann-size-3';
+    el.innerHTML = annCardHtml(ann, size, body.split(/\s+/)[0] || '', '9/9');
+    if (!fits(el)) {
+      size = 'ann-size-3 ann-title-tight';
+      el.innerHTML = annCardHtml(ann, size, body.split(/\s+/)[0] || '', '9/9');
+      if (!fits(el)) return { size: size, parts: [body] };
+    }
+    var parts = splitBody(ann, body, el, size);
+    return { size: size, parts: parts.length > 12 ? [body] : parts };
+  }
+
   function renderAnnouncementsPage() {
     var list = (currentData && currentData.announcements) || [];
     if (list.length === 0) {
       els.announcementsContent.innerHTML = '<div class="fallback-text">אין הודעות להצגה</div>';
+      renderDots(els.annDots, 0, 1, 0);
+      showAnnouncementPhoto('');
       return;
     }
+    if (annIndex >= list.length) { annIndex = 0; annPart = 0; }
 
-    var start = announcementPage * ANNOUNCEMENTS_PER_PAGE;
-    if (start >= list.length) { announcementPage = 0; start = 0; }
-
-    var html = '';
-    for (var i = start; i < start + ANNOUNCEMENTS_PER_PAGE && i < list.length; i++) {
-      var ann = list[i];
-      var hasImage = ann.showImage && ann.imageUrl;
-      var cardClass = 'announcement-card' + (ann.urgent ? ' urgent' : '') + (hasImage ? ' has-image' : '');
-      var cardStyle = hasImage
-        ? ' style="background-image:url(\'' + ann.imageUrl + '\');background-size:cover;-webkit-background-size:cover;background-position:center center;-webkit-background-position:center center;"'
-        : '';
-      html +=
-        '<div class="' + cardClass + '"' + cardStyle + '>' +
-          '<div class="ann-title">' + escapeHtml(ann.title) + '</div>' +
-          '<div class="ann-body">' + escapeHtml(ann.body) + '</div>' +
-          '<div class="ann-date">' + escapeHtml(ann.date) + '</div>' +
-        '</div>';
-    }
-
-    els.announcementsContent.className = 'fade-out';
     var el = els.announcementsContent;
-    setTimeout(function() { el.innerHTML = html; el.className = 'fade-in'; }, 400);
+    el.className = 'fade-out';
+    annBusy = true;
+    setTimeout(function() {
+      annBusy = false;
+      var ann = list[annIndex];
+      if (annPart === 0 || !annLayout) annLayout = layoutAnnouncement(ann, el);
+      if (annPart >= annLayout.parts.length) annPart = 0;
+      var n = annLayout.parts.length;
+      el.innerHTML = annCardHtml(ann, annLayout.size, annLayout.parts[annPart],
+        n > 1 ? (annPart + 1) + '/' + n : '');
+      el.className = 'fade-in';
+      showAnnouncementPhoto(ann.showImage && ann.imageUrl ? ann.imageUrl : '');
+      renderDots(els.annDots, list.length, 1, annIndex);
+    }, 400);
   }
 
   function rotateAnnouncements() {
     var list = (currentData && currentData.announcements) || [];
-    if (Math.ceil(list.length / ANNOUNCEMENTS_PER_PAGE) <= 1) return;
-    announcementPage = (announcementPage + 1) % Math.ceil(list.length / ANNOUNCEMENTS_PER_PAGE);
+    if (!list.length || annBusy) return; // mid-render: annLayout isn't ready yet
+    if (annLayout && annPart + 1 < annLayout.parts.length) {
+      annPart++;
+    } else {
+      if (list.length === 1 && (!annLayout || annLayout.parts.length === 1)) return;
+      annIndex = (annIndex + 1) % list.length;
+      annPart = 0;
+    }
     renderAnnouncementsPage();
   }
 
-  // --- Render: News + Pagination Dots ---
-  function updateNewsDots() {
-    if (!els.newsDots) return;
-    var list = (currentData && currentData.ynet) || [];
-    var totalPages = Math.ceil(list.length / NEWS_PER_PAGE);
-    if (totalPages <= 1) { els.newsDots.innerHTML = ''; return; }
+  // --- Render: News + Pagination Dots (D26: whole headlines, paged by height) ---
+  var newsPages = [];  // [[start, end), ...] built by measuring
+
+  function renderDots(el, count, perPage, page) {
+    if (!el) return;
+    var totalPages = Math.ceil(count / perPage);
+    if (totalPages <= 1) { el.innerHTML = ''; return; }
     var html = '';
     for (var i = 0; i < totalPages; i++) {
-      html += '<span class="page-dot' + (i === newsPage ? ' active' : '') + '"></span>';
+      html += '<span class="page-dot' + (i === page ? ' active' : '') + '"></span>';
     }
-    els.newsDots.innerHTML = html;
+    el.innerHTML = html;
+  }
+
+  function newsItemHtml(item) {
+    return '<div class="news-item">' + escapeHtml(stripEmoji(item.title)) + '</div>';
+  }
+
+  function setCompactNews(on) {
+    var panel = els.newsContent.parentNode;
+    panel.className = panel.className.replace(/(^|\s)news-compact(?=\s|$)/g, '');
+    if (on) panel.className += ' news-compact';
+  }
+
+  // Render every headline once (invisible), measure, pack whole items per page.
+  // If even one headline is taller than the whole box, retry one type step
+  // smaller (.news-compact) so it still shows in full.
+  function paginateNews(list, el) {
+    setCompactNews(false);
+    var pages = packNews(list, el);
+    if (pages.tooTall) {
+      setCompactNews(true);
+      pages = packNews(list, el);
+    }
+    return pages;
+  }
+
+  function packNews(list, el) {
+    var html = '';
+    for (var i = 0; i < list.length; i++) html += newsItemHtml(list[i]);
+    el.innerHTML = html;
+    var avail = el.clientHeight - FIT_SLACK;
+    var kids = el.children;
+    var pages = [];
+    var start = 0, used = 0;
+    var tooTall = false;
+    for (var k = 0; k < kids.length; k++) {
+      var h = kids[k].offsetHeight;
+      if (h > avail) tooTall = true;
+      if (k > start && used + h > avail) {
+        pages.push([start, k]);
+        start = k;
+        used = 0;
+      }
+      used += h;
+    }
+    pages.push([start, kids.length]);
+    pages.tooTall = tooTall;
+    return pages;
   }
 
   function renderNewsPage() {
     var list = (currentData && currentData.ynet) || [];
     if (list.length === 0) {
-      els.newsContent.innerHTML = '<div class="fallback-text">חדשות לא זמינות</div>';
-      updateNewsDots();
+      els.newsContent.innerHTML = '<div class="fallback-text">החדשות הטובות יחזרו בקרוב</div>';
+      newsPages = [];
+      renderDots(els.newsDots, 0, 1, 0);
       return;
     }
 
-    var start = newsPage * NEWS_PER_PAGE;
-    if (start >= list.length) { newsPage = 0; start = 0; }
-
-    var html = '';
-    for (var i = start; i < start + NEWS_PER_PAGE && i < list.length; i++) {
-      html += '<div class="news-item">' + escapeHtml(list[i].title) + '</div>';
-    }
-
     var el = els.newsContent;
+    if (!el.offsetWidth && !el.offsetHeight) return; // card hidden (alert on a low screen)
     el.className = 'fade-out';
-    setTimeout(function() { el.innerHTML = html; el.className = 'fade-in'; updateNewsDots(); }, 400);
+    setTimeout(function() {
+      newsPages = paginateNews(list, el);
+      if (newsPage >= newsPages.length) newsPage = 0;
+      var html = '';
+      for (var i = newsPages[newsPage][0]; i < newsPages[newsPage][1]; i++) html += newsItemHtml(list[i]);
+      el.innerHTML = html;
+      el.className = 'fade-in';
+      renderDots(els.newsDots, newsPages.length, 1, newsPage);
+    }, 400);
   }
 
   function rotateNews() {
-    var list = (currentData && currentData.ynet) || [];
-    var totalPages = Math.ceil(list.length / NEWS_PER_PAGE);
-    if (totalPages <= 1) return;
-    newsPage = (newsPage + 1) % totalPages;
+    if (newsPages.length <= 1) return;
+    newsPage = (newsPage + 1) % newsPages.length;
     renderNewsPage();
+  }
+
+  // Desktop browsers swap in the Heebo web font after first paint, which
+  // changes line heights; re-measure once it is ready. The lobby device has no
+  // document.fonts (and cannot load the font), so this is skipped there.
+  function relayoutWhenFontsReady() {
+    if (!document.fonts || !document.fonts.ready) return;
+    document.fonts.ready.then(function() {
+      annPart = 0;
+      annLayout = null;
+      renderAnnouncementsPage();
+      renderNewsPage();
+    });
   }
 
   // --- Render: Shabbat ---
@@ -290,12 +590,21 @@
     if (data.utcOffset !== undefined) utcOffset = data.utcOffset;
 
     renderAlert(data.alert);
+    applyBackground(data.background);
     renderWeather(data.weather);
     renderDates(data);
     renderShabbat(data.shabbat);
 
-    announcementPage = 0;
-    newsPage = 0;
+    // Keep the rotation position across polls (a 6+ part announcement must be able
+    // to finish). Re-measure only when the current announcement's text changed or
+    // the alert state changed (it changes the space available).
+    var cur = (data.announcements || [])[annIndex];
+    var key = cur ? (cur.title || '') + '\u0001' + (cur.body || '') + '\u0001' + (data.alert && data.alert.title ? 'A' : '') : '';
+    if (key !== annKey) {
+      annKey = key;
+      annPart = 0;
+      annLayout = null;
+    }
     renderAnnouncementsPage();
     renderNewsPage();
   }
@@ -333,7 +642,6 @@
   // --- Init ---
   function init() {
     initDom();
-    setBackground();
     updateClock();
     renderFallbacks();
 
@@ -341,6 +649,7 @@
     if (cached) render(cached);
 
     fetchData();
+    relayoutWhenFontsReady();
 
     setInterval(updateClock, 1000);
     setInterval(rotateAnnouncements, ANNOUNCEMENT_ROTATE);

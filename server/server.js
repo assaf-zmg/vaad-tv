@@ -10,6 +10,82 @@ var app = express();
 var PORT = process.env.PORT || 3000;
 var SHEET_ID = process.env.GOOGLE_SHEET_ID || '1e6bM89BRo1VEvw4edUaydH8sYy29Kr94BJW-W9Li5pI';
 
+// --- Photo area: pool / holiday / building-event logic lives in schedule.js ---
+var schedule = require('./schedule');
+var BG_IMAGES = schedule.BG_IMAGES;
+var THEMES = schedule.THEMES;
+var SCHEDULE_SHEET = process.env.SCHEDULE_SHEET || 'לוח תמונות';
+
+// LOCAL TESTING ONLY (ignored on Vercel):
+//   DEBUG_DATE=2027-05-12T10:00:00+03:00   pretend it's this moment
+//   SCHEDULE_MOCK=test/mock-schedule.json  read the schedule from a file, not the sheet
+var IS_VERCEL = !!(process.env.VERCEL || process.env.VERCEL_ENV); // debug hooks off on any Vercel env
+var DEBUG_DATE_MS = (!IS_VERCEL && process.env.DEBUG_DATE) ? Date.parse(process.env.DEBUG_DATE) : NaN;
+var SCHEDULE_MOCK = (!IS_VERCEL && process.env.SCHEDULE_MOCK) ? path.resolve(__dirname, process.env.SCHEDULE_MOCK) : '';
+if (!isNaN(DEBUG_DATE_MS)) console.log('DEBUG_DATE active:', new Date(DEBUG_DATE_MS).toISOString());
+//   ANNOUNCEMENTS_MOCK=test/mock-announcements.csv  announcements from a CSV, not the sheet
+var ANNOUNCEMENTS_MOCK = (!IS_VERCEL && process.env.ANNOUNCEMENTS_MOCK) ? path.resolve(__dirname, process.env.ANNOUNCEMENTS_MOCK) : '';
+//   ALERT_MOCK=טקסט התרעה       show a red alert banner with this text
+//   YNET_MOCK_EMPTY=1           ynet returns no items (empty state)
+//   DEBUG_ROTATE_SEC=60         pool photo changes every N seconds (to watch the crossfade)
+var ALERT_MOCK = (!IS_VERCEL && process.env.ALERT_MOCK) || '';
+var YNET_MOCK_EMPTY = !IS_VERCEL && process.env.YNET_MOCK_EMPTY === '1';
+var DEBUG_ROTATE_MS = (!IS_VERCEL && +process.env.DEBUG_ROTATE_SEC > 0) ? +process.env.DEBUG_ROTATE_SEC * 1000 : 0;
+if (SCHEDULE_MOCK) console.log('SCHEDULE_MOCK active:', SCHEDULE_MOCK);
+if (ALERT_MOCK || YNET_MOCK_EMPTY || DEBUG_ROTATE_MS) console.log('Debug mocks:', { ALERT_MOCK: ALERT_MOCK, YNET_MOCK_EMPTY: YNET_MOCK_EMPTY, DEBUG_ROTATE_MS: DEBUG_ROTATE_MS });
+if (ANNOUNCEMENTS_MOCK) console.log('ANNOUNCEMENTS_MOCK active:', ANNOUNCEMENTS_MOCK);
+
+function nowMs() {
+  return isNaN(DEBUG_DATE_MS) ? Date.now() : DEBUG_DATE_MS;
+}
+
+function israelLocalMs() {
+  return nowMs() + getUtcOffset() * 60 * 60 * 1000;
+}
+
+var lastSchedule = [];
+
+// Never rejects: on any error keep the last good schedule.
+function fetchSchedule() {
+  return fetchScheduleRaw()
+    .then(function(items) { lastSchedule = items; return items; })
+    .catch(function(err) {
+      console.error('Error fetching schedule:', err.message);
+      return lastSchedule;
+    });
+}
+
+function fetchScheduleRaw() {
+  var itemsPromise;
+  if (SCHEDULE_MOCK) {
+    // Mock file holds rows in the sheet's column order, as gviz cells.
+    delete require.cache[SCHEDULE_MOCK];
+    itemsPromise = Promise.resolve(schedule.parseScheduleRows(require(SCHEDULE_MOCK)));
+  } else {
+    var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
+      '/gviz/tq?tqx=out:json&headers=1&sheet=' + encodeURIComponent(SCHEDULE_SHEET);
+    itemsPromise = fetch(url, { timeout: 10000 })
+      .then(function(res) { return res.text(); })
+      .then(function(text) {
+        var json = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
+        if (json.status === 'error') throw new Error('schedule sheet: ' + JSON.stringify(json.errors));
+        if (!schedule.isScheduleTable(json)) {
+          // Tab missing (gviz fell back to the first tab): a real "no schedule", not an error.
+          console.log('Schedule tab "' + SCHEDULE_SHEET + '" not found; showing the photo pool only.');
+          return [];
+        }
+        return schedule.parseScheduleRows(json);
+      });
+  }
+  // Resolve Drive / imgBB share links once, at fetch time.
+  return itemsPromise.then(function(items) {
+    return Promise.all(items.map(function(item) {
+      if (!item.link) return item;
+      return resolveImageUrl(item.link).then(function(u) { item.imageUrl = u; return item; });
+    }));
+  });
+}
+
 // --- In-memory cache ---
 var cache = {
   data: null,
@@ -86,48 +162,12 @@ var weatherDescriptions = {
   99: 'סופת רעמים עם ברד כבד'
 };
 
-var hebrewDays = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
 
-// --- RSS News Filters ---
-var NEWS_BLACKLIST = [
-  'הרוג','הרוגים','פצוע','פצועים','הרוגה',
-  'נרצח','נרצחה','נרצחו',
-  'ירי','ירי רקטות','אזעקה',
-  'פיגוע','פיגועים','מטען','חיסול',
-  'מחבל','מחבלים','ירי טילים','כטב"ם',
-  'חדירה','חטיפה','חטופים',
-  'לחימה','קרב','מלחמה','עימות',
-  'צבא','צה"ל','תקיפה','הפצצה','יירוט',
-  'רצח','רציחה','דקירה','דקר',
-  'תקף','תקפה','תקפו','תקפת',
-  'תוקף','תוקפת','תוקפים','תוקפות',
-  'התקפה','התקפות',
-  'אלימות','שוד','שדד','גניבה',
-  'נעצר','מעצר','חשוד','חקירה','כתב אישום',
-  'אונס','הטרדה','תקיפה מינית',
-  'תאונה','תאונת דרכים','התנגשות','דריסה',
-  'שריפה','דליקה','קריסה','התמוטטות','טביעה',
-  'אסון','פינוי','נפגעים','משבר',
-  'ירידות','פיטורים','אבטלה','מחסור',
-  'התייקרות','זינוק במחירים',
-  'מחאה','הפגנה','שביתה','סכסוך',
-  'מגפה','קורונה','נגיף','הדבקה','חולה קשה',
-  'מוות','תמותה'
-];
-
-var NEWS_WHITELIST = [
-  'זכה','זכתה','הצלחה','יוזמה','פרויקט',
-  'חדש','השקה','קהילה','ילדים','חינוך',
-  'תרומה','התנדבות','חדשנות','מחקר',
-  'גילוי','בריאות','טוב','סיוע','שיתוף פעולה'
-];
-
-function titleContainsAny(title, list) {
-  for (var i = 0; i < list.length; i++) {
-    if (title.indexOf(list[i]) !== -1) return true;
-  }
-  return false;
-}
+// --- Ynet "good news only" (lists in news-filter.json, owned by content; logic in news.js) ---
+var NEWS_FILTER = require('./news-filter.json');
+var news = require('./news');
+var weather = require('./weather');
+var hebdate = require('./hebdate');
 
 // --- Data Fetchers ---
 
@@ -159,8 +199,10 @@ function resolveImageUrl(url) {
 
 function fetchAnnouncements() {
   var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv';
-  return fetch(url)
-    .then(function(res) { return res.text(); })
+  var csvPromise = ANNOUNCEMENTS_MOCK
+    ? Promise.resolve(require('fs').readFileSync(ANNOUNCEMENTS_MOCK, 'utf8'))
+    : fetch(url, { timeout: 10000 }).then(function(res) { return res.text(); });
+  return csvPromise
     .then(function(csv) {
       var records = csvParse.parse(csv, {
         columns: true,
@@ -204,67 +246,52 @@ function fetchAnnouncements() {
     });
 }
 
-function fetchYnet() {
-  var url = 'http://www.ynet.co.il/Integration/StoryRss2.xml';
+// Own cache: 7 feeds are fetched at most every 10 minutes, not every 2.
+var ynetCache = { data: null, timestamp: 0, TTL: 10 * 60 * 1000 };
+
+function fetchYnetFeed(feed) {
+  // https directly: the http URL 301-redirects.
+  var url = 'https://www.ynet.co.il/Integration/StoryRss' + feed.id + '.xml';
   return fetch(url, { timeout: 10000 })
-    .then(function(res) { return res.text(); })
-    .then(function(xml) {
-      return xml2js.parseStringPromise(xml);
+    .then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.text();
     })
+    .then(function(xml) { return xml2js.parseStringPromise(xml); })
     .then(function(result) {
-      var whitelisted = [];
-      var neutral = [];
-      try {
-        var channel = result.rss.channel[0];
-        var rawItems = channel.item || [];
-        // Scan up to 40 items so the filter has enough to choose from
-        for (var i = 0; i < Math.min(rawItems.length, 40); i++) {
-          var item = rawItems[i];
-          var title = (item.title && item.title[0]) || '';
-          // Skip blacklisted items
-          if (titleContainsAny(title, NEWS_BLACKLIST)) continue;
-          var entry = { title: title, link: (item.link && item.link[0]) || '' };
-          // Separate whitelisted from neutral
-          if (titleContainsAny(title, NEWS_WHITELIST)) {
-            whitelisted.push(entry);
-          } else {
-            neutral.push(entry);
-          }
-        }
-      } catch (e) {
-        console.error('Ynet parse error:', e.message);
-      }
-      // Whitelisted items first, then neutral; cap at 8
-      return whitelisted.concat(neutral).slice(0, 8);
+      var raw = (result.rss && result.rss.channel && result.rss.channel[0].item) || [];
+      var items = raw.slice(0, 30).map(function(item) {
+        var t = item.title && item.title[0];
+        if (t && typeof t === 'object') t = t._ || '';
+        return { title: ('' + (t || '')).trim(), link: (item.link && item.link[0]) || '' };
+      }).filter(function(it) { return it.title; });
+      return { feed: feed, items: items };
     });
 }
 
-function metSymbolToHebrew(code) {
-  if (code.indexOf('thunder') !== -1) return 'סופת רעמים';
-  if (code.indexOf('snow') !== -1) return 'שלג';
-  if (code.indexOf('sleet') !== -1) return 'ברד';
-  if (code.indexOf('rain') !== -1 || code.indexOf('shower') !== -1) return 'גשם';
-  if (code.indexOf('drizzle') !== -1) return 'טפטוף';
-  if (code.indexOf('fog') !== -1) return 'ערפל';
-  if (code === 'cloudy') return 'מעונן';
-  if (code.indexOf('partlycloudy') !== -1) return 'מעונן חלקית';
-  if (code.indexOf('fair') !== -1) return 'בהיר בעיקר';
-  return 'בהיר';
-}
-
-// Severity order for picking worst daytime condition (lower index = worse)
-var MET_SEVERITY = [
-  'thunder', 'heavysnow', 'snow', 'sleet',
-  'heavyrain', 'rain', 'rainshowers', 'shower',
-  'lightrain', 'drizzle', 'fog',
-  'cloudy', 'partlycloudy', 'fair', 'clearsky'
-];
-function metSeverity(sym) {
-  var base = sym.replace('_day','').replace('_night','');
-  for (var i = 0; i < MET_SEVERITY.length; i++) {
-    if (base.indexOf(MET_SEVERITY[i]) !== -1) return i;
+// A failed feed is skipped. Only if every feed fails is it an error (the caller then
+// keeps the last list). Never falls back to unfiltered news: may return [].
+function fetchYnet() {
+  if (YNET_MOCK_EMPTY) return Promise.resolve([]);
+  if (ynetCache.data && (Date.now() - ynetCache.timestamp) < ynetCache.TTL) {
+    return Promise.resolve(ynetCache.data);
   }
-  return MET_SEVERITY.length;
+  return Promise.all(NEWS_FILTER.feeds.map(function(feed) {
+    return fetchYnetFeed(feed).catch(function(err) {
+      console.error('Ynet feed ' + feed.id + ' (' + feed.name + ') failed:', err.message);
+      return null;
+    });
+  })).then(function(groups) {
+    groups = groups.filter(Boolean);
+    if (!groups.length) {
+      if (ynetCache.data) return ynetCache.data;
+      throw new Error('all ynet feeds failed');
+    }
+    var list = news.select(groups, NEWS_FILTER);
+    ynetCache.data = list;
+    ynetCache.timestamp = Date.now();
+    return list;
+  });
 }
 
 function fetchWeather() {
@@ -280,58 +307,7 @@ function fetchWeather() {
     .then(function(res) { return res.json(); })
     .then(function(data) {
       var series = data.properties.timeseries;
-      var dayMap = {};
-
-      for (var i = 0; i < series.length; i++) {
-        var s    = series[i];
-        var h    = parseInt(s.time.slice(11, 13), 10);
-        var date = s.time.slice(0, 10);
-
-        if (!dayMap[date]) dayMap[date] = { maxTemp: -99, symbol: '' };
-        var day = dayMap[date];
-
-        // --- Max temperature ---
-        // From 6-hourly blocks (T00, T06, T12) covering daytime
-        if ((h === 0 || h === 6 || h === 12) &&
-            s.data.next_6_hours && s.data.next_6_hours.details) {
-          var mx = s.data.next_6_hours.details.air_temperature_max;
-          if (mx !== undefined && mx > day.maxTemp) day.maxTemp = mx;
-        }
-        // Also scan instant temps for hourly entries during 06–15 UTC (09–18 local)
-        if (h >= 6 && h <= 15 && s.data.next_1_hours) {
-          var t = s.data.instant.details.air_temperature || -99;
-          if (t > day.maxTemp) day.maxTemp = t;
-        }
-
-        // --- Worst daytime symbol ---
-        // Scan 03–15 UTC (= 06–18 Israel local)
-        if (h >= 3 && h <= 15) {
-          var sym = (s.data.next_1_hours && s.data.next_1_hours.summary && s.data.next_1_hours.summary.symbol_code)
-                 || (s.data.next_6_hours && s.data.next_6_hours.summary && s.data.next_6_hours.summary.symbol_code)
-                 || '';
-          if (sym && (!day.symbol || metSeverity(sym) < metSeverity(day.symbol))) {
-            day.symbol = sym;
-          }
-        }
-      }
-
-      var daily = [];
-      var dates = Object.keys(dayMap).sort().slice(0, 6);
-      for (var d = 0; d < dates.length; d++) {
-        var dateStr = dates[d];
-        var dateObj = new Date(dateStr + 'T12:00:00');
-        var dayIndex = dateObj.getDay();
-        var entry   = dayMap[dateStr];
-        var symbol  = entry.symbol || 'clearsky_day';
-        daily.push({
-          date:        dateStr,
-          dayName:     'יום ' + hebrewDays[dayIndex],
-          maxTemp:     Math.round(entry.maxTemp),
-          minTemp:     Math.round(entry.maxTemp),
-          weathercode: symbol,
-          description: metSymbolToHebrew(symbol)
-        });
-      }
+      var daily = weather.buildDaily(series, Date.now()); // Israel-local days (review #3)
 
       // Current: most recent entry
       var first  = series[0] || {};
@@ -343,7 +319,7 @@ function fetchWeather() {
         current: {
           temperature: Math.round(curDet.air_temperature || 0),
           weathercode: curSym,
-          description: metSymbolToHebrew(curSym)
+          description: weather.metSymbolToHebrew(curSym)
         },
         daily: daily
       };
@@ -352,7 +328,7 @@ function fetchWeather() {
 
 function fetchShabbat() {
   var url = 'https://www.hebcal.com/shabbat?cfg=json&geonameid=293918&M=on';
-  return fetch(url)
+  return fetch(url, { timeout: 10000 })
     .then(function(res) { return res.json(); })
     .then(function(data) {
       var result = {
@@ -381,6 +357,7 @@ function fetchShabbat() {
 }
 
 function fetchAlerts() {
+  if (ALERT_MOCK) return Promise.resolve({ title: ALERT_MOCK, areas: 'פתח תקווה' });
   var url = 'https://www.oref.org.il/WarningMessages/alert/alerts.json';
   return fetch(url, {
     timeout: 5000,
@@ -413,14 +390,8 @@ function fetchAlerts() {
 
 function getHebrewDate() {
   try {
-    // Use Node.js Intl to format Hebrew date
-    var now = new Date();
-    var hebrewFormatter = new Intl.DateTimeFormat('he-IL-u-ca-hebrew', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-    return hebrewFormatter.format(now);
+    // D20: letters, e.g. "א׳ בכסלו תשפ״ז" (see hebdate.js + test/hebdate.test.js)
+    return hebdate.formatHebrewDate(new Date());
   } catch (e) {
     console.error('Hebrew date error:', e.message);
     return '';
@@ -429,14 +400,7 @@ function getHebrewDate() {
 
 function getGregorianDate() {
   try {
-    var now = new Date();
-    var formatter = new Intl.DateTimeFormat('he-IL', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-    return formatter.format(now);
+    return hebdate.formatGregorianDate(new Date()); // Israel time (review #4)
   } catch (e) {
     return '';
   }
@@ -474,7 +438,7 @@ app.get('/api/dashboard.json', function(req, res) {
   var now = Date.now();
 
   // Return cached data if fresh
-  if (cache.data && (now - cache.timestamp) < cache.TTL) {
+  if (cache.data && (now - cache.timestamp) < (DEBUG_ROTATE_MS ? 5000 : cache.TTL)) {
     res.json(cache.data);
     return;
   }
@@ -484,7 +448,9 @@ app.get('/api/dashboard.json', function(req, res) {
 
   // Weather uses its own 6-hour cache
   var weatherPromise;
-  if (weatherCache.data && (now - weatherCache.timestamp) < weatherCache.TTL) {
+  // Also expire at Israel midnight, so "today" never carries yesterday's data (review #3)
+  if (weatherCache.data && (now - weatherCache.timestamp) < weatherCache.TTL &&
+      weather.israelDate(weatherCache.timestamp) === weather.israelDate(now)) {
     weatherPromise = Promise.resolve(weatherCache.data);
   } else {
     weatherPromise = fetchWeather()
@@ -519,7 +485,8 @@ app.get('/api/dashboard.json', function(req, res) {
   var sources = [
     { key: 'announcements', fn: fetchAnnouncements },
     { key: 'ynet', fn: fetchYnet },
-    { key: 'alert', fn: fetchAlerts }
+    { key: 'alert', fn: fetchAlerts },
+    { key: 'schedule', fn: fetchSchedule }
   ];
 
   var promises = sources.map(function(source) {
@@ -550,80 +517,86 @@ app.get('/api/dashboard.json', function(req, res) {
       ynet: results.ynet || [],
       weather: results.weather || { current: {}, daily: [] },
       shabbat: results.shabbat || {},
-      alert: results.alert || null
+      alert: results.alert || null,
+      background: schedule.getBackground(results.schedule || lastSchedule, israelLocalMs(), DEBUG_ROTATE_MS)
     };
 
     cache.data = payload;
     cache.timestamp = Date.now();
 
     res.json(payload);
+  }).catch(function(err) {
+    // Review #7: a throw while building the payload (e.g. malformed content JSON)
+    // must not leave the request hanging; serve the last good data instead.
+    console.error('dashboard.json build failed:', err && err.stack || err);
+    res.json(cache.data || {});
   });
 });
 
-// --- Image proxy for old-browser TLS compatibility ---
-var imageCache = {};
-
-app.get('/api/bg/:index', function(req, res) {
-  var bgImages = [
-    'https://images.unsplash.com/photo-1606567595334-d39972c85dbe?w=1920&q=60',
-    'https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=1920&q=60',
-    'https://images.unsplash.com/photo-1457089328109-e5d9bd499191?w=1920&q=60',
-    'https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?w=1920&q=60',
-    'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=60',
-    'https://images.unsplash.com/photo-1494972308805-463bc619d34e?w=1920&q=60',
-    'https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=1920&q=60'
-  ];
-
-  var index = parseInt(req.params.index, 10) || 0;
-  index = index % bgImages.length;
-  var url = bgImages[index];
-
-  // Check cache (cache for 24 hours)
-  if (imageCache[index] && imageCache[index].expires > Date.now()) {
-    res.set('Content-Type', imageCache[index].contentType);
-    res.set('Cache-Control', 'public, max-age=86400');
-    res.send(imageCache[index].buffer);
-    return;
-  }
-
-  fetch(url)
+// --- Photo proxies (old Android can't do modern TLS to external hosts) ---
+// Only URLs from our own JSON pools are fetched (no open proxy here).
+// No in-memory cache: each photo URL is stable, so Vercel's CDN caches it (s-maxage).
+function sendPoolImage(url, res, label) {
+  fetch(url, { timeout: 15000, headers: { 'User-Agent': 'Mozilla/5.0 (compatible; VaadTV/1.0)' } })
     .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
       var ct = r.headers.get('content-type') || 'image/jpeg';
       return r.buffer().then(function(buf) {
-        imageCache[index] = {
-          buffer: buf,
-          contentType: ct,
-          expires: Date.now() + 24 * 60 * 60 * 1000
-        };
         res.set('Content-Type', ct);
-        res.set('Cache-Control', 'public, max-age=86400');
+        res.set('Cache-Control', 'public, max-age=86400, s-maxage=2592000');
         res.send(buf);
       });
     })
     .catch(function(err) {
-      console.error('Image proxy error:', err.message);
+      console.error(label + ' image error:', err.message);
       res.status(502).send('');
     });
+}
+
+// D22: /api/pool/landscape|nature|art/:index
+app.get('/api/pool/:kind/:index', function(req, res) {
+  var pool = schedule.POOLS[req.params.kind];
+  var index = parseInt(req.params.index, 10);
+  if (!pool || !(index >= 0) || !pool[index]) { res.status(404).send(''); return; }
+  sendPoolImage(pool[index].url, res, 'Pool ' + req.params.kind);
 });
 
-// --- Announcement image proxy (bypasses ORB/CORS for Google Drive URLs) ---
-app.get('/api/image-proxy', function(req, res) {
-  var url = req.query.url;
-  if (!url) { res.status(400).send(''); return; }
+// Old URL kept so a page cached before the deploy still gets landscapes.
+app.get('/api/bg/:index', function(req, res) {
+  var index = parseInt(req.params.index, 10) || 0;
+  index = ((index % BG_IMAGES.length) + BG_IMAGES.length) % BG_IMAGES.length;
+  sendPoolImage(BG_IMAGES[index].url, res, 'Background');
+});
 
-  fetch(url, {
-    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; VaadTV/1.0)' }
-  })
-    .then(function(r) {
-      var ct = r.headers.get('content-type') || 'image/jpeg';
-      res.set('Content-Type', ct);
-      res.set('Cache-Control', 'public, max-age=3600');
-      return r.buffer().then(function(buf) { res.send(buf); });
-    })
-    .catch(function(err) {
-      console.error('Image proxy error:', err.message);
-      res.status(502).send('');
-    });
+// --- Holiday / event photo proxy ---
+app.get('/api/theme/:key/:index', function(req, res) {
+  var theme = THEMES[req.params.key];
+  var index = parseInt(req.params.index, 10) || 0;
+  if (!theme || !theme.images[index]) { res.status(404).send(''); return; }
+  sendPoolImage(theme.images[index].url, res, 'Theme');
+});
+
+// --- D25: photo credits (not linked from the TV) ---
+var credits = require('./credits');
+app.get('/credits', function(req, res) {
+  res.set('Content-Type', 'text/html; charset=utf-8');
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.send(credits.renderCreditsHtml());
+});
+
+// --- Announcement image proxy (Drive / imgBB links from the sheet) ---
+// Hardened (code review #2): host allowlist re-checked per redirect hop, 2xx +
+// image/* only, max 4 MB, nosniff. See image-proxy.js + test/image-proxy.test.js.
+var imageProxy = require('./image-proxy');
+app.get('/api/image-proxy', function(req, res) {
+  var url = '' + (req.query.url || '');
+  imageProxy.fetchImage(url, fetch).then(function(out) {
+    res.set('X-Content-Type-Options', 'nosniff');
+    if (out.status !== 200) { res.status(out.status).send(''); return; }
+    res.set('Content-Type', out.contentType);
+    res.set('Cache-Control', 'public, max-age=3600');
+    res.send(out.body);
+  });
 });
 
 // --- Serve static frontend (local dev only; Vercel serves /public directly) ---

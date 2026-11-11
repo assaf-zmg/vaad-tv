@@ -1,0 +1,69 @@
+/* === D27: forecast row, as many whole days as fit (max 5) ===
+   Append at the END of style.css (after the D26 block). Replaces the
+   icon-beside-text layout of .forecast-day with a stacked one: icon on top,
+   temperature, day name. Spacing shrinks first (.wx-compact), type never. */
+
+#weather-forecast {
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.forecast-day {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  margin-left: 22px;
+  text-align: center;
+}
+
+.forecast-day:last-child {
+  margin-left: 0;
+}
+
+.forecast-day .day-icon {
+  margin-left: 0;
+  margin-bottom: 4px;
+}
+
+.forecast-day .day-icon,
+.forecast-day .day-icon svg {
+  width: 44px;
+  height: 44px;
+}
+
+.forecast-day .day-temp {
+  font-size: 30px;
+}
+
+.forecast-day .day-name {
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+/* Tighter spacing before dropping a day */
+.wx-compact .forecast-day {
+  margin-left: 10px;
+}
+
+.wx-compact .forecast-day:last-child {
+  margin-left: 0;
+}
+
+@media (max-height: 820px) {
+  .forecast-day { margin-left: 16px; }
+  .forecast-day .day-icon,
+  .forecast-day .day-icon svg { width: 34px; height: 34px; }
+  .forecast-day .day-temp { font-size: 24px; }
+  .forecast-day .day-name { font-size: 15px; }
+  .wx-compact .forecast-day { margin-left: 8px; }
+}

@@ -17,47 +17,45 @@
     <span id="alert-text"></span>
   </div>
 
-  <!-- Top Strip: Clock (RIGHT in RTL) + Weather Forecast (LEFT in RTL) -->
-  <div id="top-strip">
-
-    <!-- Clock card — first child = right side in RTL -->
-    <div id="clock-section">
-      <div id="clock">--:--</div>
-      <div id="gregorian-date"></div>
-      <div id="hebrew-date"></div>
-    </div>
-
-    <!-- Weather card — second child = left side in RTL -->
-    <div id="weather-section">
-      <div id="weather-label">תחזית</div>
-      <div id="weather-forecast"></div>
-    </div>
-
-  </div>
-
-  <!-- Main Content -->
   <div id="main">
 
-    <!-- Announcements — first child = right side in RTL -->
-    <div id="announcements-panel" class="panel">
-      <div class="panel-header">הודעות ועד בית</div>
-      <div id="announcements-content"></div>
-    </div>
-
-    <!-- Sidebar: News + Shabbat — second child = left side in RTL -->
+    <!-- Info column — first child = RIGHT side in RTL -->
     <div id="sidebar">
 
-      <div id="news-panel" class="panel">
-        <div class="panel-header">כותרות Ynet</div>
-        <div id="news-content"></div>
-        <div id="news-dots"></div>
+      <div id="clock-card" class="card">
+        <div id="clock">--:--</div>
+        <div id="gregorian-date"></div>
+        <div id="hebrew-date"></div>
+        <div id="weather-forecast"></div>
       </div>
 
-      <div id="shabbat-panel" class="panel">
+      <div id="news-panel" class="card">
+        <div class="card-header">חדשות טובות מ-ynet<span class="news-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="#ffd58a" stroke-width="2"/><g stroke="#ffd58a" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.6" y1="4.6" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.4" y2="19.4"/><line x1="19.4" y1="4.6" x2="17.7" y2="6.3"/><line x1="6.3" y1="17.7" x2="4.6" y2="19.4"/></g></svg>מסנן אופטימיות פעיל</span></div>
+        <div id="news-content"></div>
+        <div id="news-dots" class="dots"></div>
+      </div>
+
+      <div id="announcements-panel" class="card">
+        <div class="card-header">הודעות ועד בית</div>
+        <div id="announcements-content"></div>
+        <div id="ann-dots" class="dots"></div>
+      </div>
+
+      <div id="shabbat-panel" class="card">
         <div id="shabbat-content"></div>
       </div>
 
     </div>
+
+    <!-- Photo — second child = LEFT side in RTL -->
+    <div id="photo">
+      <div id="photo-a" class="photo-layer"></div>
+      <div id="photo-b" class="photo-layer"></div>
+      <div id="ann-photo" class="photo-layer"></div>
+      <div id="photo-message"></div>
+      <div id="photo-caption"></div>
+    </div>
+
   </div>
 
   <script src="js/dashboard.js"></script>

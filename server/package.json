@@ -4,7 +4,8 @@
   "description": "Lobby dashboard backend proxy for Vaad TV",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node test/schedule.test.js && node test/news.test.js && node test/weather.test.js && node test/hebdate.test.js && node test/credits.test.js && node test/strip-emoji.test.js && node test/client.test.js && node test/image-proxy.test.js && node test/server.test.js"
   },
   "dependencies": {
     "csv-parse": "^5.5.0",

@@ -3,15 +3,159 @@
   "configurations": [
     {
       "name": "vaad-tv",
-      "runtimeExecutable": "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
-      "runtimeArgs": ["/Users/assafyogev_1/Documents/Vaad TV/server/server.js"],
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3000",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
       "port": 3000,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-dev",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3020",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3020,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-holiday",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3010",
+        "DEBUG_DATE=2027-05-12T10:00:00+03:00",
+        "SCHEDULE_MOCK=test/mock-schedule.json",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3010,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-mourning",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3011",
+        "DEBUG_DATE=2027-06-21T10:00:00+03:00",
+        "SCHEDULE_MOCK=test/mock-schedule.json",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3011,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-announcement",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3012",
+        "ANNOUNCEMENTS_MOCK=test/mock-announcements.csv",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3012,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-alert",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3013",
+        "ALERT_MOCK=ירי רקטות וטילים",
+        "DEBUG_DATE=2027-05-12T10:00:00+03:00",
+        "SCHEDULE_MOCK=test/mock-schedule.json",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3013,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-snow",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3014",
+        "DEBUG_DATE=2026-11-16T06:01:00+02:00",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3014,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-ynet-empty",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3015",
+        "YNET_MOCK_EMPTY=1",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3015,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-crossfade",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3016",
+        "DEBUG_ROTATE_SEC=40",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3016,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-art",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3017",
+        "DEBUG_DATE=2026-11-12T09:01:00+02:00",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3017,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-nature",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3018",
+        "DEBUG_DATE=2026-11-12T03:01:00+02:00",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3018,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-long-alert",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3019",
+        "ANNOUNCEMENTS_MOCK=test/mock-announcements.csv",
+        "ALERT_MOCK=ירי רקטות וטילים",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3019,
       "autoPort": false
     },
     {
       "name": "vaad-tv-static",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "3001"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "3001"
+      ],
       "port": 3001
     }
   ]
