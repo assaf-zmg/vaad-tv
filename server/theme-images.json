@@ -673,6 +673,50 @@
    }
   ]
  },
+ "city": {
+  "label": "אירוע בעיר",
+  "message": "",
+  "sub": "",
+  "tone": "festive",
+  "priority": 1,
+  "images": [
+   {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Fireworks_over_the_city%2C_Quebec_City.jpg/1920px-Fireworks_over_the_city%2C_Quebec_City.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "credit": "Wilfredor",
+    "license": "CC0"
+   },
+   {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/DSC_6232_Blue_fireworks_cascade_over_the_water_lighting_the_night_sky_with_shimmering_trails_and_reflection.jpg/1920px-DSC_6232_Blue_fireworks_cascade_over_the_water_lighting_the_night_sky_with_shimmering_trails_and_reflection.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "credit": "PattayaPatrol",
+    "license": "CC BY-SA 4.0"
+   },
+   {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2f/370_rsd_fireworks_red.jpg/1920px-370_rsd_fireworks_red.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "credit": "Standard2211",
+    "license": "CC BY-SA 3.0"
+   },
+   {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/370_rsd_fireworks_white.jpg/1920px-370_rsd_fireworks_white.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "credit": "Standard2211",
+    "license": "CC BY-SA 3.0"
+   },
+   {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/370_rsd_fireworks_blue.jpg/1920px-370_rsd_fireworks_blue.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "credit": "Standard2211",
+    "license": "CC BY-SA 3.0"
+   },
+   {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Festival_de_Luces%2C_Chile_2023_-_%27Lantern_Festival%27_-_A742021.jpg/1920px-Festival_de_Luces%2C_Chile_2023_-_%27Lantern_Festival%27_-_A742021.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "credit": "Rjcastillo",
+    "license": "CC BY-SA 4.0"
+   },
+   {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Festival_de_Luces%2C_Chile_2023_-_%27Lantern_Festival%27_-_A741946.jpg/1920px-Festival_de_Luces%2C_Chile_2023_-_%27Lantern_Festival%27_-_A741946.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "credit": "Rjcastillo",
+    "license": "CC BY-SA 4.0"
+   }
+  ]
+ },
  "custom": {
   "label": "בקשת ועד",
   "message": "",

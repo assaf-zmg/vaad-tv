@@ -32,7 +32,11 @@
   "place": "גלישת עננים, מכתש רמון",
   "credit": "Giladtop",
   "license": "CC BY-SA 4.0",
-  "source": "https://commons.wikimedia.org/wiki/File:%D7%92%D7%9C%D7%99%D7%A9%D7%AA_%D7%A2%D7%A0%D7%A0%D7%99%D7%9D_%D7%9C%D7%9E%D7%9B%D7%AA%D7%A9_%D7%A8%D7%9E%D7%95%D7%9F.jpg"
+  "source": "https://commons.wikimedia.org/wiki/File:%D7%92%D7%9C%D7%99%D7%A9%D7%AA_%D7%A2%D7%A0%D7%A0%D7%99%D7%9D_%D7%9C%D7%9E%D7%9B%D7%AA%D7%A9_%D7%A8%D7%9E%D7%95%D7%9F.jpg",
+  "trip": {
+   "title": "מכתש רמון",
+   "go": "ramon"
+  }
  },
  {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/2015_Swaledale_from_Kisdon_Hill.jpg/1920px-2015_Swaledale_from_Kisdon_Hill.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
@@ -74,7 +78,11 @@
   "place": "עין בוקק, ים המלח",
   "credit": "Staselnik",
   "license": "CC BY-SA 3.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Ein_Bokek._Dead_Sea._Israel._05.jpg"
+  "source": "https://commons.wikimedia.org/wiki/File:Ein_Bokek._Dead_Sea._Israel._05.jpg",
+  "trip": {
+   "title": "עין בוקק",
+   "go": "ein-bokek"
+  }
  },
  {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Afternoon_at_Tennfjorden%2C_Raftsundet%2C_Hinn%C3%B8ya%2C_Norway%2C_2015_September_%2802%29.jpg/1920px-Afternoon_at_Tennfjorden%2C_Raftsundet%2C_Hinn%C3%B8ya%2C_Norway%2C_2015_September_%2802%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
@@ -193,21 +201,33 @@
   "place": "מכתש רמון",
   "credit": "Rhododendrites",
   "license": "CC BY-SA 4.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Bridge_at_Makhtesh_Ramon_(40582).jpg"
+  "source": "https://commons.wikimedia.org/wiki/File:Bridge_at_Makhtesh_Ramon_(40582).jpg",
+  "trip": {
+   "title": "מכתש רמון",
+   "go": "ramon"
+  }
  },
  {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Dead_Sea_salt_formation_%28Aerial_view%2C_2007%29.jpg/1920px-Dead_Sea_salt_formation_%28Aerial_view%2C_2007%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "place": "תצורות מלח, ים המלח",
   "credit": "Godot13",
   "license": "CC BY-SA 4.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Dead_Sea_salt_formation_(Aerial_view,_2007).jpg"
+  "source": "https://commons.wikimedia.org/wiki/File:Dead_Sea_salt_formation_(Aerial_view,_2007).jpg",
+  "trip": {
+   "title": "ים המלח",
+   "go": "dead-sea"
+  }
  },
  {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0a/Habonim-Dor_Beach.jpg/1920px-Habonim-Dor_Beach.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "place": "חוף הבונים",
   "credit": "טל שמע",
   "license": "CC BY-SA 4.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Habonim-Dor_Beach.jpg"
+  "source": "https://commons.wikimedia.org/wiki/File:Habonim-Dor_Beach.jpg",
+  "trip": {
+   "title": "חוף דור-הבונים",
+   "go": "habonim"
+  }
  },
  {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/Sunset%2C_Kuta%2C_Bali%2C_Indonesia%2C_20220825_1755_0879.jpg/1920px-Sunset%2C_Kuta%2C_Bali%2C_Indonesia%2C_20220825_1755_0879.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
@@ -217,18 +237,15 @@
   "source": "https://commons.wikimedia.org/wiki/File:Sunset,_Kuta,_Bali,_Indonesia,_20220825_1755_0879.jpg"
  },
  {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a4/Allium_rothii_1.jpg/1920px-Allium_rothii_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-  "place": "שום רוט",
-  "credit": "גדעון פיזנטי",
-  "license": "CC BY 3.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Allium_rothii_1.jpg"
- },
- {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/%D7%A2%D7%A5_%D7%A2%D7%9C_%D7%90%D7%99_%D7%9E%D7%9C%D7%97_%D7%91%D7%90%D7%9E%D7%A6%D7%A2_%D7%99%D7%9D_%D7%94%D7%9E%D7%9C%D7%97.jpg/1920px-%D7%A2%D7%A5_%D7%A2%D7%9C_%D7%90%D7%99_%D7%9E%D7%9C%D7%97_%D7%91%D7%90%D7%9E%D7%A6%D7%A2_%D7%99%D7%9D_%D7%94%D7%9E%D7%9C%D7%97.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "place": "עץ על אי מלח, ים המלח",
   "credit": "ערן רזניק",
   "license": "CC BY-SA 4.0",
-  "source": "https://commons.wikimedia.org/wiki/File:%D7%A2%D7%A5_%D7%A2%D7%9C_%D7%90%D7%99_%D7%9E%D7%9C%D7%97_%D7%91%D7%90%D7%9E%D7%A6%D7%A2_%D7%99%D7%9D_%D7%94%D7%9E%D7%9C%D7%97.jpg"
+  "source": "https://commons.wikimedia.org/wiki/File:%D7%A2%D7%A5_%D7%A2%D7%9C_%D7%90%D7%99_%D7%9E%D7%9C%D7%97_%D7%91%D7%90%D7%9E%D7%A6%D7%A2_%D7%99%D7%9D_%D7%94%D7%9E%D7%9C%D7%97.jpg",
+  "trip": {
+   "title": "ים המלח",
+   "go": "dead-sea"
+  }
  },
  {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Foggy_Reflections_-_Loch_Tummel.jpg/1920px-Foggy_Reflections_-_Loch_Tummel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
@@ -256,7 +273,11 @@
   "place": "גמלים בבקעת הירדן",
   "credit": "Ishai Parasol",
   "license": "CC BY-SA 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Camels_in_Jordan_valley_(4568207363).jpg"
+  "source": "https://commons.wikimedia.org/wiki/File:Camels_in_Jordan_valley_(4568207363).jpg",
+  "trip": {
+   "title": "בקעת הירדן",
+   "go": "jordan-vly"
+  }
  },
  {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/2011-08-01_10-31-42_Switzerland_Segl-Maria.jpg/1920px-2011-08-01_10-31-42_Switzerland_Segl-Maria.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
@@ -266,18 +287,15 @@
   "source": "https://commons.wikimedia.org/wiki/File:2011-08-01_10-31-42_Switzerland_Segl-Maria.jpg"
  },
  {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/Iris_mariae_1.jpg/1920px-Iris_mariae_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-  "place": "אירוס הנגב",
-  "credit": "גדעון פיזנטי",
-  "license": "CC BY 3.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Iris_mariae_1.jpg"
- },
- {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/%D7%9E%D7%9B%D7%AA%D7%A9_%D7%A8%D7%9E%D7%95%D7%9F_-_%D7%92%D7%9C%D7%99%D7%A9%D7%AA_%D7%A2%D7%A0%D7%A0%D7%99%D7%9D_%28cropped%29.jpg/1920px-%D7%9E%D7%9B%D7%AA%D7%A9_%D7%A8%D7%9E%D7%95%D7%9F_-_%D7%92%D7%9C%D7%99%D7%A9%D7%AA_%D7%A2%D7%A0%D7%A0%D7%99%D7%9D_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "place": "ערפל במכתש רמון",
   "credit": "ZeevStein",
   "license": "CC BY-SA 4.0",
-  "source": "https://commons.wikimedia.org/wiki/File:%D7%9E%D7%9B%D7%AA%D7%A9_%D7%A8%D7%9E%D7%95%D7%9F_-_%D7%92%D7%9C%D7%99%D7%A9%D7%AA_%D7%A2%D7%A0%D7%A0%D7%99%D7%9D_(cropped).jpg"
+  "source": "https://commons.wikimedia.org/wiki/File:%D7%9E%D7%9B%D7%AA%D7%A9_%D7%A8%D7%9E%D7%95%D7%9F_-_%D7%92%D7%9C%D7%99%D7%A9%D7%AA_%D7%A2%D7%A0%D7%A0%D7%99%D7%9D_(cropped).jpg",
+  "trip": {
+   "title": "מכתש רמון",
+   "go": "ramon"
+  }
  },
  {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Cala_de_la_Granadella%2C_J%C3%A1vea%2C_Espa%C3%B1a%2C_2014-07-01%2C_DD_37.JPG/1920px-Cala_de_la_Granadella%2C_J%C3%A1vea%2C_Espa%C3%B1a%2C_2014-07-01%2C_DD_37.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
@@ -298,7 +316,11 @@
   "place": "פטריית תמנע, הערבה",
   "credit": "Chmee2",
   "license": "CC BY 3.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Mushroom_in_Timna_Park_in_summer_2011_(1).JPG"
+  "source": "https://commons.wikimedia.org/wiki/File:Mushroom_in_Timna_Park_in_summer_2011_(1).JPG",
+  "trip": {
+   "title": "בקעת תמנע",
+   "go": "timna"
+  }
  },
  {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/01_Calanche_Piana.jpg/1920px-01_Calanche_Piana.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
@@ -340,14 +362,22 @@
   "place": "עבדת, הנגב",
   "credit": "Oren Rozen",
   "license": "CC BY-SA 3.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Avdat_260914_03.jpg"
+  "source": "https://commons.wikimedia.org/wiki/File:Avdat_260914_03.jpg",
+  "trip": {
+   "title": "עבדת",
+   "go": "avdat"
+  }
  },
  {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Caesarea_Maritima_BW_2010-09-23_09-49-28.JPG/1920px-Caesarea_Maritima_BW_2010-09-23_09-49-28.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "place": "קיסריה",
   "credit": "Berthold Werner",
   "license": "CC BY-SA 3.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Caesarea_Maritima_BW_2010-09-23_09-49-28.JPG"
+  "source": "https://commons.wikimedia.org/wiki/File:Caesarea_Maritima_BW_2010-09-23_09-49-28.JPG",
+  "trip": {
+   "title": "קיסריה",
+   "go": "caesarea"
+  }
  },
  {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/Bled_Island_05.jpg/1920px-Bled_Island_05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
@@ -385,13 +415,6 @@
   "source": "https://commons.wikimedia.org/wiki/File:Los_Gigantes,_Tenerife,_Espa%C3%B1a,_2012-12-16,_DD_10.jpg"
  },
  {
-  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Alone_in_the_unspoilt_wilderness_%28Unsplash%29.jpg/1920px-Alone_in_the_unspoilt_wilderness_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-  "place": "מרחבים פראיים",
-  "credit": "David Marcu",
-  "license": "CC0",
-  "source": "https://commons.wikimedia.org/wiki/File:Alone_in_the_unspoilt_wilderness_(Unsplash).jpg"
- },
- {
   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/Aerial_image_of_Alicudi_%28view_from_the_south%29.jpg/1920px-Aerial_image_of_Alicudi_%28view_from_the_south%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
   "place": "האי אליקודי, איטליה",
   "credit": "Carsten Steger",
@@ -418,5 +441,205 @@
   "credit": "Sanshiro Kubota",
   "license": "CC BY 2.0",
   "source": "https://commons.wikimedia.org/wiki/File:Lonely_house_on_the_coast_near_Ei%C3%B0i_-_Faroe_Islands_(50413406426).jpg"
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/David_river_waterfall_-_Ein_Gedi_National_Park_%282%29.jpg/1920px-David_river_waterfall_-_Ein_Gedi_National_Park_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "מפל דוד, עין גדי",
+  "credit": "Radosław Botev",
+  "license": "CC BY 3.0 pl",
+  "trip": {
+   "title": "שמורת עין גדי",
+   "go": "ein-gedi"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/82/The_Banias_Waterfall_%D7%9E%D7%A4%D7%9C%D7%99_%D7%94%D7%91%D7%A0%D7%99%D7%90%D7%A1.jpg/1920px-The_Banias_Waterfall_%D7%9E%D7%A4%D7%9C%D7%99_%D7%94%D7%91%D7%A0%D7%99%D7%90%D7%A1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "מפל הבניאס",
+  "credit": "CarmelH1",
+  "license": "CC BY-SA 4.0",
+  "trip": {
+   "title": "שמורת הבניאס",
+   "go": "banias"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/%D7%96%D7%A8%D7%99%D7%97%D7%94_%D7%91%D7%90%D7%92%D7%9E%D7%95%D7%9F_%D7%97%D7%95%D7%9C%D7%94_%D7%91%D7%96%D7%9E%D7%9F_%D7%A0%D7%93%D7%99%D7%93%D7%AA_%D7%94%D7%A2%D7%92%D7%95%D7%A8%D7%99%D7%9D.jpg/1920px-%D7%96%D7%A8%D7%99%D7%97%D7%94_%D7%91%D7%90%D7%92%D7%9E%D7%95%D7%9F_%D7%97%D7%95%D7%9C%D7%94_%D7%91%D7%96%D7%9E%D7%9F_%D7%A0%D7%93%D7%99%D7%93%D7%AA_%D7%94%D7%A2%D7%92%D7%95%D7%A8%D7%99%D7%9D.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "עגורים באגמון החולה",
+  "credit": "Tomere",
+  "license": "CC BY-SA 4.0",
+  "trip": {
+   "title": "אגמון החולה",
+   "go": "hula"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/41/Landscape_with_Lake_Kinnaret_%28Sea_of_Galilee%29_in_Distance_-_From_Golan_Heights_%285710776912%29.jpg/1920px-Landscape_with_Lake_Kinnaret_%28Sea_of_Galilee%29_in_Distance_-_From_Golan_Heights_%285710776912%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "נוף לכנרת",
+  "credit": "Adam Jones from Kelowna, BC, Canada",
+  "license": "CC BY-SA 2.0",
+  "trip": {
+   "title": "הכנרת",
+   "go": "kinneret"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/150169_mount_hermon_PikiWiki_Israel.jpg/1920px-150169_mount_hermon_PikiWiki_Israel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "החרמון המושלג",
+  "credit": "ישראל פוגל",
+  "license": "CC BY 2.5",
+  "trip": {
+   "title": "הר חרמון",
+   "go": "hermon"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/Rosh_HaNikra_Grottoes_3.jpg/1920px-Rosh_HaNikra_Grottoes_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "נקרות ראש הנקרה",
+  "credit": "AF1621",
+  "license": "CC BY-SA 3.0",
+  "trip": {
+   "title": "ראש הנקרה",
+   "go": "rosh-hanikr"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/Eilat-coral-beach-reserve-c.JPG/1920px-Eilat-coral-beach-reserve-c.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "חוף האלמוגים, אילת",
+  "credit": "Mboesch",
+  "license": "CC BY-SA 4.0",
+  "trip": {
+   "title": "שמורת חוף האלמוגים",
+   "go": "coral-beach"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f1/View_of_the_Dead_Sea_from_Masada_%281%29.jpg/1920px-View_of_the_Dead_Sea_from_Masada_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "נוף ממצדה",
+  "credit": "Radosław Botev",
+  "license": "CC BY 3.0 pl",
+  "trip": {
+   "title": "מצדה",
+   "go": "masada"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/144418_gamla_waterfall_-_golan_heights_PikiWiki_Israel.jpg/1920px-144418_gamla_waterfall_-_golan_heights_PikiWiki_Israel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "מפל גמלא",
+  "credit": "רחל וייסלר",
+  "license": "CC BY 2.5",
+  "trip": {
+   "title": "שמורת גמלא",
+   "go": "gamla"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Mt_Arbel_dual_cliffs_drone_shot.jpg/1920px-Mt_Arbel_dual_cliffs_drone_shot.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "הר ארבל",
+  "credit": "PastorAndyCook",
+  "license": "CC BY-SA 4.0",
+  "trip": {
+   "title": "הר ארבל",
+   "go": "arbel"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1f/Road_12_between_mountains.jpg/1920px-Road_12_between_mountains.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "הרי אילת",
+  "credit": "Tiia Monto",
+  "license": "CC BY-SA 3.0",
+  "trip": {
+   "title": "הקניון האדום",
+   "go": "red-canyon"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Nimrod_castle_%2829%29.jpg/1920px-Nimrod_castle_%2829%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "מבצר נמרוד",
+  "credit": "עומר מרקובסקי",
+  "license": "CC BY-SA 4.0",
+  "trip": {
+   "title": "מבצר נמרוד",
+   "go": "nimrod"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/PikiWiki_Israel_42289_Caves_at_Beit_Guvrin.jpg/1920px-PikiWiki_Israel_42289_Caves_at_Beit_Guvrin.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "מערה בבית גוברין",
+  "credit": "Harvey Sapir",
+  "license": "CC BY 2.5",
+  "trip": {
+   "title": "בית גוברין-מרשה",
+   "go": "beit-guvrin"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Sunset_reflection.jpg/1920px-Sunset_reflection.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "שקיעה בחוף אכזיב",
+  "credit": "טל שמע",
+  "license": "CC BY-SA 4.0",
+  "trip": {
+   "title": "אכזיב",
+   "go": "achziv"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/116390_gilboa_iris_PikiWiki_Israel.jpg/1920px-116390_gilboa_iris_PikiWiki_Israel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "אירוסי הגלבוע",
+  "credit": "עוזי פז",
+  "license": "CC BY 2.5",
+  "trip": {
+   "title": "הר הגלבוע",
+   "go": "gilboa"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/%D7%A0%D7%97%D7%9C_%D7%99%D7%94%D7%95%D7%93%D7%99%D7%99%D7%94-%D7%96%D7%95%D7%95%D7%99%D7%AA%D7%9F.jpg/1920px-%D7%A0%D7%97%D7%9C_%D7%99%D7%94%D7%95%D7%93%D7%99%D7%99%D7%94-%D7%96%D7%95%D7%95%D7%99%D7%AA%D7%9F.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "בריכה בשמורת יהודיה",
+  "credit": "דן סיידה",
+  "license": "CC BY-SA 4.0",
+  "trip": {
+   "title": "שמורת יהודיה",
+   "go": "yehudiya"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/124385_ein_afek_nature_reserve-_PikiWiki_Israel.jpg/1920px-124385_ein_afek_nature_reserve-_PikiWiki_Israel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "שמורת עין אפק",
+  "credit": "שלמה רודד",
+  "license": "CC BY 2.5",
+  "trip": {
+   "title": "שמורת עין אפק",
+   "go": "ein-afek"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/Nahal_Amud_panorama_%28cylindrical%2C_90_deg._width%29.jpg/1920px-Nahal_Amud_panorama_%28cylindrical%2C_90_deg._width%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "נחל עמוד",
+  "credit": "DmitTrix",
+  "license": "CC0",
+  "trip": {
+   "title": "נחל עמוד",
+   "go": "nahal-amud"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/86/Yarkon_Springs_Afek_%2818%29.jpg/1920px-Yarkon_Springs_Afek_%2818%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "מקורות הירקון",
+  "credit": "עומר מרקובסקי",
+  "license": "CC BY-SA 4.0",
+  "trip": {
+   "title": "גן לאומי ירקון",
+   "go": "yarkon"
+  }
+ },
+ {
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/%D7%94%D7%A9%D7%AA%D7%A7%D7%A4%D7%95%D7%AA_%D7%A2%D7%9C_%D7%94%D7%9E%D7%99%D7%9D_%D7%91%D7%A2%D7%99%D7%9F_%D7%A2%D7%91%D7%93%D7%AA.jpg/1920px-%D7%94%D7%A9%D7%AA%D7%A7%D7%A4%D7%95%D7%AA_%D7%A2%D7%9C_%D7%94%D7%9E%D7%99%D7%9D_%D7%91%D7%A2%D7%99%D7%9F_%D7%A2%D7%91%D7%93%D7%AA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "place": "עין עבדת",
+  "credit": "Galgilgal",
+  "license": "CC BY-SA 4.0",
+  "trip": {
+   "title": "עין עבדת",
+   "go": "ein-avdat"
+  }
  }
 ]
