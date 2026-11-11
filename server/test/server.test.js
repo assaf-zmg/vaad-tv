@@ -68,13 +68,17 @@ var server = app.listen(0, function() {
         get(port, '/api/qr/' + id + '.png?s=6'),
         get(port, '/api/qr/' + id + '.png?s=8', { Host: 'evil.example' }),
         get(port, '/api/qr/nope.png'),
-        get(port, '/api/qr/' + id)
+        get(port, '/api/qr/' + id),
+        get(port, '/api/qr/' + id + '.png?s=5'),
+        get(port, '/api/qr/' + id + '.png')
       ]).then(function(r) {
+        assert.equal(r[5].raw.readUInt32BE(16), 185, 's=5 -> 185px (D46)');
+        assert.equal(r[6].raw.readUInt32BE(16), 222, 'no s -> 222px (D46 default)');
         assert.equal(r[0].status, 200);
         assert.equal(r[0].headers['content-type'], 'image/png');
         assert.ok(/max-age=86400/.test(r[0].headers['cache-control']));
         assert.equal(r[0].headers['x-content-type-options'], 'nosniff');
-        assert.equal(r[0].raw.readUInt32BE(16), 296, 's=8 -> 296px');
+        assert.equal(r[0].raw.readUInt32BE(16), 296, 's=8 -> 296px (kept for cached pages)');
         assert.equal(r[1].raw.readUInt32BE(16), 222, 's=6 -> 222px');
         assert.ok(r[2].raw.equals(r[0].raw), 'Host header does not change the code');
         assert.equal(r[3].status, 404);

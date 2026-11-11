@@ -154,11 +154,11 @@
   // The block replaces the plain place pill (#photo-caption is hidden while it
   // shows). A message pill on the photo wins: then no context block. The QR
   // PNG is requested at an integer scale and shown at natural size (wave 3).
-  // QR PNG at an integer scale: 8 px/module, 6 on screens <= 820px high. Before
+  // QR PNG at an integer scale (D46): 6 px/module (222px), 5 (185px) on screens <= 820px high. Before
   // layout the old WebView can report innerHeight 0; then use the document height.
   function qrScale() {
     var h = window.innerHeight || document.documentElement.clientHeight;
-    return h && h <= 820 ? 6 : 8;
+    return h && h <= 820 ? 5 : 6;
   }
 
   function qrSrc(qr) {

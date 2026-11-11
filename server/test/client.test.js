@@ -56,13 +56,13 @@ var q = makeCtx(1080);
 q.render({ message: '', context: { kind: 'cake', label: 'העוגה הבאה שלכם', name: 'עוגת <b>', sub: 'צילום: X · Unsplash',
   qr: { img: '/api/qr/c-cheese.png', cta: 'סרקו למתכון' } } });
 assert.equal(q.els.photoContext.className, 'ctx-cake has-qr');
-assert.ok(q.els.photoContext.innerHTML.indexOf('src="/api/qr/c-cheese.png?s=8"') !== -1, q.els.photoContext.innerHTML);
+assert.ok(q.els.photoContext.innerHTML.indexOf('src="/api/qr/c-cheese.png?s=6"') !== -1, q.els.photoContext.innerHTML);
 assert.ok(q.els.photoContext.innerHTML.indexOf('עוגת &lt;b&gt;') !== -1, 'name escaped');
 assert.ok(!/width=|height=/.test(q.els.photoContext.innerHTML), 'natural size: no width/height');
 assert.equal(q.els.photoCaption.style.display, 'none', 'caption hidden while the block shows');
 q = makeCtx(720);
 q.render({ context: { kind: 'israel', label: 'l', name: 'n', sub: '', qr: { img: '/api/qr/ramon.png', cta: 'c' } } });
-assert.ok(q.els.photoContext.innerHTML.indexOf('src="/api/qr/ramon.png?s=6"') !== -1, 'low screen -> s=6');
+assert.ok(q.els.photoContext.innerHTML.indexOf('src="/api/qr/ramon.png?s=5"') !== -1, 'low screen -> s=5 (D46)');
 q.render({ context: { kind: 'abroad', label: 'l', name: 'n', sub: '' } });
 assert.equal(q.els.photoContext.className, 'ctx-abroad');
 assert.equal(q.els.photoContext.innerHTML.indexOf('<img'), -1, 'no QR without qr');
@@ -83,15 +83,15 @@ assert.equal(q.els.photoContext.innerHTML, '');
     extract('qrScale', '\n  }\n') + '\n  }\n' + extract('qrSrc', '\n  }\n') + '\n  }\n' +
     'var ctxShown = "";\n' + extract('showContext', '\n  }\n') + '\n  }; return { showContext: showContext, qrScale: qrScale };'
   )({}, win, doc, FakeImage, function(bg) { renders.push(bg); });
-  assert.equal(api.qrScale(), 8, 'innerHeight 0 -> falls back to the document height');
-  win.innerHeight = 720; assert.equal(api.qrScale(), 6); win.innerHeight = 1080;
+  assert.equal(api.qrScale(), 6, 'innerHeight 0 -> falls back to the document height');
+  win.innerHeight = 720; assert.equal(api.qrScale(), 5, 'D46: low screen'); win.innerHeight = 1080;
   var plain = { message: '', context: { kind: 'abroad', label: 'l', name: 'n', sub: '' } };
   api.showContext(plain); api.showContext(plain);
   assert.equal(renders.length, 1, 'same block on the next poll -> no redraw');
   var withQr = { message: '', context: { kind: 'cake', label: 'l', name: 'n', sub: '', qr: { img: '/api/qr/c-cheese.png', cta: 'c' } } };
   renders = [];
   api.showContext(withQr);
-  assert.equal(images.length, 1); assert.equal(images[0].src, '/api/qr/c-cheese.png?s=8');
+  assert.equal(images.length, 1); assert.equal(images[0].src, '/api/qr/c-cheese.png?s=6');
   assert.ok(!renders.length || !renders[renders.length - 1] || !renders[renders.length - 1].context, 'nothing with a QR before the PNG loads');
   images[0].onload();
   assert.strictEqual(renders[renders.length - 1], withQr, 'QR block after the PNG loaded');

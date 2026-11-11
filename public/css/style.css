@@ -1120,3 +1120,31 @@ body.has-alert #photo-context { display: none; }
   .card + #announcements-panel { margin-top: 18px; }
   #announcements-panel + .card { margin-top: 14px; }
 }
+
+/* === D46: smaller QR, context block re-balanced around it ===
+   Append at the END of style.css (after D45). QR scale goes 8->6 (296->222px)
+   on normal screens and 6->5 (222->185px) on low screens (JS + server, see
+   the addendum). The block shrinks with it: tighter padding, a narrower text
+   column and one step smaller type, so the code and the text stay balanced. */
+
+#photo-context.has-qr {
+  padding: 12px;
+  border-radius: 16px;
+}
+
+.has-qr .ctx-text {
+  margin-left: 18px;
+  max-width: 300px;
+}
+
+.has-qr .ctx-label { font-size: 22px; }
+.has-qr .ctx-name { font-size: 38px; }
+.has-qr .ctx-cta { font-size: 18px; margin-top: 10px; }
+
+@media (max-height: 820px) {
+  #photo-context.has-qr { padding: 8px; border-radius: 12px; }
+  .has-qr .ctx-text { margin-left: 12px; max-width: 230px; }
+  .has-qr .ctx-label { font-size: 16px; }
+  .has-qr .ctx-name { font-size: 28px; }
+  .has-qr .ctx-cta { font-size: 15px; margin-top: 6px; }
+}
