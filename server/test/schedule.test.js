@@ -78,17 +78,24 @@ var a1 = s.getBackground([], local('2027-07-01T09:00:00')).url;
 var a2 = s.getBackground([], local('2027-07-01T11:59:00')).url;
 var a3 = s.getBackground([], local('2027-07-01T12:00:00')).url;
 assert.equal(a1, a2); assert.notEqual(a2, a3);
-// 8 slots a day: no repeat within a week (62 photos > 56 slots)
-var seen = {};
-for (var h = 0; h < 7 * 24; h += 3) seen[s.getBackground([], local('2027-07-01T00:00:00') + h * HOUR).url] = 1;
-assert.equal(Object.keys(seen).length, 56);
+// 8 slots a day: no repeat within a week. Wave 3: the 7 slots of the cake window
+// (Thu 15:00 -> Fri 12:00) show the cake, so 49 pool slots, all different.
+var seen = {}, poolSlots = 0;
+for (var h = 0; h < 7 * 24; h += 3) {
+  var at0 = local('2027-07-01T00:00:00') + h * HOUR;
+  if (s.cakeWindowActive(at0)) continue;
+  poolSlots++;
+  seen[s.getBackground([], at0).url] = 1;
+}
+assert.equal(poolSlots, 49);
+assert.equal(Object.keys(seen).length, 49);
 
 // --- D22: pool mix, 4-slot cycle landscape -> nature -> landscape -> art ---
 var L = s.BG_IMAGES.length, N = s.NATURE_IMAGES.length, A = s.ART_IMAGES.length;
 assert.ok(L > 0 && N > 0 && A > 0, 'all three pools loaded');
 var base = Math.floor(local('2027-07-01T00:00:00') / (3 * HOUR));
 var kinds = [];
-for (var k = 0; k < 8; k++) kinds.push(s.getBackground([], (base + k) * 3 * HOUR + 1).id.split('-')[0]);
+for (var k = 0; k < 8; k++) kinds.push(s.poolBackground(base + k).id.split('-')[0]);
 var cyclePos = base % 4;
 var expectCycle = ['landscape', 'nature', 'landscape', 'art'];
 kinds.forEach(function(kind, k) { assert.equal(kind, expectCycle[(cyclePos + k) % 4], 'slot ' + k + ' kind'); });
@@ -97,7 +104,7 @@ kinds.forEach(function(kind, k) { assert.equal(kind, expectCycle[(cyclePos + k) 
 function poolSeq(kind, count) {
   var out = [];
   for (var t = 0; out.length < count; t++) {
-    var b = s.getBackground([], (base + t) * 3 * HOUR + 1);
+    var b = s.poolBackground(base + t);
     if (b.id.split('-')[0] === kind) out.push(+b.id.split('-')[1]);
   }
   return out;
@@ -115,7 +122,7 @@ function poolSeq(kind, count) {
 // Deterministic: same moment -> same photo.
 assert.equal(s.getBackground([], local('2027-07-01T10:30:00')).url, s.getBackground([], local('2027-07-01T10:30:00')).url);
 // URLs and captions per pool.
-function firstOf(kind) { for (var t = 0; ; t++) { var b = s.getBackground([], (base + t) * 3 * HOUR + 1); if (b.id.split('-')[0] === kind) return b; } }
+function firstOf(kind) { for (var t = 0; ; t++) { var b = s.poolBackground(base + t); if (b.id.split('-')[0] === kind) return b; } }
 var bl = firstOf('landscape'), bn = firstOf('nature'), ba = firstOf('art');
 assert.ok(/^\/api\/pool\/landscape\/\d+\?v=/.test(bl.url), bl.url);
 assert.ok(/^\/api\/pool\/nature\/\d+\?v=/.test(bn.url), bn.url);
@@ -157,5 +164,111 @@ assert.notEqual(s.urlVersion('https://a.example/1.jpg'), s.urlVersion('https://a
   assert.notEqual(after.url, before.url, 'D24: new source url -> new image url');
 })();
 assert.equal(s.urlVersion('https://a.example/1.jpg'), s.urlVersion('https://a.example/1.jpg'));
+
+// ===== Wave 3 (D33): cake slot, trip card, no QR during an alert =====
+var golinks = require('../golinks');
+// Cake window: Israel local Thursday 15:00 -> Friday 12:00 (2027-07-01 is a Thursday)
+assert.equal(s.cakeWindowActive(local('2027-07-01T14:59:00')), false, 'Thu 14:59');
+assert.equal(s.cakeWindowActive(local('2027-07-01T15:00:00')), true, 'Thu 15:00');
+assert.equal(s.cakeWindowActive(local('2027-07-01T23:59:00')), true, 'Thu night');
+assert.equal(s.cakeWindowActive(local('2027-07-02T11:59:00')), true, 'Fri 11:59');
+assert.equal(s.cakeWindowActive(local('2027-07-02T12:00:00')), false, 'Fri 12:00');
+assert.equal(s.cakeWindowActive(local('2027-07-03T10:00:00')), false, 'Sat');
+assert.equal(s.cakeWindowActive(local('2027-06-30T16:00:00')), false, 'Wed');
+// DST: Israel moves the clock on Friday 26.3.2027 at 02:00; the window is wall-clock
+assert.equal(s.cakeWindowActive(local('2027-03-26T11:59:00')), true, 'DST Fri 11:59');
+assert.equal(s.cakeWindowActive(local('2027-03-26T12:00:00')), false, 'DST Fri 12:00');
+assert.equal(s.cakeWindowActive(local('2027-03-26T01:30:00')), true, 'DST Fri 01:30');
+
+var cakeBg = s.getBackground([], local('2027-07-01T16:00:00'));
+var ci = s.cakeIndex(local('2027-07-01T16:00:00'));
+var cake = s.CAKES[ci];
+assert.ok(cakeBg.id.indexOf('cake-' + ci) === 0, cakeBg.id);
+assert.equal(cakeBg.url, '/api/cake/' + ci + '?v=' + s.urlVersion(cake.image));
+assert.equal(cakeBg.caption, '', 'no caption on the cake photo');
+assert.deepEqual(cakeBg.qr, { kind: 'cake', title: 'העוגה הבאה שלכם', name: cake.title,
+  cta: 'סרקו למתכון', img: '/api/qr/' + cake.go + '.png' });
+// same week = same cake all window long; next week = another cake
+assert.equal(s.cakeIndex(local('2027-07-02T11:00:00')), ci);
+assert.notEqual(s.cakeIndex(local('2027-07-08T16:00:00')), ci);
+// 52 consecutive weeks show 52 different cakes
+var seen = {};
+for (var w = 0; w < 52; w++) seen[s.cakeIndex(local('2027-07-01T16:00:00') + w * 7 * 24 * HOUR)] = 1;
+assert.equal(Object.keys(seen).length, 52, 'a year without repeats');
+// any active schedule item wins over the cake
+var holidayThu = [{ row: 1, from: '2027-07-01', to: '2027-07-01', theme: 'atzmaut', details: '', text: '', active: true }];
+var hb = s.getBackground(holidayThu, local('2027-07-01T16:00:00'));
+assert.equal(hb.id.indexOf('theme-atzmaut'), 0, 'holiday beats cake');
+assert.ok(!hb.qr, 'no QR on a holiday photo');
+// alert: the cake photo stays, its card goes
+var cakeAlert = s.getBackground([], local('2027-07-01T16:00:00'), 0, { alert: true });
+assert.equal(cakeAlert.id, cakeBg.id);
+assert.ok(!cakeAlert.qr, 'no QR during an alert');
+
+// Trip card only on landscape photos that carry trip data
+var tripBg = null, plainLand = null, other = null;
+for (var t = 0; t < 400 && !(tripBg && plainLand && other); t++) {
+  var at = local('2027-07-04T00:00:00') + t * 3 * HOUR; // Sunday onward, then weekly
+  if (s.cakeWindowActive(at)) continue;
+  var b = s.getBackground([], at);
+  var kind = b.id.split('-')[0], idx = +b.id.split('-')[1];
+  if (kind === 'landscape' && s.BG_IMAGES[idx].trip && !tripBg) tripBg = { bg: b, img: s.BG_IMAGES[idx], at: at };
+  else if (kind === 'landscape' && !s.BG_IMAGES[idx].trip && !plainLand) plainLand = b;
+  else if (kind !== 'landscape' && !other) other = b;
+}
+assert.ok(tripBg, 'found a trip landscape slot');
+assert.deepEqual(tripBg.bg.qr, { kind: 'trip', title: 'הטיול הבא שלכם', name: tripBg.img.trip.title,
+  cta: 'סרקו לפרטים', img: '/api/qr/' + tripBg.img.trip.go + '.png' });
+assert.equal(tripBg.bg.caption, tripBg.img.place, 'the place caption stays');
+if (plainLand) assert.ok(!plainLand.qr, 'landscape without trip -> no card');
+assert.ok(other && !other.qr, 'nature/art -> no card');
+assert.ok(!s.getBackground([], tripBg.at, 0, { alert: true }).qr, 'trip card hidden during an alert');
+// custom committee photo -> no card
+var customRow = [{ row: 2, from: '2027-07-04', to: '2027-07-30', theme: 'custom', details: '', text: 'x', active: true, imageUrl: 'https://i.ibb.co/a.jpg' }];
+assert.ok(!s.getBackground(customRow, tripBg.at).qr, 'committee photo -> no card');
+
+// ===== D39: "אירוע בעיר" =====
+assert.equal(s.formatDates('2027-06-04', '2027-06-04'), '4.6');
+assert.equal(s.formatDates('2027-02-09', '2027-02-18'), '9–18.2');
+assert.equal(s.formatDates('2027-10-28', '2027-11-02'), '28.10–2.11');
+(function() {
+  var hadCity = !!s.THEMES.city;
+  if (!hadCity) s.THEMES.city = { label: 'אירוע בעיר', priority: 1, tone: 'festive', message: '', sub: '', images: [] };
+  var goId = Object.keys(golinks.LINKS)[0];
+  var city = [{ row: 3, from: '2027-06-04', to: '2027-06-04', theme: 'city', name: 'מרוץ הלילה', details: 'פארק אוחיון',
+    text: '', go: goId, active: true }];
+  var cb = s.getBackground(city, local('2027-06-04T10:00:00'));
+  assert.equal(cb.message, 'מרוץ הלילה, פארק אוחיון · 4.6');
+  assert.equal(cb.tone, 'festive');
+  assert.deepEqual(cb.qr, { kind: 'event', title: 'אירוע בעיר', name: 'מרוץ הלילה', cta: 'סרקו לפרטים', img: '/api/qr/' + goId + '.png' });
+  assert.ok(!s.getBackground(city, local('2027-06-04T10:00:00'), 0, { alert: true }).qr, 'no event QR in an alert');
+  // no place, no go id -> text without the place, no card
+  var bare = [{ row: 3, from: '2027-02-09', to: '2027-02-18', theme: 'city', name: 'אמצע הדרך', details: '', text: '', active: true }];
+  var bb2 = s.getBackground(bare, local('2027-02-10T10:00:00'));
+  assert.equal(bb2.message, 'אמצע הדרך · 9–18.2');
+  assert.ok(!bb2.qr);
+  // screen text (column G) overrides
+  bare[0].text = 'טקסט חופשי';
+  assert.equal(s.getBackground(bare, local('2027-02-10T10:00:00')).message, 'טקסט חופשי');
+  // a building event (priority 3) on the same day wins and has no QR
+  var both = city.concat([{ row: 4, from: '2027-06-04', to: '2027-06-04', theme: 'wedding', details: 'משפחת כהן', text: '', active: true }]);
+  var wb = s.getBackground(both, local('2027-06-04T10:00:00'));
+  assert.ok(/משפחת כהן/.test(wb.message)); assert.ok(!wb.qr);
+  if (!hadCity) delete s.THEMES.city;
+})();
+// Sheet column H holding a known go id -> item.go (not an image link)
+(function() {
+  var goId = Object.keys(golinks.LINKS)[0];
+  function cell(v) { return { v: v }; }
+  var table = { table: { cols: [{ label: 'מתאריך' }], rows: [
+    { c: [cell('4/6/2027'), null, null, cell('מרוץ'), cell('אירוע בעיר'), null, null, cell(goId), null] },
+    { c: [cell('5/6/2027'), null, null, cell('x'), cell('בקשת ועד'), null, null, cell('https://i.ibb.co/a.jpg'), null] },
+    { c: [cell('6/6/2027'), null, null, cell('x'), cell('בקשת ועד'), null, null, cell('nope-id'), null] }
+  ] } };
+  var r = s.parseScheduleRows(table);
+  assert.equal(r[0].go, goId); assert.equal(r[0].link, '', 'go id is not an image link');
+  assert.equal(r[1].go, ''); assert.equal(r[1].link, 'https://i.ibb.co/a.jpg');
+  assert.equal(r[2].go, ''); assert.equal(r[2].link, 'nope-id', 'unknown id stays a link (resolver ignores it)');
+})();
 
 console.log('schedule tests: ALL OK');

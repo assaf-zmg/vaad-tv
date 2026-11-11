@@ -1,0 +1,89 @@
+{
+ "_comment": "LOCAL ONLY. D39 city event example (column H = go id).",
+ "table": {
+  "cols": [
+   {
+    "id": "A",
+    "label": "מתאריך",
+    "type": "string"
+   },
+   {
+    "id": "B",
+    "label": "עד תאריך (כולל)",
+    "type": "string"
+   },
+   {
+    "id": "C",
+    "label": "סוג",
+    "type": "string"
+   },
+   {
+    "id": "D",
+    "label": "שם",
+    "type": "string"
+   },
+   {
+    "id": "E",
+    "label": "תבנית",
+    "type": "string"
+   },
+   {
+    "id": "F",
+    "label": "פרטים (שם המשפחה)",
+    "type": "string"
+   },
+   {
+    "id": "G",
+    "label": "טקסט על המסך (ריק = ברירת מחדל)",
+    "type": "string"
+   },
+   {
+    "id": "H",
+    "label": "קישור לתמונה (ריק = מהמאגר)",
+    "type": "string"
+   },
+   {
+    "id": "I",
+    "label": "פעיל",
+    "type": "string"
+   },
+   {
+    "id": "J",
+    "label": "הערות",
+    "type": "string"
+   }
+  ],
+  "rows": [
+   {
+    "c": [
+     {
+      "v": "Date(2027,5,4)"
+     },
+     {
+      "v": "Date(2027,5,4)"
+     },
+     {
+      "v": "אירוע בעיר"
+     },
+     {
+      "v": "מרוץ הלילה"
+     },
+     {
+      "v": "אירוע בעיר"
+     },
+     {
+      "v": "פארק אוחיון"
+     },
+     null,
+     {
+      "v": "achziv"
+     },
+     {
+      "v": true
+     },
+     null
+    ]
+   }
+  ]
+ }
+}

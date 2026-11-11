@@ -1,0 +1,4 @@
+{
+ "_comment": "Dev-owned runtime switches. newsMode: \"ticker\" (D35, bottom bar) or \"card\" (news card in the column, fallback).",
+ "newsMode": "ticker"
+}

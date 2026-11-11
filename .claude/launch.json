@@ -157,6 +157,73 @@
         "3001"
       ],
       "port": 3001
+    },
+    {
+      "name": "vaad-tv-cake",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3021",
+        "SCHEDULE_MOCK=test/mock-schedule.json",
+        "DEBUG_DATE=2026-11-12T16:00:00+02:00",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3021,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-trip",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3022",
+        "SCHEDULE_MOCK=test/mock-schedule.json",
+        "DEBUG_DATE=2026-11-16T07:30:00+02:00",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3022,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-trip-alert",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3023",
+        "SCHEDULE_MOCK=test/mock-schedule.json",
+        "DEBUG_DATE=2026-11-16T07:30:00+02:00",
+        "ALERT_MOCK=ירי רקטות וטילים",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3023,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-trip-flyer",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3024",
+        "SCHEDULE_MOCK=test/mock-schedule.json",
+        "DEBUG_DATE=2026-11-16T07:30:00+02:00",
+        "ANNOUNCEMENTS_MOCK=test/mock-announcements.csv",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3024,
+      "autoPort": false
+    },
+    {
+      "name": "vaad-tv-city",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "PORT=3025",
+        "DEBUG_DATE=2027-06-04T10:00:00+03:00",
+        "SCHEDULE_MOCK=test/mock-schedule-city.json",
+        "/Users/assafyogev_1/.local/node-v20.11.1-darwin-arm64/bin/node",
+        "/Users/assafyogev_1/Claude Projects/vaad-tv/server/server.js"
+      ],
+      "port": 3025,
+      "autoPort": false
     }
   ]
 }

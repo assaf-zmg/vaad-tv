@@ -50,6 +50,10 @@ function renderCreditsHtml() {
     t.images.forEach(function(img) { themeItems.push(row(t.label, img)); });
   });
   body += section('חגים ואירועים', themeItems);
+  // wave 3: cake of the week photos (entries use "image" for the photo url)
+  body += section('עוגות', s.CAKES.map(function(c) {
+    return row(c.title, { url: c.image, credit: c.credit, license: c.license, source: c.source, page: c.page });
+  }));
   return '<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8">' +
     '<meta name="robots" content="noindex"><meta name="viewport" content="width=device-width, initial-scale=1">' +
     '<title>קרדיטים לתמונות · לוח הבניין</title>' +

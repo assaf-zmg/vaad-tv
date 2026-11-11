@@ -23,6 +23,15 @@ Object.keys(s.THEMES).forEach(function(key) {
   s.THEMES[key].images.forEach(function(img, i) { expectListed(img, 'theme ' + key + '/' + i); });
 });
 
+// Wave 3: every cake photo is credited "צילום: <name> · Unsplash" with its photo page
+assert.ok(html.indexOf('<h2>עוגות (' + s.CAKES.length + ')</h2>') !== -1, 'cakes section');
+s.CAKES.forEach(function(c) {
+  count++;
+  assert.ok(html.indexOf(esc(c.image)) !== -1, 'cake ' + c.id + ': image url missing');
+  assert.ok(html.indexOf('<strong>' + esc(c.title) + '</strong> · צילום: ' + esc(c.credit) + ' · Unsplash') !== -1, 'cake ' + c.id + ': credit');
+  assert.ok(html.indexOf('href="' + esc(c.page) + '"') !== -1, 'cake ' + c.id + ': page link');
+});
+
 // Unsplash photos are credited "צילום: <name> · Unsplash", never "ויקישיתוף".
 var unsplash = 0;
 Object.keys(s.THEMES).forEach(function(key) {

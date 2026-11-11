@@ -5,6 +5,8 @@ var BG_IMAGES = require('./bg-images.json');         // landscapes (content-owne
 var NATURE_IMAGES = require('./nature-images.json'); // nature & animals (content-owned)
 var ART_IMAGES = require('./art-images.json');       // public-domain art (content-owned)
 var THEMES = require('./theme-images.json');
+var CAKES = require('./cakes.json');                 // wave 3: cake of the week (content-owned)
+var golinks = require('./golinks');                  // wave 3: closed QR target list
 var BG_SLOT_MS = 3 * 60 * 60 * 1000; // pool photo changes every 3 hours (Israel time)
 
 function normalizeKey(s) {
@@ -69,6 +71,9 @@ function parseScheduleRows(gvizJson) {
     var c = r.c || [];
     var from = parseSheetDate(c[0]);
     if (!from) return; // template/example rows without a date are ignored
+    var link = cellText(c[7]);
+    // D39: column H may hold a go-link id (QR card) instead of an image link
+    var go = golinks.resolve(link) ? link : '';
     out.push({
       row: i,
       from: from,
@@ -77,7 +82,8 @@ function parseScheduleRows(gvizJson) {
       theme: themeKeyFor(cellText(c[4])),
       details: cellText(c[5]),
       text: cellText(c[6]),
-      link: cellText(c[7]),
+      link: go ? '' : link,
+      go: go,
       active: cellBool(c[8])
     });
   });
@@ -134,19 +140,79 @@ function poolBackground(slot) {
   var img = POOLS[pick.kind][pick.index];
   // D25: on screen only the place (art: "<title> · <artist>"); credits are on /credits
   var caption = pick.kind === 'art' ? img.place + ' · ' + img.credit : img.place;
-  return {
+  var bg = {
     id: pick.kind + '-' + pick.index,
     url: '/api/pool/' + pick.kind + '/' + pick.index + '?v=' + urlVersion(img.url),
     caption: caption,
     message: '', sub: '', tone: ''
   };
+  // wave 3: "הטיול הבא שלכם" only on Israeli landscapes that carry trip data
+  if (pick.kind === 'landscape' && img.trip && img.trip.go) {
+    bg.qr = qrCard('trip', 'הטיול הבא שלכם', img.trip.title, 'סרקו לפרטים', img.trip.go);
+  }
+  return bg;
+}
+
+// --- Wave 3 (D33): cake of the week, Israel local Thursday 15:00 -> Friday 12:00.
+// localMs is wall-clock time, so the DST switch (a Friday at 02:00) can't move it.
+var DAY_MS = 24 * 60 * 60 * 1000;
+var CAKE_EPOCH = Date.UTC(2026, 0, 1); // a Thursday (local midnight)
+
+function cakeWindowActive(localMs) {
+  var d = new Date(localMs);
+  var day = d.getUTCDay(), h = d.getUTCHours();
+  return (day === 4 && h >= 15) || (day === 5 && h < 12);
+}
+
+// One cake per week, the whole list before any repeat.
+function cakeIndex(localMs) {
+  var week = Math.floor((localMs - CAKE_EPOCH) / (7 * DAY_MS));
+  return ((week % CAKES.length) + CAKES.length) % CAKES.length;
+}
+
+function cakeBackground(localMs) {
+  var i = cakeIndex(localMs);
+  var cake = CAKES[i];
+  return {
+    id: 'cake-' + i,
+    url: '/api/cake/' + i + '?v=' + urlVersion(cake.image),
+    caption: '', // like holiday photos; the credit is on /credits
+    message: '', sub: '', tone: '',
+    qr: qrCard('cake', 'העוגה הבאה שלכם', cake.title, 'סרקו למתכון', cake.go)
+  };
+}
+
+function qrCard(kind, title, name, cta, go) {
+  return { kind: kind, title: title, name: name, cta: cta, img: '/api/qr/' + go + '.png' };
+}
+
+// D39: "4.6", "9–18.2", "28.10–2.11"
+function formatDates(from, to) {
+  function dm(iso) { var p = iso.split('-'); return { d: +p[2], m: +p[1] }; }
+  var a = dm(from), b = dm(to || from);
+  if (!to || to === from) return a.d + '.' + a.m;
+  if (a.m === b.m) return a.d + '–' + b.d + '.' + b.m;
+  return a.d + '.' + a.m + '–' + b.d + '.' + b.m;
+}
+
+// D39: "<event>, <place> · <dates>"
+function cityMessage(item) {
+  var head = item.name + (item.details ? ', ' + item.details : '');
+  return (head ? head + ' · ' : '') + formatDates(item.from, item.to);
 }
 
 // What the big photo area shows at `localMs` (ms since epoch, shifted to Israel time):
-// building event / committee request > memorial day > holiday > random pool.
+// building event / committee request > memorial day > holiday / city event > cake > pool.
 // Same priority: the lower row in the sheet wins.
 // slotMs is optional (local testing can rotate faster); default 3 hours.
-function getBackground(schedule, localMs, slotMs) {
+// opts.alert: a red alert is on -> no QR card at all (wave 3).
+function getBackground(schedule, localMs, slotMs, opts) {
+  var bg = pickBackground(schedule, localMs, slotMs);
+  if (opts && opts.alert) delete bg.qr;
+  return bg;
+}
+
+function pickBackground(schedule, localMs, slotMs) {
   var today = localDateString(localMs);
   var slot = Math.floor(localMs / (slotMs || BG_SLOT_MS));
 
@@ -156,11 +222,12 @@ function getBackground(schedule, localMs, slotMs) {
     var pri = THEMES[item.theme].priority || 1;
     if (!best || pri >= best.pri) best = { item: item, pri: pri };
   });
-  if (!best) return poolBackground(slot);
+  if (!best) return cakeWindowActive(localMs) ? cakeBackground(localMs) : poolBackground(slot);
 
   var item = best.item;
   var theme = THEMES[item.theme];
   var bg = poolBackground(slot);
+  delete bg.qr; // a scheduled day never shows the trip card
   if (item.imageUrl) {
     bg.id = 'custom-' + item.row + '-' + item.imageUrl;
     bg.url = '/api/image-proxy?url=' + encodeURIComponent(item.imageUrl);
@@ -172,7 +239,12 @@ function getBackground(schedule, localMs, slotMs) {
     bg.url = '/api/theme/' + item.theme + '/' + i + '?v=' + urlVersion(img.url);
     bg.caption = ''; // D25: holiday / event photos carry no caption on screen
   }
-  bg.message = item.text || fillDetails(theme.message, item.details);
+  if (item.theme === 'city') {
+    bg.message = item.text || cityMessage(item);
+    if (item.go) bg.qr = qrCard('event', 'אירוע בעיר', item.name || bg.message, 'סרקו לפרטים', item.go);
+  } else {
+    bg.message = item.text || fillDetails(theme.message, item.details);
+  }
   bg.sub = item.text ? '' : theme.sub;
   bg.tone = theme.tone;
   bg.id += '|' + bg.message;
@@ -186,6 +258,11 @@ module.exports = {
   POOLS: POOLS,
   urlVersion: urlVersion,
   THEMES: THEMES,
+  CAKES: CAKES,
+  cakeWindowActive: cakeWindowActive,
+  cakeIndex: cakeIndex,
+  formatDates: formatDates,
+  poolBackground: poolBackground,
   themeKeyFor: themeKeyFor,
   parseSheetDate: parseSheetDate,
   isScheduleTable: isScheduleTable,

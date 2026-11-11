@@ -79,6 +79,9 @@
     els.annPhoto = document.getElementById('ann-photo');
     els.photoMessage = document.getElementById('photo-message');
     els.photoCaption = document.getElementById('photo-caption');
+    els.qrCard = document.getElementById('qr-card');
+    els.tickerStrip = document.getElementById('ticker-strip');
+    els.tickerViewport = document.getElementById('ticker-viewport');
   }
 
   // --- XHR (ES5, no fetch) ---
@@ -138,7 +141,39 @@
   // The server decides what to show (pool photo every 3 hours, holiday photo,
   // or a building event) and sends { id, url, caption, message, sub, tone }.
   // We preload the new photo, then cross-fade it in on top of the old one.
-  var photoState = { id: null, pendingId: null, front: null, annShowing: false };
+  var photoState = { id: null, pendingId: null, front: null, annShowing: false, bg: null };
+
+  // --- QR card (wave 3, D33) ---
+  // The server decides when a QR segment applies and adds it to the
+  // background payload:
+  //   bg.qr = { kind: 'trip' | 'cake',
+  //             title: 'הטיול הבא שלכם' | 'העוגה הבאה שלכם',
+  //             name: 'עין עבדת',
+  //             cta: 'סרקו לפרטים' | 'סרקו למתכון',
+  //             img: '/api/qr/ein-avdat.png' }     // PNG, black on white, quiet zone
+  // The client asks for an integer scale (?s=8, or ?s=6 on screens <= 820px
+  // high) and shows the PNG at its natural size (no width/height, no CSS
+  // scaling) so every module stays a whole number of pixels on the old WebView.
+  // No bg.qr -> no card. The card hides during a red alert (CSS) and while a
+  // committee flyer takes over the photo (showAnnouncementPhoto).
+  function renderQrCard(bg) {
+    var q = bg && bg.qr;
+    if (!q || !q.img) {
+      els.qrCard.innerHTML = '';
+      els.qrCard.className = '';
+      return;
+    }
+    els.qrCard.className = q.kind === 'cake' ? 'qr-cake' : 'qr-trip';
+    var scale = window.innerHeight <= 820 ? 6 : 8;
+    var src = q.img + (q.img.indexOf('?') === -1 ? '?' : '&') + 's=' + scale;
+    els.qrCard.innerHTML =
+      '<div class="qr-text">' +
+        '<div class="qr-kicker">' + escapeHtml(q.title || '') + '</div>' +
+        '<div class="qr-name">' + escapeHtml(q.name || '') + '</div>' +
+        '<div class="qr-cta">' + escapeHtml(q.cta || '') + '</div>' +
+      '</div>' +
+      '<div class="qr-tile"><img src="' + src + '" alt=""></div>';
+  }
 
   function renderPhotoText(bg) {
     var msg = '';
@@ -150,6 +185,8 @@
     els.photoMessage.innerHTML = msg;
     els.photoMessage.className = (bg.tone === 'somber' ? 'somber' : '') + (photoState.annShowing ? ' hidden' : '');
     els.photoCaption.innerHTML = escapeHtml(bg.caption || '');
+    photoState.bg = bg;
+    renderQrCard(bg); // runs from the photo's onload, so the card never shows without its photo
   }
 
   function applyBackground(bg) {
@@ -189,6 +226,7 @@
     photoState.annShowing = on;
     var hide = on ? ' hidden' : '';
     els.photoCaption.className = hide;
+    if (els.qrCard) els.qrCard.style.display = on ? 'none' : '';
     els.photoMessage.className = els.photoMessage.className.replace(' hidden', '').replace('hidden', '') + hide;
   }
 
@@ -344,6 +382,8 @@
     annLayout = null;
     renderAnnouncementsPage();
     renderNewsPage();
+    renderTicker(true);
+    if (photoState.bg) renderQrCard(photoState.bg); // QR scale follows the screen height
   };
 
   // --- Render: Dates ---
@@ -576,6 +616,71 @@
     });
   }
 
+  // --- ynet ticker (D35) ---
+  // Builds the strip once per headline change (not per poll, so the scroll
+  // does not restart every 2 minutes). Two identical copies, each at least as
+  // wide as the viewport; one CSS animation moves the strip by 50% (= one
+  // copy) left -> right at TICKER_SPEED px/s. No per-frame JS.
+  var TICKER_SPEED = 70; // px per second, slow enough to read from 2-3 m
+  var tickerKey = null;
+
+  function setTickerAnimation(el, value) {
+    el.style.webkitAnimation = 'none';
+    el.style.animation = 'none';
+    void el.offsetWidth; // restart the animation
+    el.style.webkitAnimation = value;
+    el.style.animation = value;
+  }
+
+  function renderTicker(force) {
+    var strip = els.tickerStrip;
+    if (!strip) return;
+    var list = (currentData && currentData.ynet) || [];
+    var titles = [];
+    for (var i = 0; i < list.length; i++) titles.push(stripEmoji(list[i].title));
+    var key = titles.join('\n');
+    // Hidden (red alert, or ticker off): measure nothing now; the first
+    // render() after the ticker is visible again builds it at the right width.
+    if (!els.tickerViewport.offsetWidth) { tickerKey = null; return; }
+    if (!force && key === tickerKey) return;
+    tickerKey = key;
+
+    if (!titles.length) {
+      strip.className = 'ticker-strip static';
+      strip.innerHTML = 'החדשות הטובות יחזרו בקרוב';
+      setTickerAnimation(strip, '');
+      return;
+    }
+
+    var one = '';
+    for (var k = 0; k < titles.length; k++) {
+      one += '<span class="ticker-item">' + escapeHtml(titles[k]) + '</span><span class="ticker-sep"></span>';
+    }
+    strip.className = 'ticker-strip';
+
+    // One copy must be at least as wide as the viewport for a seamless loop.
+    var copyHtml = one;
+    strip.innerHTML = '<span class="ticker-copy">' + copyHtml + '</span>';
+    var viewportW = els.tickerViewport.offsetWidth;
+    for (var guard = 0; guard < 10 && strip.children[0].offsetWidth < viewportW; guard++) {
+      copyHtml += one;
+      strip.innerHTML = '<span class="ticker-copy">' + copyHtml + '</span>';
+    }
+    var copyW = strip.children[0].offsetWidth;
+    strip.innerHTML = '<span class="ticker-copy">' + copyHtml + '</span><span class="ticker-copy">' + copyHtml + '</span>';
+
+    var seconds = Math.max(20, Math.round(copyW / TICKER_SPEED));
+    setTickerAnimation(strip, 'ticker-scroll ' + seconds + 's linear infinite');
+  }
+
+  // D35: server flag newsMode 'ticker' | 'card'. No flag (older cached data) keeps
+  // the page default (index.html ships with ticker-on). No classList on old WebView.
+  function applyNewsMode(mode) {
+    if (mode !== 'ticker' && mode !== 'card') return;
+    var cls = document.body.className.replace(/(^|\s)ticker-on(?=\s|$)/g, '');
+    document.body.className = mode === 'ticker' ? cls + ' ticker-on' : cls;
+  }
+
   // --- Render: Shabbat ---
   function renderShabbat(shabbat) {
     if (!shabbat || (!shabbat.candleLighting && !shabbat.parasha)) {
@@ -598,6 +703,7 @@
     currentData = data;
     if (data.utcOffset !== undefined) utcOffset = data.utcOffset;
 
+    applyNewsMode(data.newsMode);
     renderAlert(data.alert);
     applyBackground(data.background);
     renderWeather(data.weather);
@@ -616,6 +722,7 @@
     }
     renderAnnouncementsPage();
     renderNewsPage();
+    renderTicker(false);
   }
 
   // --- Initial loading placeholders ---

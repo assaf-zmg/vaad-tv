@@ -18,6 +18,8 @@ var SHEET_ID = process.env.GOOGLE_SHEET_ID || '1e6bM89BRo1VEvw4edUaydH8sYy29Kr94
 
 // --- Photo area: pool / holiday / building-event logic lives in schedule.js ---
 var schedule = require('./schedule');
+var SETTINGS = require('./settings.json');      // dev-owned switches (D35 newsMode)
+var NEWS_MODE = SETTINGS.newsMode === 'card' ? 'card' : 'ticker';
 var BG_IMAGES = schedule.BG_IMAGES;
 var THEMES = schedule.THEMES;
 var SCHEDULE_SHEET = process.env.SCHEDULE_SHEET || 'לוח תמונות';
@@ -524,7 +526,9 @@ app.get('/api/dashboard.json', function(req, res) {
       weather: results.weather || { current: {}, daily: [] },
       shabbat: results.shabbat || {},
       alert: results.alert || null,
-      background: schedule.getBackground(results.schedule || lastSchedule, israelLocalMs(), DEBUG_ROTATE_MS)
+      newsMode: NEWS_MODE,
+      background: schedule.getBackground(results.schedule || lastSchedule, israelLocalMs(), DEBUG_ROTATE_MS,
+        { alert: !!(results.alert && results.alert.title) })
     };
 
     cache.data = payload;
@@ -580,6 +584,36 @@ app.get('/api/theme/:key/:index', function(req, res) {
   var index = parseInt(req.params.index, 10) || 0;
   if (!theme || !theme.images[index]) { res.status(404).send(''); return; }
   sendPoolImage(theme.images[index].url, res, 'Theme');
+});
+
+// --- Wave 3: cake of the week photo (Thursday 15:00 -> Friday 12:00) ---
+app.get('/api/cake/:index', function(req, res) {
+  var index = /^\d+$/.test(req.params.index) ? +req.params.index : -1;
+  if (!schedule.CAKES[index]) { res.status(404).send(''); return; }
+  sendPoolImage(schedule.CAKES[index].image, res, 'Cake');
+});
+
+// --- Wave 3: QR codes. /go/<id> is the short address inside every code; it
+// redirects only to entries of go-links.json (closed list, never open). ---
+var golinks = require('./golinks');
+var qr = require('./qr');
+app.get('/go/:id', function(req, res) {
+  var url = golinks.resolve(req.params.id);
+  res.set('Cache-Control', 'no-store');
+  if (!url) { res.status(404).send(''); return; }
+  res.redirect(302, url);
+});
+
+app.get(/^\/api\/qr\/([a-z0-9-]+)\.png$/, function(req, res) {
+  qr.pngFor(req.params[0], req.query.s).then(function(buf) {
+    if (!buf) { res.status(404).send(''); return; }
+    res.set('Content-Type', 'image/png');
+    res.set('Cache-Control', 'public, max-age=86400, s-maxage=2592000');
+    res.send(buf);
+  }).catch(function(err) {
+    console.error('QR error:', err.message);
+    res.status(500).send('');
+  });
 });
 
 // --- D25: photo credits (not linked from the TV) ---
