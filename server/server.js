@@ -7,6 +7,12 @@ var csvParse = require('csv-parse/sync');
 var path = require('path');
 
 var app = express();
+
+// Every /api response (images, JSON, errors) declares its own type: no MIME sniffing.
+app.use('/api', function(req, res, next) {
+  res.set('X-Content-Type-Options', 'nosniff');
+  next();
+});
 var PORT = process.env.PORT || 3000;
 var SHEET_ID = process.env.GOOGLE_SHEET_ID || '1e6bM89BRo1VEvw4edUaydH8sYy29Kr94BJW-W9Li5pI';
 

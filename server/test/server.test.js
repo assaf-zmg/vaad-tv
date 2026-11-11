@@ -37,6 +37,14 @@ var server = app.listen(0, function() {
         JSON.parse(r2.body); // valid JSON (last good data or {})
       });
     })
+    // every image route sends nosniff, on success and on error (manager follow-up)
+    .then(function() {
+      var key = Object.keys(schedule.THEMES).filter(function(k) { return schedule.THEMES[k].images.length; })[0];
+      return Promise.all(['/api/pool/art/0', '/api/pool/nope/1', '/api/bg/0', '/api/theme/' + key + '/0', '/api/theme/nope/0']
+        .map(function(p) { return get(port, p).then(function(r) {
+          assert.equal(r.headers['x-content-type-options'], 'nosniff', p + ' (status ' + r.status + ') lacks nosniff');
+        }); }));
+    })
     .then(function() { return get(port, '/credits'); })
     .then(function(r3) {
       assert.equal(r3.status, 200);
