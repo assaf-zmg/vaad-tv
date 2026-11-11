@@ -119,4 +119,46 @@ assert.ok(/has-alert/.test(body.className));
 applyNewsMode(undefined); // older cached payload without the flag: keep the page default
 assert.ok(/ticker-on/.test(body.className));
 
+// --- D45: fits() measures against the slot's capacity (card wraps its content) ---
+(function() {
+  var api = new Function('FIT_SLACK', extract('annCapacity', '\n  }\n') + '\n  }\n' + extract('fits', '\n  }\n') +
+    '\n  }; return { fits: fits, annCapacity: annCapacity };')(4);
+  // slot 509 high; card chrome (padding, header, dots) = card 279 - content 205 = 74 -> capacity 435
+  function dom(noticeH, contentH, cardH) {
+    var slot = { clientHeight: 509 };
+    var card = { offsetHeight: cardH, parentNode: slot };
+    return { offsetHeight: contentH, parentNode: card, children: noticeH === null ? [] : [{ offsetHeight: noticeH }] };
+  }
+  var short = dom(205, 205, 279);
+  assert.equal(api.annCapacity(short), 435);
+  assert.ok(api.fits(short), 'short notice fits');
+  assert.ok(api.fits(dom(431, 431, 505)), 'just under capacity - slack');
+  assert.ok(!api.fits(dom(432, 432, 506)), 'over capacity - slack');
+  assert.ok(!api.fits(dom(null, 0, 74)), 'no notice -> false');
+  // the capacity does not depend on the content (no shrink loop)
+  assert.equal(api.annCapacity(dom(100, 100, 174)), api.annCapacity(dom(400, 400, 474)));
+})();
+
+// --- D44: Shabbat block: candles icon, "פרשת השבוע: תולדות" (hebcal's leading "פרשת " dropped) ---
+(function() {
+  var els = { shabbatContent: { innerHTML: '' } };
+  var start = src.indexOf('var SHABBAT_ICON');
+  assert.ok(start !== -1, 'SHABBAT_ICON not found');
+  var end = src.indexOf('function renderShabbat(', start);
+  var render = new Function('els', escFn + '\n' + src.slice(start, end) + extract('renderShabbat', '\n  }\n') +
+    '\n  }; return renderShabbat;')(els);
+  render({ candleLighting: '16:21', havdalah: '17:19', parasha: 'פרשת תולדות' });
+  var h = els.shabbatContent.innerHTML;
+  assert.ok(h.indexOf('פרשת השבוע: תולדות') !== -1, h);
+  assert.equal(h.indexOf('פרשת השבוע: פרשת'), -1);
+  assert.ok(h.indexOf('כניסת שבת: 16:21 | יציאת שבת: 17:19') !== -1);
+  assert.ok(h.indexOf('<svg') !== -1 && h.indexOf('shabbat-icon') !== -1, 'candles icon');
+  render({ parasha: 'פרשת <b>' });
+  assert.ok(els.shabbatContent.innerHTML.indexOf('פרשת השבוע: &lt;b&gt;') !== -1, 'parasha escaped');
+  render({ parasha: 'וזאת הברכה' });
+  assert.ok(els.shabbatContent.innerHTML.indexOf('פרשת השבוע: וזאת הברכה') !== -1, 'no prefix: unchanged');
+  render(null);
+  assert.ok(/זמני שבת לא זמינים/.test(els.shabbatContent.innerHTML));
+})();
+
 console.log('client tests: ALL OK');

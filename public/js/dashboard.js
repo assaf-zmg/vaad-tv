@@ -452,11 +452,21 @@
 
   var FIT_SLACK = 4; // px of headroom for rounding between measure and paint
 
-  // Measure the card itself: el.scrollHeight never drops below el's own
-  // height, so it cannot tell "fits with room to spare".
+  // D45: the card wraps its content, so #announcements-content no longer has
+  // a fixed height. Measure against the CAPACITY instead: the slot's height
+  // (#announcements-panel, flex: 1) minus the card's own chrome (padding,
+  // border, header, dots), which does not depend on the content.
+  // Replaces the D26 fits(el).
+  function annCapacity(el) {
+    var card = el.parentNode;              // .ann-card
+    var slot = card.parentNode;            // #announcements-panel
+    var chrome = card.offsetHeight - el.offsetHeight;
+    return slot.clientHeight - chrome;
+  }
+
   function fits(el) {
-    var card = el.children[0];
-    return !!card && card.offsetHeight <= el.clientHeight - FIT_SLACK;
+    var notice = el.children[0];
+    return !!notice && notice.offsetHeight <= annCapacity(el) - FIT_SLACK;
   }
 
   // Greedy word fill at the smallest size. Whitespace tokens are kept so
@@ -718,7 +728,19 @@
     document.body.className = mode === 'ticker' ? cls + ' ticker-on' : cls;
   }
 
-  // --- Render: Shabbat ---
+  // --- Render: Shabbat (D44) ---
+  // Right-aligned like the rest of the column, with a two-candles line icon
+  // at its start (same stroke style/colour as the weather icons). hebcal's
+  // Hebrew parasha already starts with "פרשת " ("פרשת תולדות"), so it is
+  // stripped for display to avoid "פרשת השבוע: פרשת תולדות".
+  var SHABBAT_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">' +
+    '<g fill="none" stroke="#f2f0ea" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+    '<rect x="12" y="22" width="8" height="19" rx="1.5"/><rect x="28" y="22" width="8" height="19" rx="1.5"/>' +
+    '<line x1="16" y1="22" x2="16" y2="19"/><line x1="32" y1="22" x2="32" y2="19"/>' +
+    '<path d="M 16 16 C 13.5 13.5 13.5 11 16 7 C 18.5 11 18.5 13.5 16 16 Z"/>' +
+    '<path d="M 32 16 C 29.5 13.5 29.5 11 32 7 C 34.5 11 34.5 13.5 32 16 Z"/>' +
+    '<line x1="8" y1="42" x2="40" y2="42"/></g></svg>';
+
   function renderShabbat(shabbat) {
     if (!shabbat || (!shabbat.candleLighting && !shabbat.parasha)) {
       els.shabbatContent.innerHTML = '<div class="fallback-text">זמני שבת לא זמינים</div>';
@@ -728,10 +750,16 @@
     var times = '';
     if (shabbat.candleLighting) times += 'כניסת שבת: ' + shabbat.candleLighting;
     if (shabbat.havdalah) times += (times ? ' | ' : '') + 'יציאת שבת: ' + shabbat.havdalah;
+    var parasha = (shabbat.parasha || '').replace(/^פרשת\s+/, '');
 
     els.shabbatContent.innerHTML =
-      '<div class="shabbat-times">' + times + '</div>' +
-      (shabbat.parasha ? '<div class="shabbat-parasha">פרשת השבוע: ' + escapeHtml(shabbat.parasha) + '</div>' : '');
+      '<div class="shabbat-row">' +
+        '<div class="shabbat-icon">' + SHABBAT_ICON + '</div>' +
+        '<div class="shabbat-text">' +
+          '<div class="shabbat-times">' + times + '</div>' +
+          (parasha ? '<div class="shabbat-parasha">פרשת השבוע: ' + escapeHtml(parasha) + '</div>' : '') +
+        '</div>' +
+      '</div>';
   }
 
   // --- Main Render ---

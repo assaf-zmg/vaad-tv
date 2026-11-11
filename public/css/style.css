@@ -1011,3 +1011,112 @@ body.has-alert #photo-context { display: none; }
   .forecast-day:first-child .day-temp { font-size: 32px; }
   .wx-compact .forecast-day:first-child { padding-left: 8px; margin-left: 8px; }
 }
+
+/* === D44: Shabbat block right-aligned with a candles icon ===
+   Append at the END of style.css. RTL: the icon is the first child (right),
+   the two text lines follow, right-aligned like the other column blocks. */
+
+#shabbat-panel {
+  text-align: right;
+}
+
+.shabbat-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+.shabbat-icon {
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  margin-left: 14px;
+}
+
+.shabbat-icon,
+.shabbat-icon svg {
+  width: 44px;
+  height: 44px;
+}
+
+@media (max-height: 820px) {
+  .shabbat-icon { margin-left: 10px; }
+  .shabbat-icon,
+  .shabbat-icon svg { width: 34px; height: 34px; }
+}
+
+/* === D45: the committee card "floats" ===
+   Append at the END of style.css (after D44). #announcements-panel becomes a
+   transparent SLOT that still takes the free height (flex: 1), and the visible
+   card is a new inner .ann-card that wraps its content and never grows past
+   the slot. Short notice -> small card with photo showing below it; long
+   notice -> card fills the slot and D26 pagination splits it (measured
+   against the slot, see handoff-D45-fits.js). Shabbat stays anchored at the
+   bottom. The card is inset from the column edges (no more 14px bleed). */
+
+#announcements-panel {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+  min-height: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  margin-right: 0;
+  margin-left: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.ann-card {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 1 auto;
+  flex: 0 1 auto;
+  min-height: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 16px 20px 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+  -webkit-box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+}
+
+/* Content takes its natural height inside the card, capped by the slot. */
+#announcements-content {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 1 auto;
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* More air around the card so it reads as a floating object. */
+.card + #announcements-panel { margin-top: 30px; }
+#announcements-panel + .card { margin-top: 24px; }
+
+@media (max-height: 820px) {
+  .ann-card { padding: 10px 14px 8px; border-radius: 12px; }
+  .card + #announcements-panel { margin-top: 18px; }
+  #announcements-panel + .card { margin-top: 14px; }
+}
