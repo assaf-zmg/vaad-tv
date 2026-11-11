@@ -335,7 +335,16 @@
   }
 
   // Re-fit if the screen size changes (rare on the kiosk, cheap anyway).
-  window.onresize = function() { renderWeather(null); };
+  // Re-fit everything that was measured if the screen size changes: weather
+  // row (D27) and the whole-text pages of news and announcements (D26).
+  // Replaces the D27 one-liner `window.onresize = function() { renderWeather(null); };`
+  window.onresize = function() {
+    renderWeather(null);
+    annPart = 0;
+    annLayout = null;
+    renderAnnouncementsPage();
+    renderNewsPage();
+  };
 
   // --- Render: Dates ---
   function renderDates(data) {

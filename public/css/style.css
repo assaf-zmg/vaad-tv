@@ -652,3 +652,49 @@ body {
 
 /* Design (gate addendum): no holiday/event pill next to a red alert; it returns when the alert clears */
 body.has-alert #photo-message { display: none; }
+
+/* === D31: committee announcements on their own card ===
+   Owner: "זה היחידי שצריך להיות על כרטיסיה (שקופה מאוד, עם צל) אבל שיהיה מבודל".
+   Only #announcements-panel gets a card; clock, forecast, ynet and Shabbat stay
+   text-on-photo. Append at the END of style.css (after the gate fixes).
+   Old WebView: rgba + 1px border + one box-shadow, no backdrop-filter.
+   The card bleeds 14px past the column on both sides so its text stays
+   aligned with the rest of the column. D26 measuring is unaffected: it
+   measures #announcements-content inside the card's padding. */
+
+#announcements-panel {
+  margin-right: -14px;
+  margin-left: -14px;
+  padding: 14px 18px 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+  -webkit-box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+}
+
+/* The card is the separator now: drop the hairlines on both sides of it. */
+.card + #announcements-panel,
+#announcements-panel + .card {
+  border-top: none;
+}
+
+.card + #announcements-panel {
+  margin-top: 20px;
+}
+
+#announcements-panel + .card {
+  margin-top: 20px;
+  padding-top: 0;
+}
+
+@media (max-height: 820px) {
+  /* Low screens: the card's padding costs height. News gets a fixed box that
+     always fits one whole headline (3 lines at the compact size); the
+     committee card takes everything else, so a short notice never splits. */
+  #news-panel { -webkit-box-flex: 0; -webkit-flex: 0 0 auto; flex: 0 0 auto; }
+  #news-content { -webkit-box-flex: 0; -webkit-flex: 0 0 auto; flex: 0 0 auto; height: 74px; }
+  #announcements-panel { padding: 10px 14px 6px; border-radius: 12px; }
+  .card + #announcements-panel,
+  #announcements-panel + .card { margin-top: 12px; }
+}
