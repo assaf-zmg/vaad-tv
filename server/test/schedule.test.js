@@ -192,7 +192,12 @@ function slotOf(at) { return Math.floor(at / (3 * HOUR)); }
 function labelAt(kind, at) { return LABELS[kind][slotOf(at) % LABELS[kind].length]; }
 assert.ok(!cakeBg.qr, 'D37 replaces bg.qr');
 assert.deepEqual(cakeBg.context, { kind: 'cake', label: labelAt('cake', local('2027-07-01T16:00:00')), name: cake.title,
-  sub: 'צילום: ' + cake.credit + ' · Unsplash', qr: { img: '/api/qr/' + cake.go + '.png', cta: 'סרקו למתכון' } });
+  sub: '', qr: { img: '/api/qr/' + cake.go + '.png', cta: 'סרקו למתכון' } });
+// D25/D34: no photo credit on screen in any context block (credits live on /credits)
+for (var cs = 0; cs < 60; cs++) {
+  var cx = s.poolBackground(cs).context;
+  assert.ok(!/צילום|Unsplash/.test(cx.sub), 'credit in a context block: ' + cx.sub);
+}
 // labels rotate: over 4 consecutive slots the cake shows more than one label
 var cakeLabels = {};
 ['15', '18', '21'].forEach(function(h) { cakeLabels[s.getBackground([], local('2027-07-01T' + h + ':00:00')).context.label] = 1; });

@@ -185,8 +185,8 @@ function cakeBackground(localMs, slot) {
     url: '/api/cake/' + i + '?v=' + urlVersion(cake.image),
     caption: '',
     message: '', sub: '', tone: '',
-    context: context('cake', labelFor('cake', slot), cake.title, 'צילום: ' + cake.credit + ' · Unsplash',
-      qrFor(cake.go, 'סרקו למתכון'))
+    // D25/D34: no photo credit on screen; the cake's credit is on /credits
+    context: context('cake', labelFor('cake', slot), cake.title, '', qrFor(cake.go, 'סרקו למתכון'))
   };
 }
 
