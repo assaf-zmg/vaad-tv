@@ -9,7 +9,7 @@
        starts or its heartbeat (window.__vaadBeat, set by updateClock) stops for
        90s, reload with a cache-buster, but only after a small XHR to our server
        succeeds: a reload while offline leaves the browser's error page, with no
-       script to recover. Never-started pages back off (90s, 3, 6, 10 min max).
+       script to recover. Each watchdog reload in a row (w=n) waits longer: 90s, 3, 6, 10 min max.
        Until the script beats, the clock shows the device time. ES5 only. -->
   <script id="vaad-watchdog">
   (function () {
@@ -17,10 +17,12 @@
     var start = +new Date();
     var m = /[?&]w=(\d+)/.exec(window.location.search || '');
     var streak = m ? parseInt(m[1], 10) : 0;
-    var offset = null;
+    var offset = null, errSaved = 0;
     window.__vaadBeat = 0;
     window.onerror = function (msg, src, line) {
       window.__vaadLastError = new Date() + ' ' + msg + ' (' + src + ':' + line + ')';
+      if (+new Date() - errSaved < 60000) return; // localStorage at most once a minute
+      errSaved = +new Date();
       try { localStorage.setItem('vaadtv_last_error', window.__vaadLastError); } catch (e) {}
     };
     try { offset = JSON.parse(localStorage.getItem('vaadtv_dashboard_cache')).utcOffset; } catch (e) {}
@@ -51,13 +53,14 @@
       };
       x.onerror = fail;
       x.ontimeout = fail;
+      setTimeout(fail, 15000); // old WebView may never fire ontimeout; a hung probe must not stop the watchdog
       try { x.open('GET', '/api/ping?t=' + (+new Date()), true); x.timeout = 10000; x.send(); } catch (e) { fail(); }
     }
     function check() {
       var beat = window.__vaadBeat;
-      var limit = beat ? STALE_MS : Math.min(STALE_MS * Math.pow(2, streak), MAX_MS);
+      var limit = Math.min(STALE_MS * Math.pow(2, streak), MAX_MS);
       if (+new Date() - (beat || start) > limit) {
-        safeReload(beat ? 1 : streak + 1, function () { setTimeout(check, RETRY_MS); });
+        safeReload(streak + 1, function () { setTimeout(check, RETRY_MS); });
         return;
       }
       setTimeout(check, CHECK_MS);

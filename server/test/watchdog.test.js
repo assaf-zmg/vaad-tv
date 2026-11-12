@@ -107,7 +107,7 @@ assert.ok(/w=1$/.test(e.replaced));
 e = new Env('?r=1&w=2').run(WATCHDOG);
 e.advance(5 * MIN + 59 * S);
 assert.equal(e.pings().length, 0, 'w=2 waits 6 min');
-e.advance(2 * MIN);
+e.advance(62 * S);
 assert.equal(e.pings().length, 1);
 e.answer(200);
 assert.ok(/w=3$/.test(e.replaced), 'streak grows, got ' + e.replaced);
@@ -117,14 +117,34 @@ assert.equal(e.pings().length, 0, 'cap is 10 min, not less');
 e.advance(MIN + 31 * S);
 assert.equal(e.pings().length, 1, 'cap is 10 min, not more');
 
-// 4) live page: no reload while the heartbeat ticks; one stops -> reload after ~90s with w=1
-e = new Env('?w=3').run(WATCHDOG);
+// 4) live page: no reload while the heartbeat ticks; once it stops -> reload with backoff
+e = new Env('').run(WATCHDOG);
 for (var i = 0; i < 20; i++) { e.window.__vaadBeat = e.now; e.advance(30 * S); }
 assert.equal(e.pings().length, 0, 'beating page is left alone');
 e.advance(2 * MIN);
-assert.equal(e.pings().length, 1, 'heartbeat stopped -> probe');
+assert.equal(e.pings().length, 1, 'heartbeat stopped -> probe after ~90s');
 e.answer(200);
-assert.ok(/^\/\?r=\d+&w=1$/.test(e.replaced), 'a page that once beat restarts the streak at 1, got ' + e.replaced);
+assert.ok(/^\/\?r=\d+&w=1$/.test(e.replaced), 'got ' + e.replaced);
+// a page that beats and stalls again after watchdog reloads backs off too (no reload every 2 min forever)
+e = new Env('?w=3').run(WATCHDOG);
+for (i = 0; i < 20; i++) { e.window.__vaadBeat = e.now; e.advance(30 * S); }
+e.advance(9 * MIN);
+assert.equal(e.pings().length, 0, 'w=3 -> stale limit 10 min (cap), not 90s');
+e.advance(MIN + S);
+assert.equal(e.pings().length, 1);
+e.answer(200);
+assert.ok(/w=4$/.test(e.replaced), 'stale-beat path grows the streak, got ' + e.replaced);
+
+// 4b) the probe hangs with no event at all (old WebView may never fire ontimeout) -> fail after 15s, check again in 5 min
+e = new Env('').run(WATCHDOG);
+e.advance(121 * S);
+assert.equal(e.pings().length, 1);
+e.advance(15 * S + 5 * MIN);
+assert.equal(e.pings().length, 2, 'a hung probe must not stop the watchdog');
+var hung = e.pings()[0]; hung.readyState = 4; hung.status = 200; hung.onreadystatechange();
+assert.equal(e.replaced, null, 'a late answer to a probe already given up on is ignored');
+e.answer(200);
+assert.ok(/w=1$/.test(e.replaced));
 
 // 5) other query params survive, old r/w are replaced
 e = new Env('?date=2026-11-12&r=5&w=2').run(WATCHDOG);
@@ -151,6 +171,11 @@ e = new Env('').run(WATCHDOG);
 e.window.onerror('boom', 'js/dashboard.js', 12);
 assert.ok(/boom/.test(e.window.__vaadLastError));
 assert.ok(/boom/.test(e.storage.vaadtv_last_error));
+e.advance(10 * S); e.window.onerror('again', 'x', 1);
+assert.ok(/again/.test(e.window.__vaadLastError), 'last error always kept in memory');
+assert.ok(/boom/.test(e.storage.vaadtv_last_error), 'localStorage written at most once a minute');
+e.advance(MIN); e.window.onerror('later', 'x', 2);
+assert.ok(/later/.test(e.storage.vaadtv_last_error), 'written again after a minute');
 
 // 8) loader: retries dashboard.js after 5, 15, 30, 60 s with a cache-buster, then stops
 e = new Env('').run(LOADER);
