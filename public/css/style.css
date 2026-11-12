@@ -1148,3 +1148,34 @@ body.has-alert #photo-context { display: none; }
   .has-qr .ctx-name { font-size: 28px; }
   .has-qr .ctx-cta { font-size: 15px; margin-top: 6px; }
 }
+
+/* === D49: the QR context card at about half size ===
+   Owner: "הכרטיסיה עם הברקוד יכולה להיות קטנה ב 50%". Append at the END of
+   style.css (after D46). QR scale 6->4 (222->148px) on normal screens and
+   5->3 (185->111px) on low screens (JS + server, see the addendum). Only the
+   card WITH a QR (.has-qr) changes; the plain context line stays as it is. */
+
+#photo-context.has-qr {
+  padding: 8px;
+  border-radius: 12px;
+}
+
+.has-qr .ctx-text {
+  margin-left: 12px;
+  max-width: 160px;
+}
+
+.has-qr .ctx-label { font-size: 15px; }
+.has-qr .ctx-name { font-size: 24px; line-height: 1.15; }
+.has-qr .ctx-cta { font-size: 14px; margin-top: 6px; }
+
+.has-qr .qr-tile { border-radius: 5px; }
+
+@media (max-height: 820px) {
+  #photo-context.has-qr { padding: 6px; border-radius: 9px; }
+  .has-qr .ctx-text { margin-left: 9px; max-width: 125px; }
+  .has-qr .ctx-label { font-size: 12px; }
+  .has-qr .ctx-name { font-size: 18px; }
+  .has-qr .ctx-cta { font-size: 12px; margin-top: 4px; }
+  .has-qr .qr-tile { border-radius: 4px; }
+}
