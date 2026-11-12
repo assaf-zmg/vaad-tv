@@ -7,6 +7,7 @@
   var ANNOUNCEMENT_ROTATE = 20 * 1000;
   var NEWS_ROTATE = 10 * 1000;
   var PAGE_RELOAD_INTERVAL = 7 * 60 * 60 * 1000;
+  var RELOAD_RETRY = 5 * 60 * 1000; // D51: server unreachable at reload time -> try again
   var CACHE_KEY = 'vaadtv_dashboard_cache';
   var PHOTO_FADE_MS = 1600;
 
@@ -281,6 +282,7 @@
 
   // --- Clock (ES5: getUTCHours + offset, no Intl timezone) ---
   function updateClock() {
+    window.__vaadBeat = +new Date(); // D51: heartbeat for the watchdog in index.html
     var now = new Date();
     var h = (now.getUTCHours() + utcOffset) % 24;
     if (h < 0) h += 24;
@@ -802,21 +804,23 @@
   function fetchData() {
     fetchJSON('/api/dashboard.json', function(err, data) {
       if (err) {
+        setTimeout(fetchData, RETRY_INTERVAL);
         if (!currentData) {
           var cached = loadFromCache();
           if (cached) {
-            render(cached);
+            try { render(cached); } catch (e) { try { localStorage.removeItem(CACHE_KEY); } catch (e2) {} }
           } else {
             if (els.announcementsContent) els.announcementsContent.innerHTML = '<div class="fallback-text">לא ניתן לטעון נתונים</div>';
             if (els.newsContent) els.newsContent.innerHTML = '<div class="fallback-text">לא ניתן לטעון חדשות</div>';
           }
         }
-        setTimeout(fetchData, RETRY_INTERVAL);
         return;
       }
-      saveToCache(data);
-      render(data);
+      // D51: schedule the next poll first and cache only data that rendered, so one
+      // bad payload can't stop polling or break every later start from the cache.
       setTimeout(fetchData, POLL_INTERVAL);
+      try { render(data); } catch (e) { if (window.onerror) window.onerror('render: ' + e.message, 'dashboard.js', 0); return; }
+      saveToCache(data);
     });
   }
 
@@ -824,19 +828,33 @@
   function init() {
     initDom();
     updateClock();
+    setInterval(updateClock, 1000); // heartbeat first: a later failure here must not stop it
     renderFallbacks();
 
     var cached = loadFromCache();
-    if (cached) render(cached);
+    if (cached) {
+      try { render(cached); } catch (e) { // D51: a bad cache must not break every start
+        try { localStorage.removeItem(CACHE_KEY); } catch (e2) {}
+      }
+    }
 
     fetchData();
     relayoutWhenFontsReady();
 
-    setInterval(updateClock, 1000);
     setInterval(rotateAnnouncements, ANNOUNCEMENT_ROTATE);
     setInterval(rotateNews, NEWS_ROTATE);
 
-    setTimeout(function() { window.location.reload(true); }, PAGE_RELOAD_INTERVAL);
+    setTimeout(reloadPage, PAGE_RELOAD_INTERVAL);
+  }
+
+  // D51: the 7h refresh reloads only once the server answers (watchdog's safe reload);
+  // a blind reload while offline leaves the browser's error page on the screen.
+  function reloadPage() {
+    if (window.__vaadSafeReload) {
+      window.__vaadSafeReload(0, function() { setTimeout(reloadPage, RELOAD_RETRY); });
+    } else {
+      window.location.reload(true);
+    }
   }
 
   if (document.readyState === 'loading') {

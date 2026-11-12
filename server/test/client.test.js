@@ -161,4 +161,50 @@ assert.ok(/ticker-on/.test(body.className));
   assert.ok(/זמני שבת לא זמינים/.test(els.shabbatContent.innerHTML));
 })();
 
+// --- D51: heartbeat, a throwing render must not stop polling or poison the cache, safe 7h reload ---
+(function() {
+  var win = {};
+  var clock = new Function('window', 'els', 'utcOffset', extract('updateClock', '\n  }\n') + '\n  }; return updateClock;')(win, { clock: {} }, 2);
+  clock();
+  assert.ok(win.__vaadBeat > 0, 'updateClock sets the heartbeat');
+
+  var timers = [], saved = [], rendered = 0;
+  var fd = function() {
+    return new Function('fetchJSON', 'render', 'saveToCache', 'loadFromCache', 'setTimeout', 'els', 'currentData',
+      'POLL_INTERVAL', 'RETRY_INTERVAL', 'window', 'localStorage', 'CACHE_KEY', extract('fetchData', '// --- Init') + '; return fetchData;')
+      .apply(null, [].slice.call(arguments).concat([{}, { removeItem: function(k) { removed.push(k); } }, 'k']));
+  };
+  var removed = [];
+  var answer;
+  var fetchData = fd(function(u, cb) { answer = cb; }, function() { rendered++; throw new Error('bad data'); },
+    function(d) { saved.push(d); }, function() { return null; }, function(fn, ms) { timers.push(ms); }, {}, null, 120000, 60000);
+  fetchData();
+  answer(null, { bad: 1 });
+  assert.equal(rendered, 1);
+  assert.deepEqual(timers, [120000], 'next poll still scheduled after render threw');
+  assert.deepEqual(saved, [], 'data that breaks render is not cached');
+
+  timers = []; saved = [];
+  fetchData = fd(function(u, cb) { answer = cb; }, function() {}, function(d) { saved.push(d); },
+    function() { return null; }, function(fn, ms) { timers.push(ms); }, {}, null, 120000, 60000);
+  fetchData(); answer(null, { ok: 1 });
+  assert.deepEqual(saved, [{ ok: 1 }]); assert.deepEqual(timers, [120000]);
+
+  // offline with a cache that breaks render: retry still scheduled, bad cache dropped
+  timers = [];
+  fetchData = fd(function(u, cb) { answer = cb; }, function() { throw new Error('bad cache'); }, function() {},
+    function() { return { bad: 1 }; }, function(fn, ms) { timers.push(ms); }, {}, null, 120000, 60000);
+  fetchData(); answer(new Error('offline'));
+  assert.deepEqual(timers, [60000], 'retry scheduled even though the cached render threw');
+  assert.deepEqual(removed, ['k'], 'bad cache removed');
+
+  // 7h reload goes through the watchdog's safe reload; on failure retry in 5 min
+  var calls = [], later = [];
+  var w2 = { __vaadSafeReload: function(n, onFail) { calls.push(n); onFail(); }, location: { reload: function() { throw new Error('no blind reload'); } } };
+  var rp = new Function('window', 'setTimeout', 'RELOAD_RETRY', extract('reloadPage', '\n  }\n') + '\n  }; return reloadPage;')(
+    w2, function(fn, ms) { later.push(ms); }, 300000);
+  rp();
+  assert.deepEqual(calls, [0]); assert.deepEqual(later, [300000]);
+})();
+
 console.log('client tests: ALL OK');

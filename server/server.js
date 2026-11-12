@@ -597,6 +597,13 @@ app.get('/api/cake/:index', function(req, res) {
 // redirects only to entries of go-links.json (closed list, never open). ---
 var golinks = require('./golinks');
 var qr = require('./qr');
+// D51: tiny probe. The page's watchdog reloads only after this answers, so a
+// reload never happens while the kiosk is offline.
+app.get('/api/ping', function(req, res) {
+  res.set('Cache-Control', 'no-store');
+  res.json({ ok: true });
+});
+
 app.get('/go/:id', function(req, res) {
   var url = golinks.resolve(req.params.id);
   res.set('Cache-Control', 'no-store');

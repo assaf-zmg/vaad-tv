@@ -103,6 +103,13 @@ var server = app.listen(0, function() {
       assert.ok(d.newsMode === 'ticker' || d.newsMode === 'card');
       assert.ok(d.background && d.background.url, 'background still built');
     })
+    // D51: tiny no-store probe the watchdog checks before any reload
+    .then(function() { return get(port, '/api/ping'); })
+    .then(function(r) {
+      assert.equal(r.status, 200);
+      assert.equal(r.headers['cache-control'], 'no-store');
+      assert.deepEqual(JSON.parse(r.body), { ok: true });
+    })
     .then(function() { return get(port, '/credits'); })
     .then(function(r3) {
       assert.equal(r3.status, 200);

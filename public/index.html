@@ -5,6 +5,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>לוח מודעות הבניין</title>
+  <!-- D51: watchdog. Runs first, before any stylesheet. If dashboard.js never
+       starts or its heartbeat (window.__vaadBeat, set by updateClock) stops for
+       90s, reload with a cache-buster, but only after a small XHR to our server
+       succeeds: a reload while offline leaves the browser's error page, with no
+       script to recover. Never-started pages back off (90s, 3, 6, 10 min max).
+       Until the script beats, the clock shows the device time. ES5 only. -->
+  <script id="vaad-watchdog">
+  (function () {
+    var CHECK_MS = 60000, STALE_MS = 90000, MAX_MS = 600000, RETRY_MS = 300000;
+    var start = +new Date();
+    var m = /[?&]w=(\d+)/.exec(window.location.search || '');
+    var streak = m ? parseInt(m[1], 10) : 0;
+    var offset = null;
+    window.__vaadBeat = 0;
+    window.onerror = function (msg, src, line) {
+      window.__vaadLastError = new Date() + ' ' + msg + ' (' + src + ':' + line + ')';
+      try { localStorage.setItem('vaadtv_last_error', window.__vaadLastError); } catch (e) {}
+    };
+    try { offset = JSON.parse(localStorage.getItem('vaadtv_dashboard_cache')).utcOffset; } catch (e) {}
+    if (typeof offset !== 'number') offset = null;
+
+    function pad(x) { return x < 10 ? '0' + x : '' + x; }
+    function tick() {
+      if (window.__vaadBeat) return;
+      var el = document.getElementById('clock');
+      if (!el) return;
+      var now = new Date();
+      var h = offset === null ? now.getHours() : ((now.getUTCHours() + offset) % 24 + 24) % 24;
+      el.innerHTML = pad(h) + ':' + pad(offset === null ? now.getMinutes() : now.getUTCMinutes());
+    }
+    function reloadUrl(n) {
+      var parts = (window.location.search || '').replace(/^\?/, '').split('&'), out = [], i;
+      for (i = 0; i < parts.length; i++) if (parts[i] && !/^(r|w)=/.test(parts[i])) out.push(parts[i]);
+      out.push('r=' + (+new Date()));
+      if (n) out.push('w=' + n);
+      return window.location.pathname + '?' + out.join('&');
+    }
+    function safeReload(n, onFail) {
+      var done = false, x = new XMLHttpRequest();
+      function fail() { if (done) return; done = true; if (onFail) onFail(); }
+      x.onreadystatechange = function () {
+        if (x.readyState !== 4 || done) return;
+        if (x.status === 200) { done = true; window.location.replace(reloadUrl(n)); } else fail();
+      };
+      x.onerror = fail;
+      x.ontimeout = fail;
+      try { x.open('GET', '/api/ping?t=' + (+new Date()), true); x.timeout = 10000; x.send(); } catch (e) { fail(); }
+    }
+    function check() {
+      var beat = window.__vaadBeat;
+      var limit = beat ? STALE_MS : Math.min(STALE_MS * Math.pow(2, streak), MAX_MS);
+      if (+new Date() - (beat || start) > limit) {
+        safeReload(beat ? 1 : streak + 1, function () { setTimeout(check, RETRY_MS); });
+        return;
+      }
+      setTimeout(check, CHECK_MS);
+    }
+    window.__vaadSafeReload = safeReload;
+    setInterval(tick, 1000);
+    setTimeout(check, CHECK_MS);
+  })();
+  </script>
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="favicon.png">
@@ -62,12 +124,27 @@
 
     <!-- D35: good-news ticker along the bottom (body.ticker-on; newsMode flag) -->
     <div id="ticker">
-      <div class="ticker-label">חדשות טובות<img class="ticker-logo" src="img/ynet-icon-64.png" width="32" height="32" alt="ynet"><span class="news-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="#ffd58a" stroke-width="2"/><g stroke="#ffd58a" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.6" y1="4.6" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.4" y2="19.4"/><line x1="19.4" y1="4.6" x2="17.7" y2="6.3"/><line x1="6.3" y1="17.7" x2="4.6" y2="19.4"/></g></svg>מסנן אופטימיות פעיל</span></div>
+      <div class="ticker-label">חדשות טובות<img class="ticker-logo" src="data:image/png;base64,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" width="32" height="32" alt="ynet"><span class="news-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="#ffd58a" stroke-width="2"/><g stroke="#ffd58a" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.6" y1="4.6" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.4" y2="19.4"/><line x1="19.4" y1="4.6" x2="17.7" y2="6.3"/><line x1="6.3" y1="17.7" x2="4.6" y2="19.4"/></g></svg>מסנן אופטימיות פעיל</span></div>
       <div id="ticker-viewport" class="ticker-viewport"><div id="ticker-strip" class="ticker-strip"></div></div>
     </div>
 
   </div>
 
-  <script src="js/dashboard.js"></script>
+  <!-- D51: load dashboard.js with retries (5, 15, 30, 60 s, cache-busted); after that the watchdog reloads. -->
+  <script id="vaad-loader">
+  (function () {
+    var waits = [5, 15, 30, 60], tries = 0;
+    function load() {
+      var s = document.createElement('script');
+      s.src = 'js/dashboard.js' + (tries ? '?v=' + (+new Date()) : '');
+      s.onerror = function () {
+        if (s.parentNode) s.parentNode.removeChild(s);
+        if (tries < waits.length) setTimeout(load, waits[tries++] * 1000);
+      };
+      document.body.appendChild(s);
+    }
+    load();
+  })();
+  </script>
 </body>
 </html>
