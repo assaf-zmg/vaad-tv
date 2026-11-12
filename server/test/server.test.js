@@ -70,8 +70,12 @@ var server = app.listen(0, function() {
         get(port, '/api/qr/nope.png'),
         get(port, '/api/qr/' + id),
         get(port, '/api/qr/' + id + '.png?s=5'),
-        get(port, '/api/qr/' + id + '.png')
+        get(port, '/api/qr/' + id + '.png'),
+        get(port, '/api/qr/' + id + '.png?s=4'),
+        get(port, '/api/qr/' + id + '.png?s=3')
       ]).then(function(r) {
+        assert.equal(r[7].raw.readUInt32BE(16), 148, 's=4 -> 148px (D49)');
+        assert.equal(r[8].raw.readUInt32BE(16), 111, 's=3 -> 111px (D49)');
         assert.equal(r[5].raw.readUInt32BE(16), 185, 's=5 -> 185px (D46)');
         assert.equal(r[6].raw.readUInt32BE(16), 222, 'no s -> 222px (D46 default)');
         assert.equal(r[0].status, 200);

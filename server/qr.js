@@ -13,9 +13,11 @@ var cache = {};
 
 function goUrl(id) { return PUBLIC_ORIGIN + '/go/' + id; }
 
+// D49: 4 (148px) and 3 (111px) for the half-size card; 8/6/5 stay served for
+// pages cached before each change. Anything else -> 6.
+var SCALES = { '3': 3, '4': 4, '5': 5, '6': 6, '8': 8 };
 function scaleFor(s) {
-  s = '' + s;
-  return s === '5' ? 5 : s === '8' ? 8 : 6;
+  return Object.prototype.hasOwnProperty.call(SCALES, s) ? SCALES[s] : 6; // no prototype keys
 }
 
 // -> Promise<Buffer|null> (null: unknown id)
