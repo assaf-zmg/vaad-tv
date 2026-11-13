@@ -7,12 +7,16 @@
       "config": {
         "includeFiles": ["public/**"]
       }
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/server/server.js"
-    }
+    { "src": "/", "dest": "/public/index.html" },
+    { "src": "/(css|js|img)/(.*)", "dest": "/public/$1/$2" },
+    { "src": "/(favicon\\.png|favicon\\.ico)", "dest": "/public/$1" },
+    { "src": "/(.*)", "dest": "/server/server.js" }
   ]
 }
